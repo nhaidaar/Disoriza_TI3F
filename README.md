@@ -1,16 +1,11 @@
-# disoriza
+# Disoriza
 
-A new Flutter project.
+This repository is belongs to Kelompok 3 PBL TI-3F
 
-## Getting Started
+## Contributors
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Dhika Wahyu Nugroho / 06 / 2241720056
+2. Emir Abiyyu Dellanggra / 07 / 2241720197
+3. Ihza Nurkhafidh Al-Baihaqi / 11 / 2241720165
+4. Muhammad Naufal Haidar Setyawan / 17 / 2241720097
+5. Nadila Amalia Pribadi / 19 / 2241720114
