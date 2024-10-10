@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'core/common/colors.dart';
 import 'features/home/presentation/pages/splash_screen.dart';
 
 void main() {
@@ -11,10 +12,12 @@ class Disoriza extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Disoriza',
-      themeMode: ThemeMode.system,
-      home: SplashScreen(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: background,
+      ),
+      home: const SplashScreen(),
     );
   }
 }

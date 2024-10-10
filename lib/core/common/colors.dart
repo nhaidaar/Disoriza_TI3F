@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const Color background = Color(0xfff6f6f9);
+
 const Color neutral10 = Color(0xffffffff);
 const Color neutral20 = Color(0xfff6f6f6);
 const Color neutral30 = Color(0xffe3e3e3);
@@ -13,3 +15,4 @@ const Color neutral100 = Color(0xff1b1b1b);
 
 const Color green = Color(0xff4A6B18);
 const Color orange = Color(0xffE3892D);
+const Color orangePressed = Color(0xffCF7D29);

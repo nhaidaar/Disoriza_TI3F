@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:disoriza/features/home/presentation/pages/home_disoriza.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../auth/presentation/pages/auth_page.dart';
+// import 'home_disoriza.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 3), () {
       Navigator.of(context).pushAndRemoveUntil(
         PageTransition(
-          child: const HomeDisoriza(),
+          child: const AuthPage(),
           type: PageTransitionType.fade,
         ),
         (route) => false,
@@ -44,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 12),
             Text(
               'Disoriza',
-              style: mediumTS.copyWith(fontSize: 32, color: Colors.white),
+              style: mediumTS.copyWith(fontSize: 32, color: neutral10),
             ),
           ],
         ),
