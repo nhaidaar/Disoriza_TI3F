@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'features/home/presentation/pages/home_disoriza.dart';
+import 'features/home/presentation/pages/splash_screen.dart';
 
 void main() {
   runApp(const Disoriza());
@@ -14,7 +14,7 @@ class Disoriza extends StatelessWidget {
     return const MaterialApp(
       title: 'Disoriza',
       themeMode: ThemeMode.system,
-      home: HomeDisoriza(),
+      home: SplashScreen(),
     );
   }
 }
