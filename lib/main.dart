@@ -1,3 +1,4 @@
+import 'features/home/presentation/pages/home_newUser.dart';
 import 'package:flutter/material.dart';
 
 import 'core/common/colors.dart';
@@ -18,6 +19,7 @@ class Disoriza extends StatelessWidget {
         scaffoldBackgroundColor: background,
       ),
       home: const SplashScreen(),
+      // home: HomeNewUser(),
     );
   }
 }
