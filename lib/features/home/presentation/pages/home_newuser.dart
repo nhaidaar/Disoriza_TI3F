@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
 import '../widgets/disoriza_logo.dart';
+import 'home_screen.dart';
 
 class HomeNewUser extends StatelessWidget {
   const HomeNewUser({super.key});
@@ -59,7 +61,14 @@ class HomeNewUser extends StatelessWidget {
 
             // Lewati
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  PageTransition(
+                    child: const HomeScreen(),
+                    type: PageTransitionType.fade,
+                  ),
+                );
+              },
               child: Center(
                 child: Text(
                   'Lewati',
