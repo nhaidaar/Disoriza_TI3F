@@ -1,106 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
+import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
-
+import '../widgets/disoriza_logo.dart';
 
 class HomeNewUser extends StatelessWidget {
-const HomeNewUser({ Key? key }) : super(key: key);
+  const HomeNewUser({super.key});
 
   @override
-  Widget build(BuildContext context){
-    // return Container();
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: neutral10,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Container(
-          padding: EdgeInsets.all(8),
-          child: Column( //column, row, stack usually use children
+        padding: const EdgeInsets.all(28),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.all(6),
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(color: Color(0xffE1E6EC))
-                ),
-                child:             
-                Image.asset(
-                  'assets/images/logo2.png',
-                  width: 2,
-                ),
-              ),
-              SizedBox(height: 16),
-              RichText(
-                text: TextSpan(
-                  text: '',
-                  style: TextStyle(color: Colors.black),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Hai Naufal, Yuk mulai pemindaian pertamamu menggunakan',
-                      style: mediumTS.copyWith(fontSize: 24, color: neutral100)
-                      // style: GoogleFonts.interTight(color: Color(0xff1b1b1b), fontSize: 24)
-                    ),
-                    TextSpan(
-                      text: ' Disoriza AI ✨',
-                      style: mediumTS.copyWith(fontSize: 24, color: Color(0xff0B3E3F))
-                      // style: GoogleFonts.interTight(color: Color(0xff0B3E3F), fontSize: 24)
-                    )
-                  ]
-                )
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Ayo coba fitur pindai yang dimiliki aplikasi ini untuk mengetahui penyakit pada padi kamu.',
-                style: mediumTS.copyWith(fontSize: 14, color:Color.fromRGBO(27, 27, 27, 0.60))                
-                // style: GoogleFonts.interTight(
-                //   color: Color.fromRGBO(27, 27, 27, 0.60),
-                //   fontSize: 14
-                // )
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(onPressed: (){}, 
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Logo
+            const DisorizaLogo(),
+
+            const SizedBox(height: 16),
+
+            // Greeting Message
+            RichText(
+              text: TextSpan(
+                text: 'Hai Naufal, Yuk mulai pemindaian pertamamu menggunakan ',
+                style: mediumTS.copyWith(fontSize: 24, color: neutral100),
                 children: [
-                  Icon(IconsaxPlusLinear.scanner, color: Colors.white,size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'Pindai',
-                    style: mediumTS.copyWith(fontSize: 14, color: neutral10) 
-                    // style: GoogleFonts.interTight(
-                    //   color: Colors.white,
-                    //   fontSize: 14
-                    // )
+                  TextSpan(
+                    text: 'Disoriza AI ✨',
+                    style: mediumTS.copyWith(fontSize: 24, color: accentGreenMain),
                   )
                 ],
               ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 44),
-                backgroundColor: orange
-              )
-              ),
-              SizedBox(height: 12),
-              GestureDetector(
-                onTap: () {},
-                child: Center(
-                  child: Text(
-                    'Lewati',
-                    style: mediumTS.copyWith(fontSize: 14, color: neutral70)
-                    // style: GoogleFonts.interTight(
-                    //   color: Color(0xff7f7f7f),
-                    //   fontSize: 14
-                    // )
-                  ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Description Text
+            Text(
+              'Ayo coba fitur pindai yang dimiliki aplikasi ini untuk mengetahui penyakit pada padi Anda.',
+              style: mediumTS.copyWith(color: neutral70),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Pindai Button
+            CustomButton(
+              icon: IconsaxPlusLinear.scanner,
+              text: 'Pindai',
+              onTap: () {},
+            ),
+
+            const SizedBox(height: 12),
+
+            // Lewati
+            GestureDetector(
+              onTap: () {},
+              child: Center(
+                child: Text(
+                  'Lewati',
+                  style: mediumTS.copyWith(color: neutral70),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );

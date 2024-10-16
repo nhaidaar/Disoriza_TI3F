@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/common/colors.dart';
-import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../home/presentation/widgets/disoriza_logo.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 
@@ -22,21 +22,7 @@ class AuthPage extends StatelessWidget {
                 color: neutral10,
                 child: Column(
                   children: [
-                    // Disoriza Logo
-                    Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: neutral10,
-                        boxShadow: const [shadowEffect0, shadowEffect1],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        scale: 3,
-                        color: green,
-                      ),
-                    ),
+                    const DisorizaLogo(),
 
                     const SizedBox(height: 16),
 
@@ -59,10 +45,10 @@ class AuthPage extends StatelessWidget {
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
-                        color: background,
+                        color: backgroundCanvas,
                       ),
                       child: TabBar(
-                        labelStyle: mediumTS.copyWith(fontSize: 16, color: green),
+                        labelStyle: mediumTS.copyWith(fontSize: 16, color: accentGreenMain),
                         unselectedLabelStyle: mediumTS.copyWith(fontSize: 16, color: neutral60),
                         indicator: BoxDecoration(
                           color: neutral10,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../home/presentation/pages/home_newuser.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,8 +29,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void updateFieldState() {
-    setState(
-        () => areFieldsEmpty = _emailController.text.isEmpty || _passwordController.text.isEmpty);
+    setState(() {
+      areFieldsEmpty = _emailController.text.isEmpty || _passwordController.text.isEmpty;
+    });
   }
 
   @override
@@ -93,7 +96,14 @@ class _LoginPageState extends State<LoginPage> {
           CustomButton(
             text: 'Masuk',
             disabled: areFieldsEmpty,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                PageTransition(
+                  child: const HomeNewUser(),
+                  type: PageTransitionType.fade,
+                ),
+              );
+            },
           ),
         ],
       ),

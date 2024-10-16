@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../home/presentation/pages/home_newuser.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -93,7 +95,14 @@ class _RegisterPageState extends State<RegisterPage> {
           CustomButton(
             text: 'Daftar',
             disabled: areFieldsEmpty,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                PageTransition(
+                  child: const HomeNewUser(),
+                  type: PageTransitionType.fade,
+                ),
+              );
+            },
           ),
         ],
       ),
