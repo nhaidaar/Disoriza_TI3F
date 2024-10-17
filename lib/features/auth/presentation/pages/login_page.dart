@@ -5,7 +5,7 @@ import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../home/presentation/pages/home_newuser.dart';
+import '../../../home/presentation/pages/home_onboarding.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -97,11 +97,12 @@ class _LoginPageState extends State<LoginPage> {
             text: 'Masuk',
             disabled: areFieldsEmpty,
             onTap: () {
-              Navigator.of(context).push(
+              Navigator.of(context).pushAndRemoveUntil(
                 PageTransition(
-                  child: const HomeNewUser(),
+                  child: const HomeOnboarding(),
                   type: PageTransitionType.fade,
                 ),
+                (route) => false,
               );
             },
           ),

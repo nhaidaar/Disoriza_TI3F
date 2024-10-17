@@ -8,8 +8,8 @@ import '../../../../core/common/colors.dart';
 import '../widgets/disoriza_logo.dart';
 import 'home_screen.dart';
 
-class HomeNewUser extends StatelessWidget {
-  const HomeNewUser({super.key});
+class HomeOnboarding extends StatelessWidget {
+  const HomeOnboarding({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +62,12 @@ class HomeNewUser extends StatelessWidget {
             // Lewati
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pushAndRemoveUntil(
                   PageTransition(
                     child: const HomeScreen(),
                     type: PageTransitionType.fade,
                   ),
+                  (route) => false,
                 );
               },
               child: Center(
