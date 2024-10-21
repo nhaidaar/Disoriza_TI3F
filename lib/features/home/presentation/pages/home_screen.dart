@@ -1,3 +1,4 @@
+import 'package:disoriza/features/comunity/pages/comunity_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final pages = [
     const BerandaPage(),
     const Center(child: Text('Riwayat')),
-    const Center(child: Text('Komunitas')),
+    const CommunityPages(),
     const Center(child: Text('Setelan')),
   ];
 
