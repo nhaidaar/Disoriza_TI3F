@@ -1,13 +1,13 @@
 import 'package:disoriza/core/common/paddings.dart';
-import 'package:disoriza/features/comunity/pages/activity.dart';
-import 'package:disoriza/features/comunity/pages/discussion.dart';
+import 'package:disoriza/features/community/presentation/pages/activity_tab.dart';
+import 'package:disoriza/features/community/presentation/pages/discussion_tab.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/common/colors.dart';
-import '../../../../core/common/fontstyles.dart';
+import '../../../../../core/common/colors.dart';
+import '../../../../../core/common/fontstyles.dart';
 
-class CommunityPages extends StatelessWidget {
-  const CommunityPages({super.key});
+class CommunityPage extends StatelessWidget {
+  const CommunityPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +37,8 @@ class CommunityPages extends StatelessWidget {
                     color: backgroundCanvas,
                   ),
                   child: TabBar(
-                    labelStyle:
-                        mediumTS.copyWith(fontSize: 16, color: accentGreenMain),
-                    unselectedLabelStyle:
-                        mediumTS.copyWith(fontSize: 16, color: neutral60),
+                    labelStyle: mediumTS.copyWith(fontSize: 16, color: accentGreenMain),
+                    unselectedLabelStyle: mediumTS.copyWith(fontSize: 16, color: neutral60),
                     indicator: BoxDecoration(
                       color: neutral10,
                       borderRadius: BorderRadius.circular(100),
@@ -63,12 +61,13 @@ class CommunityPages extends StatelessWidget {
               children: [
                 Expanded(
                   child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    Discussion(),
-                    Activity(),
-                  ],
-                ))
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      DiscussionTab(),
+                      ActivityTab(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

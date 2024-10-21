@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import '../../../../core/common/colors.dart';
-import '../../../../core/common/fontstyles.dart';
+import '../../../../../core/common/colors.dart';
 
 class PostDetails extends StatefulWidget {
   const PostDetails({super.key});
@@ -20,12 +19,11 @@ class _PostDetailsState extends State<PostDetails> {
           Row(
             children: [
               const CircleAvatar(
-                  radius: 20,
-                  backgroundColor: neutral10,
-                  child: Icon(IconsaxPlusLinear.profile, color: neutral100),
-                ),
-
-                const SizedBox(width: 8),
+                radius: 20,
+                backgroundColor: neutral10,
+                child: Icon(IconsaxPlusLinear.profile, color: neutral100),
+              ),
+              const SizedBox(width: 8),
             ],
           )
         ],

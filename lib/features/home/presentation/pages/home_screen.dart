@@ -1,10 +1,10 @@
-import 'package:disoriza/features/comunity/pages/comunity_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
 import 'beranda_page.dart';
+import '../../../community/presentation/pages/community_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final pages = [
     const BerandaPage(),
     const Center(child: Text('Riwayat')),
-    const CommunityPages(),
+    const CommunityPage(),
     const Center(child: Text('Setelan')),
   ];
 

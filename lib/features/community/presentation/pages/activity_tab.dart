@@ -2,17 +2,14 @@ import 'package:disoriza/core/common/colors.dart';
 import 'package:disoriza/core/common/paddings.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/common/colors.dart';
-import '../../../../core/common/fontstyles.dart';
-
-class Activity extends StatefulWidget {
-  const Activity({super.key});
+class ActivityTab extends StatefulWidget {
+  const ActivityTab({super.key});
 
   @override
-  State<Activity> createState() => _ActivityState();
+  State<ActivityTab> createState() => _ActivityTabState();
 }
 
-class _ActivityState extends State<Activity> {
+class _ActivityTabState extends State<ActivityTab> {
   int _selectedIndex = 0; // Menyimpan index tab yang terpilih
 
   void _onTabSelected(int index) {
@@ -39,13 +36,10 @@ class _ActivityState extends State<Activity> {
                     child: ElevatedButton(
                       onPressed: () => _onTabSelected(0),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 0 ? accentOrangeMain : neutral10,
-                        foregroundColor: _selectedIndex == 0
-                            ? neutral10
-                            : neutral60, // Warna background
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
+                        backgroundColor: _selectedIndex == 0 ? accentOrangeMain : neutral10,
+                        foregroundColor:
+                            _selectedIndex == 0 ? neutral10 : neutral60, // Warna background
+                        padding: const EdgeInsets.symmetric(horizontal: xMedium),
                       ),
                       child: const Text('Semua'),
                     ),
@@ -55,12 +49,9 @@ class _ActivityState extends State<Activity> {
                     child: ElevatedButton(
                       onPressed: () => _onTabSelected(1),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 1 ? accentOrangeMain : neutral10,
-                        foregroundColor:
-                            _selectedIndex == 1 ? neutral10 : neutral60,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
+                        backgroundColor: _selectedIndex == 1 ? accentOrangeMain : neutral10,
+                        foregroundColor: _selectedIndex == 1 ? neutral10 : neutral60,
+                        padding: const EdgeInsets.symmetric(horizontal: xMedium),
                       ),
                       child: const Text('Postingan'),
                     ),
@@ -70,12 +61,9 @@ class _ActivityState extends State<Activity> {
                     child: ElevatedButton(
                       onPressed: () => _onTabSelected(2),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 2 ? accentOrangeMain : neutral10,
-                        foregroundColor:
-                            _selectedIndex == 2 ? neutral10 : neutral60,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
+                        backgroundColor: _selectedIndex == 2 ? accentOrangeMain : neutral10,
+                        foregroundColor: _selectedIndex == 2 ? neutral10 : neutral60,
+                        padding: const EdgeInsets.symmetric(horizontal: xMedium),
                       ),
                       child: const Text('Disukai'),
                     ),
@@ -85,12 +73,9 @@ class _ActivityState extends State<Activity> {
                     child: ElevatedButton(
                       onPressed: () => _onTabSelected(3),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 3 ? accentOrangeMain : neutral10,
-                        foregroundColor:
-                            _selectedIndex == 3 ? neutral10 : neutral60,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
+                        backgroundColor: _selectedIndex == 3 ? accentOrangeMain : neutral10,
+                        foregroundColor: _selectedIndex == 3 ? neutral10 : neutral60,
+                        padding: const EdgeInsets.symmetric(horizontal: xMedium),
                       ),
                       child: const Text('Komentar'),
                     ),
@@ -104,9 +89,8 @@ class _ActivityState extends State<Activity> {
             child: Expanded(
               flex: 1,
               child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: neutral10),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(16), color: neutral10),
                   width: double.infinity,
                   child: _getTabContent(_selectedIndex)),
             ),

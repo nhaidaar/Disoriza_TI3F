@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Discussion extends StatelessWidget {
-  const Discussion({super.key});
+class DiscussionTab extends StatelessWidget {
+  const DiscussionTab({super.key});
 
   @override
   Widget build(BuildContext context) {
