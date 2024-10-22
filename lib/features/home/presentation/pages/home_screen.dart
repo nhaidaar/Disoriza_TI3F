@@ -1,3 +1,4 @@
+import 'package:disoriza/features/riwayat/presentation/pages/history_list.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final pages = [
     const BerandaPage(),
-    const Center(child: Text('Riwayat')),
+    const ListRiwayat(),
     const CommunityPage(),
     const Center(child: Text('Setelan')),
   ];
