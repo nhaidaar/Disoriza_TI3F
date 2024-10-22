@@ -1,23 +1,23 @@
 import 'package:disoriza/core/common/colors.dart';
+import 'package:disoriza/core/common/paddings.dart';
+import 'package:disoriza/core/common/custom_tab_button.dart';
+import 'package:disoriza/features/community/presentation/widgets/no_activity_layout.dart';
+import 'package:disoriza/features/community/presentation/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 
-import 'package:disoriza/core/common/custom_tab_button.dart';
-import 'package:disoriza/core/common/paddings.dart';
-import 'package:disoriza/features/comunity/widgets/no_activity_layout.dart';
-import 'package:disoriza/features/comunity/widgets/post_card.dart';
 
-
-class Activity extends StatefulWidget {
-  const Activity({super.key});
+class ActivityTab extends StatefulWidget {
+  const ActivityTab({super.key});
 
   @override
-  State<Activity> createState() => _ActivityState();
+  State<ActivityTab> createState() => _ActivityTabState();
 }
 
-class _ActivityState extends State<Activity> {
+class _ActivityTabState extends State<ActivityTab> {
   // Menyimpan index tab yang terpilih
   int _selectedIndex = 0;
   bool isAnyActivity = true;
+
 
   void _onTabSelected(int index) {
     setState(() {

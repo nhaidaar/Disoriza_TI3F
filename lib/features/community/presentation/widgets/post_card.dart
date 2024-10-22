@@ -1,7 +1,7 @@
 import 'package:disoriza/core/common/paddings.dart';
-import 'package:disoriza/features/comunity/widgets/image_post.dart';
-import 'package:disoriza/features/comunity/widgets/like_button.dart';
-import 'package:disoriza/features/comunity/widgets/user_post_status.dart';
+import 'package:disoriza/features/community/presentation/widgets/image_post.dart';
+import 'package:disoriza/features/community/presentation/widgets/like_button.dart';
+import 'package:disoriza/features/community/presentation/widgets/user_post_status.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
