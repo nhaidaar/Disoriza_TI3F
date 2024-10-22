@@ -1,9 +1,11 @@
 import 'package:disoriza/core/common/colors.dart';
-import 'package:disoriza/core/common/paddings.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/common/colors.dart';
-import '../../../../core/common/fontstyles.dart';
+import 'package:disoriza/core/common/custom_tab_button.dart';
+import 'package:disoriza/core/common/paddings.dart';
+import 'package:disoriza/features/comunity/widgets/no_activity_layout.dart';
+import 'package:disoriza/features/comunity/widgets/post_card.dart';
+
 
 class Activity extends StatefulWidget {
   const Activity({super.key});
@@ -13,7 +15,9 @@ class Activity extends StatefulWidget {
 }
 
 class _ActivityState extends State<Activity> {
-  int _selectedIndex = 0; // Menyimpan index tab yang terpilih
+  // Menyimpan index tab yang terpilih
+  int _selectedIndex = 0;
+  bool isAnyActivity = true;
 
   void _onTabSelected(int index) {
     setState(() {
@@ -21,7 +25,6 @@ class _ActivityState extends State<Activity> {
     });
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,83 +37,41 @@ class _ActivityState extends State<Activity> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 8, right: 4),
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(0),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 0 ? accentOrangeMain : neutral10,
-                        foregroundColor: _selectedIndex == 0
-                            ? neutral10
-                            : neutral60, // Warna background
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
-                      ),
-                      child: const Text('Semua'),
-                    ),
+                  CustomTabButton(
+                    text: 'Semua',
+                    onTabSelected: _onTabSelected,
+                    selectedIndex: _selectedIndex,
+                    tabIndex: 0, // Menetapkan tabIndex untuk tab ini
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(1),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 1 ? accentOrangeMain : neutral10,
-                        foregroundColor:
-                            _selectedIndex == 1 ? neutral10 : neutral60,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
-                      ),
-                      child: const Text('Postingan'),
-                    ),
+                  CustomTabButton(
+                    text: 'Postingan',
+                    onTabSelected: _onTabSelected,
+                    selectedIndex: _selectedIndex,
+                    tabIndex: 1, // Menetapkan tabIndex untuk tab ini
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(2),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 2 ? accentOrangeMain : neutral10,
-                        foregroundColor:
-                            _selectedIndex == 2 ? neutral10 : neutral60,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
-                      ),
-                      child: const Text('Disukai'),
-                    ),
+                  CustomTabButton(
+                    text: 'Disukai',
+                    onTabSelected: _onTabSelected,
+                    selectedIndex: _selectedIndex,
+                    tabIndex: 2, // Menetapkan tabIndex untuk tab ini
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 4, right: 8),
-                    child: ElevatedButton(
-                      onPressed: () => _onTabSelected(3),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _selectedIndex == 3 ? accentOrangeMain : neutral10,
-                        foregroundColor:
-                            _selectedIndex == 3 ? neutral10 : neutral60,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: xMedium),
-                      ),
-                      child: const Text('Komentar'),
-                    ),
+                  CustomTabButton(
+                    text: 'Komentar',
+                    onTabSelected: _onTabSelected,
+                    selectedIndex: _selectedIndex,
+                    tabIndex: 3, // Menetapkan tabIndex untuk tab ini
                   ),
                 ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(small),
-            child: Expanded(
-              flex: 1,
-              child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: neutral10),
-                  width: double.infinity,
-                  child: _getTabContent(_selectedIndex)),
-            ),
-          ),
+          isAnyActivity
+              ? Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.all(xSmall),
+                      child: _getTabContent(_selectedIndex)),
+                )
+              : const NoActivityLayout(),
         ],
       ),
     );
@@ -120,15 +81,32 @@ class _ActivityState extends State<Activity> {
   Widget _getTabContent(int index) {
     switch (index) {
       case 0:
-        return Text("Konten Semua");
+        // Menampilkan 3 PostCard yang bisa discroll
+        return ListView.builder(
+          itemCount: 3, // Menentukan jumlah PostCard yang ingin digenerate
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(
+                  8.0), // Menambahkan padding antar PostCard
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: neutral10,
+                ),
+                width: double.infinity,
+                child: const PostCard(), // Menampilkan PostCard
+              ),
+            );
+          },
+        );
       case 1:
-        return Text("Konten Postingan");
+        return const Text("Konten Postingan");
       case 2:
-        return Text("Konten Disukai");
+        return const Text("Konten Disukai");
       case 3:
-        return Text("Konten Komentar");
+        return const Text("Konten Komentar");
       default:
-        return Text("Konten Tidak Diketahui");
+        return const Text("Konten Tidak Diketahui");
     }
   }
 }
