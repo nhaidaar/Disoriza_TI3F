@@ -65,8 +65,8 @@ class CommunityPages extends StatelessWidget {
                   child: TabBarView(
                   physics: NeverScrollableScrollPhysics(),
                   children: [
-                    Discussion(),
                     Activity(),
+                    Discussion(),
                   ],
                 ))
               ],
