@@ -8,7 +8,9 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../../../core/common/colors.dart';
 
 class PostCard extends StatefulWidget {
-  const PostCard({super.key});
+  final bool isDetailDiscussion;
+
+  const PostCard({super.key, required this.isDetailDiscussion});
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -18,22 +20,21 @@ class _PostCardState extends State<PostCard> {
   bool _isLiked = true;
   bool _isComment = false;
   bool image = false;
+  late int likeCount = 12;
 
-  _like() {
+  void _toggleLike() {
     setState(() {
+      if (_isLiked) {
+        likeCount--;
+      } else {
+        likeCount++;
+      }
       _isLiked = !_isLiked;
-    });
-  }
-
-  void _comment() {
-    setState(() {
-      _isComment = !_isComment;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.all(small),
       child: Column(
@@ -62,15 +63,22 @@ class _PostCardState extends State<PostCard> {
             ],
           ),
           const SizedBox(height: small),
-          const Text(
+          Text(
             'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s '
-            'standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-            overflow: TextOverflow.ellipsis,
-            maxLines: 4,
-            style: TextStyle(color: neutral90),
+            'standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a .'
+            'type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining'
+            ' essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum '
+            'passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum',
+            overflow: widget.isDetailDiscussion
+                ? TextOverflow.visible
+                : TextOverflow.ellipsis,
+            maxLines: widget.isDetailDiscussion ? null : 4,
+            style: const TextStyle(color: neutral90),
           ),
           const SizedBox(height: small),
-          const ImagePost(source: 'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg'),
+          const ImagePost(
+              source:
+                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg'),
           const SizedBox(height: small),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,7 +86,20 @@ class _PostCardState extends State<PostCard> {
               // Bagian kiri action user
               Row(
                 children: [
-                  LikeButton(isLiked: _isLiked, like: _like, likeTotal: 12),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _toggleLike,
+                        child: _isLiked
+                            ? const Icon(IconsaxPlusBold.heart,
+                                color: dangerMain) // Liked state
+                            : const Icon(
+                                IconsaxPlusLinear.heart), // Unliked state
+                      ),
+                      const SizedBox(width: 4),
+                      Text('$likeCount'), // Dynamic like count
+                    ],
+                  ),
                   const SizedBox(
                     width: 16,
                   ),
@@ -88,7 +109,7 @@ class _PostCardState extends State<PostCard> {
                       SizedBox(
                         width: 4,
                       ),
-                      Text('12')
+                      Text('12'), // Dynamic like count
                     ],
                   ),
                 ],
