@@ -1,5 +1,6 @@
 import 'package:disoriza/core/common/colors.dart';
 import 'package:disoriza/core/common/paddings.dart';
+import 'package:disoriza/features/community/presentation/widgets/no_activity_layout.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:disoriza/core/common/fontstyles.dart';
 
@@ -16,7 +17,7 @@ class DiscussionTab extends StatelessWidget {
         floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverToBoxAdapter(
-            child: SizedBox(height: 8.0),
+            child: SizedBox(height: xSmall),
           ),
           SliverAppBar(
             floating: true,
@@ -25,7 +26,7 @@ class DiscussionTab extends StatelessWidget {
             backgroundColor: neutral10,
             title: Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                  const EdgeInsets.symmetric(horizontal: xMedium, vertical: xSmall),
               decoration: BoxDecoration(
                 color: backgroundCanvas,
                 borderRadius: BorderRadius.circular(40.0),
@@ -61,7 +62,7 @@ class DiscussionTab extends StatelessWidget {
           // ),
         ],
         body: Padding(
-          padding: EdgeInsets.all(xSmall),
+          padding: EdgeInsets.all(xMedium),
           child: Column(
             children: [
               // Terpopuler
@@ -81,7 +82,11 @@ class DiscussionTab extends StatelessWidget {
                     },
                   ),
                 ],
-              )
+              ),
+
+              const SizedBox(height: small),
+
+              const NoActivityLayout(),
             ],
           ),
         ),

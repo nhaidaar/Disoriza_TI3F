@@ -18,7 +18,7 @@ class CommunityPage extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(medium),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
