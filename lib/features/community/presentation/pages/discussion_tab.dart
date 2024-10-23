@@ -1,5 +1,6 @@
 import 'package:disoriza/core/common/colors.dart';
 import 'package:disoriza/core/common/paddings.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:disoriza/core/common/fontstyles.dart';
 
 import 'package:flutter/material.dart';
@@ -29,6 +30,15 @@ class DiscussionTab extends StatelessWidget {
                 color: backgroundCanvas,
                 borderRadius: BorderRadius.circular(40.0),
               ),
+              // child: InkWell(
+              //   onTap: () {
+              //     Navigator.of(context).push(
+              //       PageTransition(
+              //         child: (),
+              //         type: PageTransitionType.fade,
+              //       ),
+              //     );
+              //   },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -48,9 +58,32 @@ class DiscussionTab extends StatelessWidget {
               ),
             ),
           ),
+          // ),
         ],
         body: Padding(
-          padding: EdgeInsets.symmetric(vertical: small),
+          padding: EdgeInsets.all(xSmall),
+          child: Column(
+            children: [
+              // Terpopuler
+              Row(
+                children: [
+                  Text(
+                    'Terpopuler',
+                    style: mediumTS.copyWith(fontSize: 18, color: neutral100),
+                  ),
+                  const SizedBox(
+                    width: 4.0,
+                  ),
+                  IconButton(
+                    icon: const Icon(IconsaxPlusLinear.arrow_down, size: 16.0),
+                    onPressed: () {
+                      // Nothing
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
