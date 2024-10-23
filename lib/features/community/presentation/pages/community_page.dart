@@ -2,6 +2,7 @@ import 'package:disoriza/core/common/paddings.dart';
 import 'package:disoriza/features/community/presentation/pages/activity_tab.dart';
 import 'package:disoriza/features/community/presentation/pages/discussion_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../../core/common/colors.dart';
 import '../../../../../core/common/fontstyles.dart';
@@ -16,9 +17,26 @@ class CommunityPage extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(
-              'Komunitas',
-              style: mediumTS.copyWith(fontSize: 24, color: neutral100),
+            title: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Header Content
+                  Text(
+                    'Komunitas',
+                    style: mediumTS.copyWith(fontSize: 24, color: neutral100),
+                  ),
+
+                  // Icon Search
+                  IconButton(
+                    icon: Icon(IconsaxPlusLinear.search_normal_1),
+                    onPressed: () {
+                      //
+                    },
+                  ),
+                ],
+              ),
             ),
             backgroundColor: neutral10,
             bottom: PreferredSize(
@@ -37,8 +55,10 @@ class CommunityPage extends StatelessWidget {
                     color: backgroundCanvas,
                   ),
                   child: TabBar(
-                    labelStyle: mediumTS.copyWith(fontSize: 16, color: accentGreenMain),
-                    unselectedLabelStyle: mediumTS.copyWith(fontSize: 16, color: neutral60),
+                    labelStyle:
+                        mediumTS.copyWith(fontSize: 16, color: accentGreenMain),
+                    unselectedLabelStyle:
+                        mediumTS.copyWith(fontSize: 16, color: neutral60),
                     indicator: BoxDecoration(
                       color: neutral10,
                       borderRadius: BorderRadius.circular(100),
