@@ -1,10 +1,10 @@
 import 'package:disoriza/core/common/colors.dart';
 import 'package:disoriza/core/common/paddings.dart';
 import 'package:disoriza/core/common/custom_tab_button.dart';
+import 'package:disoriza/features/community/presentation/pages/comment_page.dart';
 import 'package:disoriza/features/community/presentation/widgets/no_activity_layout.dart';
 import 'package:disoriza/features/community/presentation/widgets/post_card.dart';
 import 'package:flutter/material.dart';
-
 
 class ActivityTab extends StatefulWidget {
   const ActivityTab({super.key});
@@ -17,7 +17,6 @@ class _ActivityTabState extends State<ActivityTab> {
   // Menyimpan index tab yang terpilih
   int _selectedIndex = 0;
   bool isAnyActivity = true;
-
 
   void _onTabSelected(int index) {
     setState(() {
@@ -89,24 +88,32 @@ class _ActivityTabState extends State<ActivityTab> {
               padding: const EdgeInsets.all(
                   8.0), // Menambahkan padding antar PostCard
               child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: neutral10,
-                ),
-                width: double.infinity,
-                child: const PostCard(), // Menampilkan PostCard
-              ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: neutral10,
+                  ),
+                  width: double.infinity,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const CommentPage(),
+                        ),
+                      );
+                    },
+                    child: const PostCard(isDetailDiscussion: false,),
+                  )),
             );
           },
         );
       case 1:
-        return const Text("Konten Postingan");
+        return const NoActivityLayout();
       case 2:
-        return const Text("Konten Disukai");
+        return const NoActivityLayout();
       case 3:
-        return const Text("Konten Komentar");
+        return const NoActivityLayout();
       default:
-        return const Text("Konten Tidak Diketahui");
+        return const NoActivityLayout();
     }
   }
 }
