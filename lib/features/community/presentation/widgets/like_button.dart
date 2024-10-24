@@ -36,7 +36,7 @@ class _LikeButtonState extends State<LikeButton> {
       const SizedBox(
         width: 4,
       ),
-      const Text('12')
+      Text('${widget.likeTotal}')
     ]);
   }
 }
