@@ -6,12 +6,17 @@ import '../../../../core/common/colors.dart';
 class UserPostStatus extends StatelessWidget {
   final bool isLiked;
   final bool isComment;
+  final bool showText;
 
   const UserPostStatus(
-      {super.key, required this.isLiked, required this.isComment});
+      {super.key, required this.isLiked, required this.isComment, required this.showText});
 
   @override
   Widget build(BuildContext context) {
+    if (!showText) {
+      return const SizedBox(); // Tidak menampilkan apa pun
+    }
+    
     return Row(
       children: [
         isLiked || isComment

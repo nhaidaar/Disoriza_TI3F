@@ -3,8 +3,9 @@ import 'package:disoriza/core/common/paddings.dart';
 import 'package:disoriza/core/common/custom_tab_button.dart';
 import 'package:disoriza/features/community/presentation/widgets/no_activity_layout.dart';
 import 'package:disoriza/features/community/presentation/widgets/post_card.dart';
-import 'package:flutter/material.dart';
+import 'package:disoriza/features/community/presentation/model/discussion_item.dart';
 
+import 'package:flutter/material.dart';
 
 class ActivityTab extends StatefulWidget {
   const ActivityTab({super.key});
@@ -18,6 +19,28 @@ class _ActivityTabState extends State<ActivityTab> {
   int _selectedIndex = 0;
   bool isAnyActivity = true;
 
+  final List<PostItemCard> PItems = [
+    PostItemCard(
+      author: 'Ihza Nurkhafidh',
+      timeAgo: '12 hours ago',
+      title: 'Cara mendapatkan pestisida',
+      content:
+          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the ...',
+      likes: 12,
+      commands: 12,
+      imageUrl: '',
+    ),
+    PostItemCard(
+      author: 'Ihza Nurkhafidh',
+      timeAgo: '12 hours ago',
+      title: 'Cara mendapatkan pestisida',
+      content:
+          'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the ...',
+      likes: 12,
+      commands: 12,
+      imageUrl: '/assets/images/background.png',
+    ),
+  ];
 
   void _onTabSelected(int index) {
     setState(() {
@@ -83,19 +106,19 @@ class _ActivityTabState extends State<ActivityTab> {
       case 0:
         // Menampilkan 3 PostCard yang bisa discroll
         return ListView.builder(
-          itemCount: 3, // Menentukan jumlah PostCard yang ingin digenerate
+          itemCount:
+              PItems.length, // Menentukan jumlah PostCard yang ingin digenerate
           itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(
-                  8.0), // Menambahkan padding antar PostCard
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: neutral10,
-                ),
-                width: double.infinity,
-                child: const PostCard(), // Menampilkan PostCard
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: backgroundCanvas,
               ),
+              width: double.infinity,
+              child: PostCard(
+                showText: true,
+                postcard: PItems[index],
+              ), // Menampilkan PostCard
             );
           },
         );
