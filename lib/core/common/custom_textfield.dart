@@ -11,6 +11,8 @@ class CustomFormField extends StatelessWidget {
   final bool obscureText;
   final bool isPassword;
   final bool isEnabled;
+  final int maxLines;
+  final double borderradius;
   final String? hint;
   final VoidCallback? onTap;
   const CustomFormField({
@@ -21,6 +23,8 @@ class CustomFormField extends StatelessWidget {
     this.obscureText = false,
     this.isPassword = false,
     this.isEnabled = true,
+    this.maxLines = 1,
+    this.borderradius = 40.0,
     this.hint,
     this.onTap,
   });
@@ -34,7 +38,9 @@ class CustomFormField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        style: mediumTS.copyWith(fontSize: 14, color: isEnabled ? neutral100 : neutral60),
+        style: mediumTS.copyWith(
+            fontSize: 14, color: isEnabled ? neutral100 : neutral60),
+        maxLines: maxLines,
         decoration: InputDecoration(
           enabled: isEnabled,
           filled: true,
@@ -51,15 +57,15 @@ class CustomFormField extends StatelessWidget {
           hintStyle: mediumTS.copyWith(fontSize: 14, color: neutral60),
           contentPadding: const EdgeInsets.all(16),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(borderradius),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(borderradius),
             borderSide: BorderSide.none,
           ),
           disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(borderradius),
           ),
         ),
       ),

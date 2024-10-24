@@ -99,27 +99,29 @@ class DiscussionTab extends StatelessWidget {
         ],
         body: Column(
           children: [
-            // Terpopuler
-            Row(
-              children: [
-                Text(
-                  'Terpopuler',
-                  style: mediumTS.copyWith(fontSize: 18, color: neutral100),
-                ),
-                const SizedBox(
-                  width: 4.0,
-                ),
-                IconButton(
-                  icon: const Icon(IconsaxPlusLinear.arrow_down, size: 16.0),
-                  onPressed: () {
-                    // Nothing
-                  },
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: xMedium, vertical: xSmall),
+              child: // Terpopuler
+                  Row(
+                children: [
+                  Text(
+                    'Terpopuler',
+                    style: mediumTS.copyWith(fontSize: 18, color: neutral100),
+                  ),
+                  const SizedBox(
+                    width: 4.0,
+                  ),
+                  IconButton(
+                    icon: const Icon(IconsaxPlusLinear.arrow_down, size: 16.0),
+                    onPressed: () {
+                      // Nothing
+                    },
+                  ),
+                ],
+              ),
             ),
-        
             const SizedBox(height: small),
-        
             Expanded(
               child: PItems.isNotEmpty
                   ? ListView.builder(
