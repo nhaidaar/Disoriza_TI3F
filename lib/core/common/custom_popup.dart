@@ -1,7 +1,7 @@
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
+import 'effects.dart';
 import 'fontstyles.dart';
 
 class CustomPopup extends StatelessWidget {
@@ -22,15 +22,15 @@ class CustomPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: SmoothRectangleBorder(
-        borderRadius: SmoothBorderRadius(cornerRadius: 16, cornerSmoothing: 0.8),
+      shape: RoundedRectangleBorder(
+        borderRadius: defaultSmoothRadius,
       ),
       backgroundColor: neutral10,
       titlePadding: const EdgeInsets.all(12),
       title: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          borderRadius: SmoothBorderRadius(cornerRadius: 16, cornerSmoothing: 0.8),
+          borderRadius: defaultSmoothRadius,
           color: backgroundCanvas,
         ),
         child: Column(

@@ -170,11 +170,13 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
               isActive: _currentIndex == 0,
               onTap: () => _scrollToIndex(0),
             ),
+            const SizedBox(width: 4),
             RiwayatDetailRemote(
               title: 'Gejala',
               isActive: _currentIndex == 1,
               onTap: () => _scrollToIndex(1),
             ),
+            const SizedBox(width: 4),
             RiwayatDetailRemote(
               title: 'Solusi',
               isActive: _currentIndex == 2,
