@@ -1,7 +1,11 @@
+import 'package:disoriza/core/common/effects.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../pages/history_detail.dart';
 
 class HistoryCard extends StatelessWidget {
   final String image;
@@ -9,53 +13,62 @@ class HistoryCard extends StatelessWidget {
   final String timeAgo;
 
   const HistoryCard({
-    Key? key,
+    super.key,
     required this.image,
     required this.title,
     required this.timeAgo,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 163,
-      height: 154,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          PageTransition(
+            child: const DetailRiwayat(),
+            type: PageTransitionType.rightToLeft,
+          ),
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width / 2 - 24,
+        decoration: ShapeDecoration(
+          color: neutral10,
+          shape: SmoothRectangleBorder(
+            borderRadius: SmoothBorderRadius(cornerRadius: 16),
+          ),
+          shadows: const [shadowEffect1],
         ),
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        elevation: 0,
-        color: neutral10,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Image.asset(
-                image,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+            Image.asset(
+              image,
+              height: 102,
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 1),
-              child: Text(
-                title,
-                style: mediumTS.copyWith(color: neutral100)
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: mediumTS.copyWith(color: neutral100),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    timeAgo,
+                    style: mediumTS.copyWith(fontSize: 12, color: neutral70),
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
-              child: Text(
-                timeAgo,
-                style: mediumTS.copyWith(color: neutral70)
-              ),
-            ),
+            )
           ],
         ),
       ),
     );
   }
 }
-
-

@@ -1,13 +1,29 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
-import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../widgets/disoriza_logo.dart';
+import '../../../riwayat/presentation/widgets/history_card.dart';
+import '../widgets/beranda_komunitas_card.dart';
+import '../widgets/beranda_pindai_card.dart';
 
-class BerandaPage extends StatelessWidget {
+class BerandaPage extends StatefulWidget {
   const BerandaPage({super.key});
+
+  @override
+  State<BerandaPage> createState() => _BerandaPageState();
+}
+
+class _BerandaPageState extends State<BerandaPage> {
+  final carouselController = CarouselSliderController();
+  final carouselItems = const [
+    BerandaKomunitasCard(),
+    BerandaKomunitasCard(),
+    BerandaKomunitasCard(),
+  ];
+  int carouselIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +36,7 @@ class BerandaPage extends StatelessWidget {
             snap: true,
             toolbarHeight: 70,
             backgroundColor: backgroundCanvas,
+            surfaceTintColor: backgroundCanvas,
             title: Row(
               children: [
                 // Avatar
@@ -51,17 +68,20 @@ class BerandaPage extends StatelessWidget {
           ),
         ],
         body: ListView(
+          padding: EdgeInsets.zero,
           children: [
             // Pindai dengan Disoriza AI
-            const BerandaPindaiWidget(),
+            BerandaPindaiCard(
+              onTap: () {},
+            ),
 
             // Diskusi & Riwayat
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // Diskusi petani
-                  Row(
+            Column(
+              children: [
+                // Diskusi petani
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                  child: Row(
                     children: [
                       Text(
                         'Diskusi petani',
@@ -74,29 +94,38 @@ class BerandaPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Column(
-                      children: [
-                        const Icon(
-                          IconsaxPlusLinear.clipboard_close,
-                          size: 28,
-                          color: neutral60,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Belum ada diskusi yang bisa ditampilkan',
-                          style: mediumTS.copyWith(color: neutral60),
-                        ),
-                      ],
-                    ),
+                ),
+                CarouselSlider(
+                  carouselController: carouselController,
+                  items: carouselItems,
+                  options: CarouselOptions(
+                    enableInfiniteScroll: false,
+                    aspectRatio: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+                    viewportFraction: 0.975,
+                    initialPage: carouselIndex,
+                    onPageChanged: (index, _) {
+                      setState(() => carouselIndex = index);
+                    },
                   ),
+                ),
+                const SizedBox(height: 8),
+                DotsIndicator(
+                  dotsCount: 3,
+                  position: carouselIndex,
+                  decorator: const DotsDecorator(
+                    spacing: EdgeInsets.all(4),
+                    color: neutral50,
+                    activeColor: accentGreenMain,
+                  ),
+                  onTap: (index) {
+                    carouselController.animateToPage(index);
+                  },
+                ),
 
-                  const SizedBox(height: 16),
-
-                  // Riwayat Scan
-                  Row(
+                // Riwayat Scan
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                  child: Row(
                     children: [
                       Text(
                         'Riwayat terbaru',
@@ -109,84 +138,39 @@ class BerandaPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Column(
-                      children: [
-                        const Icon(
-                          IconsaxPlusLinear.clipboard_close,
-                          size: 28,
-                          color: neutral60,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Belum ada diskusi yang bisa ditampilkan',
-                          style: mediumTS.copyWith(color: neutral60),
-                        ),
-                      ],
+                ),
+                const Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    HistoryCard(
+                      image: 'assets/images/cardhist.jpeg',
+                      title: 'Bacterial Leaf Blight',
+                      timeAgo: '30 menit lalu',
                     ),
-                  ),
-                ],
-              ),
+                    HistoryCard(
+                      image: 'assets/images/cardhist.jpeg',
+                      title: 'Bacterial Leaf Blight',
+                      timeAgo: '30 menit lalu',
+                    ),
+                    HistoryCard(
+                      image: 'assets/images/cardhist.jpeg',
+                      title: 'Bacterial Leaf Blight',
+                      timeAgo: '30 menit lalu',
+                    ),
+                    HistoryCard(
+                      image: 'assets/images/cardhist.jpeg',
+                      title: 'Bacterial Leaf Blight',
+                      timeAgo: '30 menit lalu',
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+              ],
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class BerandaPindaiWidget extends StatelessWidget {
-  const BerandaPindaiWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        image: const DecorationImage(
-          image: AssetImage('assets/images/background.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Column(
-        children: [
-          // Logo
-          const DisorizaLogo(),
-
-          const SizedBox(height: 12),
-
-          // Text
-          Text(
-            'Pindai dengan Disoriza AI ✨',
-            style: mediumTS.copyWith(fontSize: 20, color: neutral10),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Pindai untuk mengetahui penyakit pada padi.',
-            style: mediumTS.copyWith(fontSize: 14, color: neutral10),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Button
-          Container(
-            decoration: BoxDecoration(
-              color: accentOrangeMain,
-              borderRadius: BorderRadius.circular(40),
-            ),
-            child: CustomButton(
-              icon: IconsaxPlusBold.scan,
-              text: 'Pindai',
-              onTap: () {},
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: pages[selectedIndex],
 
         bottomNavigationBar: Container(
-          height: 75,
+          height: 80,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: const BoxDecoration(
             color: neutral10,
