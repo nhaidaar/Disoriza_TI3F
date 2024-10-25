@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
 const BoxShadow shadowEffect0 = BoxShadow(
@@ -12,4 +13,9 @@ const BoxShadow shadowEffect1 = BoxShadow(
   offset: Offset(0, 0),
   blurRadius: 0,
   spreadRadius: 1,
+);
+
+BorderRadiusGeometry defaultSmoothRadius = SmoothBorderRadius(
+  cornerRadius: 16,
+  cornerSmoothing: 0.8,
 );

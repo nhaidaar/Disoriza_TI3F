@@ -1,18 +1,17 @@
 import 'package:disoriza/core/common/effects.dart';
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
-import '../pages/history_detail.dart';
+import '../pages/riwayat_detail.dart';
 
-class HistoryCard extends StatelessWidget {
+class RiwayatCard extends StatelessWidget {
   final String image;
   final String title;
   final String timeAgo;
 
-  const HistoryCard({
+  const RiwayatCard({
     super.key,
     required this.image,
     required this.title,
@@ -25,19 +24,17 @@ class HistoryCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           PageTransition(
-            child: const DetailRiwayat(),
+            child: const RiwayatDetail(),
             type: PageTransitionType.rightToLeft,
           ),
         );
       },
       child: Container(
         width: MediaQuery.of(context).size.width / 2 - 24,
-        decoration: ShapeDecoration(
+        decoration: BoxDecoration(
           color: neutral10,
-          shape: SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius(cornerRadius: 16),
-          ),
-          shadows: const [shadowEffect1],
+          borderRadius: defaultSmoothRadius,
+          boxShadow: const [shadowEffect1],
         ),
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: Column(
