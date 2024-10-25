@@ -6,6 +6,7 @@ import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../home/presentation/pages/home_onboarding.dart';
+import 'forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -77,11 +78,19 @@ class _LoginPageState extends State<LoginPage> {
 
           const SizedBox(height: 12),
 
+          // Forgot Password
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    PageTransition(
+                      child: const ForgotPasswordPage(),
+                      type: PageTransitionType.rightToLeft,
+                    ),
+                  );
+                },
                 child: Text(
                   'Lupa password?',
                   style: mediumTS.copyWith(color: neutral100),
