@@ -8,14 +8,14 @@ class CustomPopup extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final List<Widget> actions;
   const CustomPopup({
     super.key,
     required this.icon,
     required this.iconColor,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.actions,
   });
 
@@ -51,14 +51,16 @@ class CustomPopup extends StatelessWidget {
               style: mediumTS.copyWith(fontSize: 18, color: neutral100),
             ),
 
-            const SizedBox(height: 8),
+            if (subtitle != null) ...[
+              const SizedBox(height: 8),
 
-            // Message subtitle
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: mediumTS.copyWith(fontSize: 14, color: neutral90),
-            ),
+              // Message subtitle
+              Text(
+                subtitle.toString(),
+                textAlign: TextAlign.center,
+                style: mediumTS.copyWith(fontSize: 14, color: neutral90),
+              ),
+            ]
           ],
         ),
       ),

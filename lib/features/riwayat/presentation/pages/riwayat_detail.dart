@@ -39,6 +39,8 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
+        backgroundColor: neutral10,
+        surfaceTintColor: neutral10,
 
         // Back Button
         leading: IconButton(
@@ -161,7 +163,9 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(1000),
+          border: Border.all(color: neutral30),
           color: neutral10,
+          boxShadow: const [shadowEffect1],
         ),
         child: Row(
           children: [

@@ -50,7 +50,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
               backgroundColor: backgroundCanvas,
               prefixIcon: IconsaxPlusLinear.search_normal,
               prefixIconColor: neutral60,
-            )
+            ),
           ],
         ),
       ),

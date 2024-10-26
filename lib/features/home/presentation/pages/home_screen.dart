@@ -5,7 +5,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
 import 'beranda_page.dart';
-import '../../../community/presentation/pages/community_page.dart';
+import '../../../komunitas/presentation/pages/komunitas_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final pages = [
     const BerandaPage(),
     const RiwayatPage(),
-    const CommunityPage(),
+    const KomunitasPage(),
     const Center(child: Text('Setelan')),
   ];
 
