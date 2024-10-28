@@ -9,14 +9,20 @@ class CustomPopup extends StatelessWidget {
   final Color iconColor;
   final String title;
   final String? subtitle;
-  final List<Widget> actions;
+  final List<Widget>? actions;
+  final bool isLoading;
+  final Color loadingColor;
+  final Color loadingBackgroundColor;
   const CustomPopup({
     super.key,
     required this.icon,
     required this.iconColor,
     required this.title,
     this.subtitle,
-    required this.actions,
+    this.actions,
+    this.isLoading = false,
+    this.loadingColor = successMain,
+    this.loadingBackgroundColor = successBorder,
   });
 
   @override
@@ -61,7 +67,18 @@ class CustomPopup extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: mediumTS.copyWith(fontSize: 14, color: neutral90),
               ),
-            ]
+            ],
+
+            if (isLoading) ...[
+              const SizedBox(height: 12),
+
+              // Loading
+              LinearProgressIndicator(
+                color: loadingColor,
+                backgroundColor: loadingBackgroundColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ],
           ],
         ),
       ),

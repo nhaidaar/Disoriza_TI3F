@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
+import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../riwayat/presentation/widgets/riwayat_card.dart';
 import '../widgets/beranda_komunitas_card.dart';
@@ -76,7 +77,16 @@ class _BerandaPageState extends State<BerandaPage> {
           children: [
             // Pindai dengan Disoriza AI
             BerandaPindaiCard(
-              onTap: () {},
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => const CustomPopup(
+                  icon: IconsaxPlusBold.flash_1,
+                  iconColor: successMain,
+                  title: 'Sedang memproses',
+                  subtitle: 'Sabar ya, gambar sedang diproses.',
+                  isLoading: true,
+                ),
+              ),
             ),
 
             // Diskusi & Riwayat
