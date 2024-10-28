@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import '../../../../core/common/colors.dart';
-import '../../../../core/common/fontstyles.dart';
+import 'colors.dart';
+import 'fontstyles.dart';
 
 class CustomEmptyState extends StatelessWidget {
   final IconData icon;
@@ -24,9 +24,23 @@ class CustomEmptyState extends StatelessWidget {
           Text(
             text,
             style: mediumTS.copyWith(color: neutral60),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
+    );
+  }
+}
+
+class AktivitasEmptyState extends StatelessWidget {
+  final String title;
+  const AktivitasEmptyState({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomEmptyState(
+      icon: IconsaxPlusLinear.clipboard_close,
+      text: 'Belum ada aktivitas $title yang bisa ditampilkan',
     );
   }
 }

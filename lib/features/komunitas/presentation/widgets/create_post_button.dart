@@ -4,7 +4,7 @@ import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../pages/create_post.dart';
+import '../pages/create_post_page.dart';
 
 class CreatePostButton extends StatelessWidget {
   const CreatePostButton({
