@@ -56,7 +56,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   child: CustomButton(
                     onTap: () => Navigator.of(context).pop(false),
                     text: 'Tidak, lanjut',
-                    backgroundColor: Colors.transparent,
+                    backgroundColor: neutral10,
                     pressedColor: neutral50,
                   ),
                 ),
@@ -99,6 +99,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
         appBar: AppBar(
           backgroundColor: neutral10,
           surfaceTintColor: neutral10,
+          shape: const Border(
+            bottom: BorderSide(color: neutral30),
+          ),
 
           // Back Button
           leading: IconButton(

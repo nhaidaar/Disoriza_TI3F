@@ -19,6 +19,9 @@ class KomunitasPage extends StatelessWidget {
             toolbarHeight: 128,
             backgroundColor: neutral10,
             surfaceTintColor: neutral10,
+            shape: const Border(
+              bottom: BorderSide(color: neutral30),
+            ),
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

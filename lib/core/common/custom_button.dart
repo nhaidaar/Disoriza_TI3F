@@ -33,7 +33,7 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: !disabled ? backgroundColor : neutral30,
           borderRadius: BorderRadius.circular(40),
-          border: backgroundColor == Colors.transparent ? Border.all(color: neutral30) : null,
+          border: backgroundColor == neutral10 ? Border.all(color: neutral30) : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +44,7 @@ class CustomButton extends StatelessWidget {
               text,
               style: mediumTS.copyWith(
                 fontSize: 16,
-                color: backgroundColor == Colors.transparent ? neutral100 : neutral10,
+                color: backgroundColor == neutral10 ? neutral100 : neutral10,
               ),
               textAlign: TextAlign.center,
             ),

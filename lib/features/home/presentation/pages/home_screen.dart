@@ -1,11 +1,12 @@
-import 'package:disoriza/features/riwayat/presentation/pages/riwayat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
-
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
+
 import 'beranda_page.dart';
+import '../../../riwayat/presentation/pages/riwayat_page.dart';
 import '../../../komunitas/presentation/pages/komunitas_page.dart';
+import '../../../setelan/presentation/pages/setelan_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const BerandaPage(),
     const RiwayatPage(),
     const KomunitasPage(),
-    const Center(child: Text('Setelan')),
+    const SetelanPage(),
   ];
 
   @override

@@ -41,6 +41,9 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
         toolbarHeight: 80,
         backgroundColor: neutral10,
         surfaceTintColor: neutral10,
+        shape: const Border(
+          bottom: BorderSide(color: neutral30),
+        ),
 
         // Back Button
         leading: IconButton(
@@ -214,7 +217,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
               const SizedBox(width: 4),
               Expanded(
                 child: CustomButton(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: neutral10,
                   pressedColor: neutral50,
                   onTap: () => Navigator.of(context).pop(),
                   text: 'Batal',

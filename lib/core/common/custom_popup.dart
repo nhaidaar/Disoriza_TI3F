@@ -26,6 +26,7 @@ class CustomPopup extends StatelessWidget {
         borderRadius: defaultSmoothRadius,
       ),
       backgroundColor: neutral10,
+      surfaceTintColor: neutral10,
       titlePadding: const EdgeInsets.all(12),
       title: Container(
         padding: const EdgeInsets.all(8),

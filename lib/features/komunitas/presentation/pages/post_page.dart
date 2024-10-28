@@ -28,6 +28,9 @@ class _PostPageState extends State<PostPage> {
       appBar: AppBar(
         backgroundColor: neutral10,
         surfaceTintColor: neutral10,
+        shape: const Border(
+          bottom: BorderSide(color: neutral30),
+        ),
 
         // Back Button
         leading: IconButton(
