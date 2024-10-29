@@ -1,4 +1,4 @@
-package com.nhaidaar.disoriza
+package com.disoriza.app
 
 import io.flutter.embedding.android.FlutterActivity
 
