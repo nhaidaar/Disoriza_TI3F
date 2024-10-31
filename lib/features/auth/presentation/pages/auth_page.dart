@@ -21,23 +21,15 @@ class AuthPage extends StatelessWidget {
       child: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is Authenticated) {
-            if (state.isFirstTime) {
-              Navigator.of(context).pushAndRemoveUntil(
-                PageTransition(
-                  child: HomeOnboarding(user: state.user),
-                  type: PageTransitionType.fade,
-                ),
-                (route) => false,
-              );
-            } else {
-              Navigator.of(context).pushAndRemoveUntil(
-                PageTransition(
-                  child: HomeScreen(user: state.user),
-                  type: PageTransitionType.fade,
-                ),
-                (route) => false,
-              );
-            }
+            Navigator.of(context).pushAndRemoveUntil(
+              PageTransition(
+                child: state.isFirstTime
+                    ? HomeOnboarding(user: state.user)
+                    : HomeScreen(user: state.user),
+                type: PageTransitionType.fade,
+              ),
+              (route) => false,
+            );
           }
         },
         child: Scaffold(
@@ -74,8 +66,10 @@ class AuthPage extends StatelessWidget {
                         color: backgroundCanvas,
                       ),
                       child: TabBar(
-                        labelStyle: mediumTS.copyWith(fontSize: 16, color: accentGreenMain),
-                        unselectedLabelStyle: mediumTS.copyWith(fontSize: 16, color: neutral60),
+                        labelStyle: mediumTS.copyWith(
+                            fontSize: 16, color: accentGreenMain),
+                        unselectedLabelStyle:
+                            mediumTS.copyWith(fontSize: 16, color: neutral60),
                         indicator: BoxDecoration(
                           color: neutral10,
                           borderRadius: BorderRadius.circular(100),

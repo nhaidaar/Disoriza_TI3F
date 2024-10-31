@@ -41,7 +41,6 @@ class AuthRepositoryImpl implements AuthRepository {
         collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
         documentId: account.$id,
         data: UserModel(
-          idUser: account.$id,
           name: name,
           email: email,
         ).toMap(),
