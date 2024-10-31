@@ -1,6 +1,5 @@
 class UserModel {
   final String? id; // Appwrite document ID ($id)
-  final String? idUser;
   final String? email;
   final String? name;
   final List<String>? likedPosts; // References to post IDs
@@ -13,7 +12,6 @@ class UserModel {
 
   UserModel({
     this.id,
-    this.idUser,
     this.email,
     this.name,
     this.likedPosts,
@@ -28,7 +26,6 @@ class UserModel {
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['\$id'],
-      idUser: map['id_user'],
       email: map['email'],
       name: map['name'],
       likedPosts: List<String>.from(map['liked_post'] ?? []),
@@ -44,7 +41,6 @@ class UserModel {
   // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
-      'id_user': idUser,
       'email': email,
       'name': name,
       'liked_post': likedPosts ?? [],
@@ -59,7 +55,6 @@ class UserModel {
 
   UserModel copyWith({
     String? id,
-    String? idUser,
     String? email,
     String? name,
     List<String>? likedPosts,
@@ -72,7 +67,6 @@ class UserModel {
   }) {
     return UserModel(
       id: id ?? this.id,
-      idUser: idUser ?? this.idUser,
       email: email ?? this.email,
       name: name ?? this.name,
       likedPosts: likedPosts ?? this.likedPosts,
