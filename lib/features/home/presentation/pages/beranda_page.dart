@@ -1,18 +1,23 @@
+import 'package:appwrite/models.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:disoriza/core/common/custom_empty_state.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../riwayat/presentation/widgets/riwayat_card.dart';
+import '../../../user/presentation/cubit/user_cubit.dart';
 import '../widgets/beranda_komunitas_card.dart';
 import '../widgets/beranda_pindai_card.dart';
 
 class BerandaPage extends StatefulWidget {
-  const BerandaPage({super.key});
+  final User user;
+  const BerandaPage({super.key, required this.user});
 
   @override
   State<BerandaPage> createState() => _BerandaPageState();
@@ -45,10 +50,29 @@ class _BerandaPageState extends State<BerandaPage> {
             title: Row(
               children: [
                 // Avatar
-                const CircleAvatar(
-                  radius: 20,
-                  backgroundColor: neutral10,
-                  child: Icon(IconsaxPlusLinear.profile, color: neutral100),
+                BlocProvider(
+                  create: (context) => BlocProvider.of<UserCubit>(context)
+                    ..fetchUserModel(
+                      uid: widget.user.$id,
+                    ),
+                  child: BlocBuilder<UserCubit, UserState>(
+                    builder: (context, state) {
+                      if (state is UserFetched && state.userModel.profilePicture != null) {
+                        return CircleAvatar(
+                          radius: 20,
+                          backgroundColor: neutral10,
+                          backgroundImage: CachedNetworkImageProvider(
+                            state.userModel.profilePicture.toString(),
+                          ),
+                        );
+                      }
+                      return const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: neutral10,
+                        child: Icon(IconsaxPlusLinear.profile, color: neutral100),
+                      );
+                    },
+                  ),
                 ),
 
                 const SizedBox(width: 8),

@@ -10,6 +10,9 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/pages/auth_page.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/home/presentation/pages/splash_screen.dart';
+import 'features/user/data/repositories/user_repository_impl.dart';
+import 'features/user/domain/usecases/user_usecase.dart';
+import 'features/user/presentation/cubit/user_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +43,9 @@ class Disoriza extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AuthCubit(AuthUsecase(AuthRepositoryImpl(client: client))),
+          ),
+          BlocProvider(
+            create: (context) => UserCubit(UserUsecase(UserRepositoryImpl(client: client))),
           ),
         ],
         child: BlocProvider(

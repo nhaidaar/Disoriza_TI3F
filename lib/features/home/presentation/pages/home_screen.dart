@@ -20,15 +20,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
-  final pages = [
-    const BerandaPage(),
-    const RiwayatPage(),
-    const KomunitasPage(),
-    const SetelanPage(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      BerandaPage(user: widget.user),
+      const RiwayatPage(),
+      const KomunitasPage(),
+      const SetelanPage(),
+    ];
+
     return Scaffold(
       // Select pages by index
       body: pages[selectedIndex],

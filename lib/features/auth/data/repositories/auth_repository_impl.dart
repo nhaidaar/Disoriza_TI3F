@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:disoriza/features/auth/domain/repositories/auth_repository.dart';
 
-import '../models/user_model.dart';
+import '../../../user/data/models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final Client client;
