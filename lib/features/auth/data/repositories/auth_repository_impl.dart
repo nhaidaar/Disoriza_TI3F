@@ -2,8 +2,11 @@
 
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:disoriza/features/auth/domain/repositories/auth_repository.dart';
+
+import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final Client client;
@@ -32,6 +35,18 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
+
+      await Databases(client).createDocument(
+        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
+        documentId: account.$id,
+        data: UserModel(
+          idUser: account.$id,
+          name: name,
+          email: email,
+        ).toMap(),
+      );
+
       return Right(account);
     } on AppwriteException catch (e) {
       return Left(e);
