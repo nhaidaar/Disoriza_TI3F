@@ -7,6 +7,7 @@ class UserModel {
   final List<String>? likedComments; // References to comment IDs
   final List<String>? posts; // References to post IDs
   final List<String>? comments; // References to comment IDs
+  final List<String>? histories; // References to detail_history IDs
   final String? profilePicture;
   final String? idImage;
 
@@ -19,6 +20,7 @@ class UserModel {
     this.likedComments,
     this.posts,
     this.comments,
+    this.histories,
     this.profilePicture,
     this.idImage,
   });
@@ -33,6 +35,7 @@ class UserModel {
       likedComments: List<String>.from(map['liked_comment'] ?? []),
       posts: List<String>.from(map['posts'] ?? []),
       comments: List<String>.from(map['comments'] ?? []),
+      histories: List<String>.from(map['histories'] ?? []),
       profilePicture: map['url_image'],
       idImage: map['id_image'],
     );
@@ -48,6 +51,7 @@ class UserModel {
       'liked_comment': likedComments ?? [],
       'posts': posts ?? [],
       'comments': comments ?? [],
+      'histories': histories ?? [],
       'url_image': profilePicture,
       'id_image': idImage,
     };
@@ -62,6 +66,7 @@ class UserModel {
     List<String>? likedComments,
     List<String>? posts,
     List<String>? comments,
+    List<String>? histories,
     String? profilePicture,
     String? idImage,
   }) {
@@ -74,6 +79,7 @@ class UserModel {
       likedComments: likedComments ?? this.likedComments,
       posts: posts ?? this.posts,
       comments: comments ?? this.comments,
+      histories: histories ?? this.histories,
       profilePicture: profilePicture ?? this.profilePicture,
       idImage: idImage ?? this.idImage,
     );
