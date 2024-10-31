@@ -54,3 +54,36 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
+
+class CustomLoadingButton extends StatelessWidget {
+  final Color backgroundColor;
+  const CustomLoadingButton({
+    super.key,
+    this.backgroundColor = accentOrangeMain,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(40),
+        border: backgroundColor == neutral10 ? Border.all(color: neutral30) : null,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 23,
+            width: 23,
+            child: CircularProgressIndicator(
+              color: backgroundColor == neutral10 ? neutral30 : neutral10,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

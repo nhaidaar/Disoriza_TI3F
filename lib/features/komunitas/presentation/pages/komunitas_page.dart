@@ -73,6 +73,7 @@ class KomunitasPage extends StatelessWidget {
             ),
           ),
           body: const TabBarView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
               DiskusiPage(),
               AktivitasmuPage(),

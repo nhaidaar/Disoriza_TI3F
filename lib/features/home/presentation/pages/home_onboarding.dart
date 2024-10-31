@@ -1,3 +1,4 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
@@ -9,7 +10,8 @@ import '../widgets/disoriza_logo.dart';
 import 'home_screen.dart';
 
 class HomeOnboarding extends StatelessWidget {
-  const HomeOnboarding({super.key});
+  final User user;
+  const HomeOnboarding({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +66,7 @@ class HomeOnboarding extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                   PageTransition(
-                    child: const HomeScreen(),
+                    child: HomeScreen(user: user),
                     type: PageTransitionType.fade,
                   ),
                   (route) => false,

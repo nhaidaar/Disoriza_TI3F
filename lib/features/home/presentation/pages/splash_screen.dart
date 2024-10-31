@@ -1,33 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../auth/presentation/pages/auth_page.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pushAndRemoveUntil(
-        PageTransition(
-          child: const AuthPage(),
-          type: PageTransitionType.fade,
-        ),
-        (route) => false,
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

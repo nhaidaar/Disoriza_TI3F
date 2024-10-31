@@ -1,3 +1,4 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import '../../../../core/common/colors.dart';
@@ -9,7 +10,8 @@ import '../../../komunitas/presentation/pages/komunitas_page.dart';
 import '../../../setelan/presentation/pages/setelan_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final User user;
+  const HomeScreen({super.key, required this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

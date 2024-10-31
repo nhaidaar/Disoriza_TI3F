@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../home/presentation/pages/home_onboarding.dart';
+import '../cubit/auth_cubit.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -92,16 +92,19 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 24),
 
           // Daftar Button
-          CustomButton(
-            text: 'Daftar',
-            disabled: areFieldsEmpty,
-            onTap: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                PageTransition(
-                  child: const HomeOnboarding(),
-                  type: PageTransitionType.fade,
-                ),
-                (route) => false,
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is RegisterLoading) return const CustomLoadingButton();
+              return CustomButton(
+                text: 'Daftar',
+                disabled: areFieldsEmpty,
+                onTap: () {
+                  context.read<AuthCubit>().register(
+                        name: _namaController.text,
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      );
+                },
               );
             },
           ),
