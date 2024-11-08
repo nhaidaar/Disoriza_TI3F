@@ -1,13 +1,21 @@
+import 'package:appwrite/models.dart';
+import 'package:disoriza/features/komunitas/presentation/cubit/comment/comment_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../user/data/models/user_model.dart';
+import '../../data/models/comment_model.dart';
+import '../../data/models/post_model.dart';
 import '../widgets/post_card.dart';
 
 class PostPage extends StatefulWidget {
-  const PostPage({super.key});
+  final User user;
+  final PostModel postModel;
+  const PostPage({super.key, required this.postModel, required this.user});
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -15,6 +23,14 @@ class PostPage extends StatefulWidget {
 
 class _PostPageState extends State<PostPage> {
   final commentController = TextEditingController();
+
+  @override
+  void initState() {
+    context.read<CommentCubit>().fetchComments(
+          postId: widget.postModel.id.toString(),
+        );
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -49,13 +65,11 @@ class _PostPageState extends State<PostPage> {
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(8),
-              children: const [
+              children: [
                 PostCard(
+                  user: widget.user,
+                  postModel: widget.postModel,
                   fullPost: true,
-                  title: 'Cara mendapatkan pestida',
-                  text:
-                      'Hawar daun bakteri adalah penyakit yang disebabkan oleh bakteri Xanthomonas oryzae pv. oryzae, yang merupakan salah satu penyakit paling merusak pada tanaman padi. Penyakit ini menyerang daun, menyebabkan daun menjadi kuning, layu, dan akhirnya kering. Jika infeksi parah, tanaman dapat mati sebelum mencapai fase pematangan.',
-                  image: 'assets/images/main.jpg',
                 ),
               ],
             ),
@@ -75,7 +89,20 @@ class _PostPageState extends State<PostPage> {
                   hint: 'Berikan komentar',
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (commentController.text.isNotEmpty) {
+                      final comment = CommentModel(
+                        idPost: PostModel(id: widget.postModel.id),
+                        idCommentator: UserModel(id: widget.user.$id),
+                        value: commentController.text,
+                        date: DateTime.now().millisecondsSinceEpoch,
+                      );
+
+                      context.read<CommentCubit>().createComment(comment: comment);
+
+                      commentController.clear();
+                    }
+                  },
                   icon: const Icon(IconsaxPlusLinear.send_1),
                 ),
               ],

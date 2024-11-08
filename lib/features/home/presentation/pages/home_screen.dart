@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final pages = [
       BerandaPage(user: widget.user),
       const RiwayatPage(),
-      const KomunitasPage(),
+      KomunitasPage(user: widget.user),
       const SetelanPage(),
     ];
 

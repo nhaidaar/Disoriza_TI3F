@@ -40,7 +40,7 @@ class AktivitasEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomEmptyState(
       icon: IconsaxPlusLinear.clipboard_close,
-      text: 'Belum ada aktivitas $title yang bisa ditampilkan',
+      text: 'Belum ada aktivitas ${title.toLowerCase()} yang bisa ditampilkan',
     );
   }
 }
@@ -65,6 +65,18 @@ class RiwayatEmptyState extends StatelessWidget {
     return const CustomEmptyState(
       icon: IconsaxPlusLinear.clipboard_close,
       text: 'Belum ada riwayat yang bisa ditampilkan',
+    );
+  }
+}
+
+class KomentarEmptyState extends StatelessWidget {
+  const KomentarEmptyState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const CustomEmptyState(
+      icon: IconsaxPlusLinear.clipboard_close,
+      text: 'Belum ada komentar yang bisa ditampilkan',
     );
   }
 }

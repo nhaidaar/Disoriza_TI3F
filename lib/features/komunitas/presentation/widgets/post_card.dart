@@ -1,26 +1,36 @@
+import 'package:appwrite/models.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
+import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/custom_dropdown.dart';
+import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../data/models/post_model.dart';
+import '../cubit/comment/comment_cubit.dart';
+import '../cubit/komunitas/komunitas_cubit.dart';
 import '../pages/post_page.dart';
 import 'comment_card.dart';
+import 'post_loading_card.dart';
 
 class PostCard extends StatefulWidget {
+  final User user;
   final bool fullPost;
-  final String title;
-  final String text;
-  final String? image;
+  final bool isAktivitas;
+  final PostModel postModel;
 
   const PostCard({
     super.key,
-    required this.title,
-    required this.text,
-    this.image,
+    required this.user,
+    required this.postModel,
     this.fullPost = false,
+    this.isAktivitas = false,
   });
 
   @override
@@ -29,6 +39,13 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLiked = false;
+  bool isLatest = false;
+
+  @override
+  void initState() {
+    isLiked = (widget.postModel.likes ?? []).contains(widget.user.$id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +54,10 @@ class _PostCardState extends State<PostCard> {
           ? null
           : () => Navigator.of(context).push(
                 PageTransition(
-                  child: const PostPage(),
+                  child: BlocProvider.value(
+                    value: context.read<CommentCubit>(),
+                    child: PostPage(user: widget.user, postModel: widget.postModel),
+                  ),
                   type: PageTransitionType.rightToLeft,
                 ),
               ),
@@ -56,11 +76,7 @@ class _PostCardState extends State<PostCard> {
             Row(
               children: [
                 // Avatar
-                const CircleAvatar(
-                  radius: 20,
-                  backgroundColor: neutral10,
-                  child: Icon(IconsaxPlusLinear.profile, color: neutral100),
-                ),
+                CustomAvatar(link: widget.postModel.creator!.profilePicture),
 
                 const SizedBox(width: 12),
 
@@ -68,10 +84,17 @@ class _PostCardState extends State<PostCard> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Wahyu Utami', style: mediumTS.copyWith(color: neutral100)),
+                    Text(
+                      widget.postModel.creator != null
+                          ? widget.postModel.creator!.name.toString()
+                          : 'Disoriza User',
+                      style: mediumTS.copyWith(color: neutral100),
+                    ),
                     const SizedBox(height: 4),
                     Text(
-                      '12 hours ago',
+                      timeago.format(
+                        DateTime.fromMillisecondsSinceEpoch(widget.postModel.date ?? 0),
+                      ),
                       style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                     )
                   ],
@@ -82,7 +105,7 @@ class _PostCardState extends State<PostCard> {
             const SizedBox(height: 12),
 
             Text(
-              widget.title,
+              widget.postModel.title.toString(),
               style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
               maxLines: !widget.fullPost ? 2 : null,
               overflow: !widget.fullPost ? TextOverflow.ellipsis : null,
@@ -91,7 +114,7 @@ class _PostCardState extends State<PostCard> {
             const SizedBox(height: 4),
 
             Text(
-              widget.text,
+              widget.postModel.content.toString(),
               style: mediumTS.copyWith(color: neutral90),
               maxLines: !widget.fullPost ? 3 : null,
               overflow: !widget.fullPost ? TextOverflow.ellipsis : null,
@@ -100,11 +123,13 @@ class _PostCardState extends State<PostCard> {
             const SizedBox(height: 4),
 
             // Image (optional)
-            if (widget.image != null) ...[
+            if (widget.postModel.urlImage != null) ...[
               const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.asset(widget.image.toString()),
+                child: CachedNetworkImage(
+                  imageUrl: widget.postModel.urlImage.toString(),
+                ),
               ),
             ],
 
@@ -115,7 +140,17 @@ class _PostCardState extends State<PostCard> {
                 // Like
                 GestureDetector(
                   onTap: () {
-                    setState(() => isLiked = !isLiked);
+                    setState(() {
+                      isLiked = !isLiked;
+                      isLiked
+                          ? (widget.postModel.likes ?? []).add(widget.user.$id)
+                          : (widget.postModel.likes ?? []).remove(widget.user.$id);
+                    });
+
+                    context.read<KomunitasCubit>().likePost(
+                          uid: widget.user.$id,
+                          post: widget.postModel,
+                        );
                   },
                   child: Icon(
                     isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
@@ -125,7 +160,7 @@ class _PostCardState extends State<PostCard> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '12',
+                  (widget.postModel.likes ?? []).length.toString(),
                   style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                 ),
 
@@ -139,23 +174,21 @@ class _PostCardState extends State<PostCard> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '12',
+                  (widget.postModel.comments ?? []).length.toString(),
                   style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                 ),
 
                 const Spacer(),
 
-                if (isLiked && !widget.fullPost) ...[
-                  const CircleAvatar(
-                    radius: 12,
-                    backgroundColor: neutral30,
-                    child: Icon(IconsaxPlusLinear.profile, color: neutral100, size: 12),
+                if (isLiked && !widget.fullPost && widget.isAktivitas) ...[
+                  CustomAvatar(
+                    link: widget.postModel.creator!.profilePicture,
+                    radius: 10,
                   ),
                   const SizedBox(width: 4),
-                  Container(
-                    height: 4,
-                    width: 4,
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: neutral30),
+                  const CircleAvatar(
+                    radius: 2,
+                    backgroundColor: neutral30,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -180,9 +213,20 @@ class _PostCardState extends State<PostCard> {
                   ),
                   const Spacer(),
                   CustomDropdown(
-                    items: const ['Terpopuler', 'Terbaru'],
-                    initialValue: 'Terpopuler',
-                    onChanged: (value) {},
+                    items: const [
+                      MapEntry('Terpopuler', false),
+                      MapEntry('Terbaru', true),
+                    ],
+                    initialValue: const MapEntry('Terpopuler', false),
+                    onChanged: (filter) async {
+                      if (isLatest != filter.value) {
+                        isLatest = !isLatest;
+                        context.read<CommentCubit>().fetchComments(
+                              postId: widget.postModel.id.toString(),
+                              latest: isLatest,
+                            );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -190,12 +234,26 @@ class _PostCardState extends State<PostCard> {
               const SizedBox(height: 12),
 
               // List of Komentar
-              ...List.generate(3, (index) {
-                return const CommentCard(
-                  text:
-                      'Hmm, tidak bisa begitu saudaraku, mungkin saja kamu tidak mengerti caranya, mungkin saja kamu terlena dengan dunia yang fana ini',
-                );
-              })
+              BlocBuilder<CommentCubit, CommentState>(
+                builder: (context, state) {
+                  if (state is CommentLoading) {
+                    return const PostLoadingCard();
+                  }
+                  if (state is CommentLoaded) {
+                    return state.commentModels.isNotEmpty
+                        ? Column(
+                            children: state.commentModels.map((comment) {
+                              return CommentCard(
+                                user: widget.user,
+                                commentModel: comment,
+                              );
+                            }).toList(),
+                          )
+                        : const Center(child: KomentarEmptyState());
+                  }
+                  return const Center(child: KomentarEmptyState());
+                },
+              ),
             ]
           ],
         ),

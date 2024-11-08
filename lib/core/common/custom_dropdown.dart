@@ -4,10 +4,10 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'colors.dart';
 import 'fontstyles.dart';
 
-class CustomDropdown extends StatefulWidget {
-  final List<String> items;
-  final String initialValue;
-  final Function(String) onChanged;
+class CustomDropdown<K, V> extends StatefulWidget {
+  final List<MapEntry<K, V>> items;
+  final MapEntry<K, V> initialValue;
+  final Function(MapEntry<K, V>) onChanged;
 
   const CustomDropdown({
     super.key,
@@ -17,11 +17,11 @@ class CustomDropdown extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdown> createState() => _CustomDropdownState();
+  State<CustomDropdown<K, V>> createState() => _CustomDropdownState<K, V>();
 }
 
-class _CustomDropdownState extends State<CustomDropdown> {
-  late String selectedValue;
+class _CustomDropdownState<K, V> extends State<CustomDropdown<K, V>> {
+  late MapEntry<K, V> selectedValue;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(
+    return PopupMenuButton<MapEntry<K, V>>(
       initialValue: selectedValue,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -40,21 +40,24 @@ class _CustomDropdownState extends State<CustomDropdown> {
       elevation: 0,
       position: PopupMenuPosition.under,
 
-      // Do something when choice changed
+      // Handle selection change
       onSelected: (value) {
         setState(() => selectedValue = value);
         widget.onChanged(value);
       },
 
       itemBuilder: (context) {
-        return widget.items.map((String item) {
-          return PopupMenuItem(
+        return widget.items.map((item) {
+          return PopupMenuItem<MapEntry<K, V>>(
             value: item,
             padding: const EdgeInsets.all(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(item, style: mediumTS.copyWith(fontSize: 16, color: neutral100)),
+                Text(
+                  item.key.toString(),
+                  style: mediumTS.copyWith(fontSize: 16, color: neutral100),
+                ),
                 if (selectedValue == item) const Icon(Icons.check, size: 20),
               ],
             ),
@@ -66,7 +69,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         child: Row(
           children: [
             Text(
-              selectedValue,
+              selectedValue.key.toString(),
               style: mediumTS.copyWith(fontSize: 16, color: neutral100),
             ),
             const SizedBox(width: 4),

@@ -1,14 +1,25 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
+import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../data/models/comment_model.dart';
+import '../cubit/comment/comment_cubit.dart';
 
 class CommentCard extends StatefulWidget {
-  final String text;
+  final User user;
+  final CommentModel commentModel;
 
-  const CommentCard({super.key, required this.text});
+  const CommentCard({
+    super.key,
+    required this.user,
+    required this.commentModel,
+  });
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -16,6 +27,12 @@ class CommentCard extends StatefulWidget {
 
 class _CommentCardState extends State<CommentCard> {
   bool isLiked = false;
+
+  @override
+  void initState() {
+    isLiked = (widget.commentModel.likes ?? []).contains(widget.user.$id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +51,7 @@ class _CommentCardState extends State<CommentCard> {
           Row(
             children: [
               // Avatar
-              const CircleAvatar(
-                radius: 20,
-                backgroundColor: neutral10,
-                child: Icon(IconsaxPlusLinear.profile, color: neutral100),
-              ),
+              CustomAvatar(link: widget.commentModel.idCommentator!.profilePicture),
 
               const SizedBox(width: 12),
 
@@ -46,10 +59,17 @@ class _CommentCardState extends State<CommentCard> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Wahyu Utami', style: mediumTS.copyWith(color: neutral100)),
+                  Text(
+                    widget.commentModel.idCommentator != null
+                        ? widget.commentModel.idCommentator!.name.toString()
+                        : 'Disoriza User',
+                    style: mediumTS.copyWith(color: neutral100),
+                  ),
                   const SizedBox(height: 4),
                   Text(
-                    '12 hours ago',
+                    timeago.format(
+                      DateTime.fromMillisecondsSinceEpoch(widget.commentModel.date ?? 0),
+                    ),
                     style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                   )
                 ],
@@ -60,7 +80,7 @@ class _CommentCardState extends State<CommentCard> {
           const SizedBox(height: 8),
 
           Text(
-            widget.text,
+            widget.commentModel.value.toString(),
             style: mediumTS.copyWith(color: neutral90),
           ),
 
@@ -71,7 +91,17 @@ class _CommentCardState extends State<CommentCard> {
             children: [
               GestureDetector(
                 onTap: () {
-                  setState(() => isLiked = !isLiked);
+                  setState(() {
+                    isLiked = !isLiked;
+                    isLiked
+                        ? (widget.commentModel.likes ?? []).add(widget.user.$id)
+                        : (widget.commentModel.likes ?? []).remove(widget.user.$id);
+                  });
+
+                  context.read<CommentCubit>().likeComment(
+                        uid: widget.user.$id,
+                        comment: widget.commentModel,
+                      );
                 },
                 child: Icon(
                   isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
@@ -81,7 +111,7 @@ class _CommentCardState extends State<CommentCard> {
               ),
               const SizedBox(width: 4),
               Text(
-                '12',
+                (widget.commentModel.likes ?? []).length.toString(),
                 style: mediumTS.copyWith(fontSize: 12, color: neutral80),
               ),
             ],

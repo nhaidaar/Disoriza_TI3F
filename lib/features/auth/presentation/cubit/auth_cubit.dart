@@ -54,7 +54,7 @@ class AuthCubit extends Cubit<AuthState> {
     bool isFirstTime = false,
   }) async {
     try {
-      emit(LoginLoading());
+      isFirstTime ? emit(RegisterLoading()) : emit(LoginLoading());
 
       final session = await _authUsecase.login(email: email, password: password);
       session.fold(
@@ -63,7 +63,7 @@ class AuthCubit extends Cubit<AuthState> {
           final user = await _authUsecase.checkSession();
           user.fold(
             (l) => emit(AuthError(message: l.message.toString())),
-            (r) => emit(Authenticated(user: r, isFirstTime: true)),
+            (r) => emit(Authenticated(user: r, isFirstTime: isFirstTime)),
           );
         },
       );
@@ -74,10 +74,9 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> logout() async {
     try {
-      emit(LoginLoading());
       final logout = await _authUsecase.logout();
       logout.fold(
-        (error) => emit(AuthError(message: error.toString())),
+        (error) => emit(AuthError(message: error.message.toString())),
         (success) => emit(Unauthenticated()),
       );
     } catch (_) {
