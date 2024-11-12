@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final pages = [
       BerandaPage(user: widget.user),
-      const RiwayatPage(),
+      RiwayatPage(user: widget.user),
       KomunitasPage(user: widget.user),
       const SetelanPage(),
     ];

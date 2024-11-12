@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:appwrite/models.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../widgets/riwayat_card.dart';
@@ -6,9 +8,12 @@ import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../cubit/riwayat_cubit.dart';
+import '../../data/models/riwayat_model.dart';
 
 class RiwayatPage extends StatefulWidget {
-  const RiwayatPage({super.key});
+  final User user;
+  const RiwayatPage({super.key, required this.user});
 
   @override
   State<RiwayatPage> createState() => _RiwayatPageState();
@@ -16,8 +21,20 @@ class RiwayatPage extends StatefulWidget {
 
 class _RiwayatPageState extends State<RiwayatPage> {
   final _searchController = TextEditingController();
+  String _searchQuery = '';
 
-  bool isRiwayatEmpty = false;
+  @override
+  void initState() {
+    super.initState();
+    context.read<RiwayatCubit>().fetchAllRiwayat(user: widget.user);
+
+    // Add a listener to update the search query on text change
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -38,15 +55,11 @@ class _RiwayatPageState extends State<RiwayatPage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
             Text(
               'Riwayat pemindaian',
               style: mediumTS.copyWith(color: neutral100),
             ),
-
             const SizedBox(height: 16),
-
-            // Search Field
             CustomFormField(
               controller: _searchController,
               hint: 'Cari judul penyakit',
@@ -57,29 +70,42 @@ class _RiwayatPageState extends State<RiwayatPage> {
           ],
         ),
       ),
-      body: !isRiwayatEmpty
-          ? ListView(
+      body: BlocBuilder<RiwayatCubit, RiwayatState>(
+        builder: (context, state) {
+          if (state is RiwayatLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is RiwayatLoaded) {
+            // Filter the list based on the search query
+            final filteredList = state.histModels.where((riwayat) {
+              final title = riwayat.id_disease?.name?.toLowerCase() ?? '';
+              return title.contains(_searchQuery.toLowerCase());
+            }).toList();
+
+            if (filteredList.isEmpty) {
+              return const Center(child: RiwayatEmptyState());
+            }
+            return ListView(
               padding: const EdgeInsets.all(20),
               children: [
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: List.generate(10, (index) {
-                    return const RiwayatCard(
+                  children: filteredList.map((riwayat) {
+                    return RiwayatCard(
                       image: 'assets/images/cardhist.jpeg',
-                      title: 'Bacterial Leaf Blight',
-                      timeAgo: '30 menit lalu',
+                      title: riwayat.id_disease?.name ?? 'Unknown Disease',
+                      timeAgo: 'Some time ago',
                     );
-                  }),
+                  }).toList(),
                 ),
               ],
-            )
-          : const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(child: RiwayatEmptyState()),
-              ],
-            ),
+            );
+          } else if (state is RiwayatError) {
+            return Center(child: Text('Error: ${state.message}'));
+          }
+          return const Center(child: RiwayatEmptyState());
+        },
+      ),
     );
   }
 }
