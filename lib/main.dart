@@ -18,6 +18,9 @@ import 'features/komunitas/presentation/cubit/komunitas/komunitas_cubit.dart';
 import 'features/user/data/repositories/user_repository_impl.dart';
 import 'features/user/domain/usecases/user_usecase.dart';
 import 'features/user/presentation/cubit/user_cubit.dart';
+import 'package:disoriza/features/riwayat/data/repositories/riwayat_repository_impl.dart';
+import 'package:disoriza/features/riwayat/domain/usecases/riwayat_usecase.dart';
+import 'package:disoriza/features/riwayat/presentation/cubit/riwayat_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +62,11 @@ class Disoriza extends StatelessWidget {
           BlocProvider(
             create: (context) => KomunitasCubit(
               KomunitasUsecase(KomunitasRepositoryImpl(client: client)),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => RiwayatCubit(
+              RiwayatUsecase(RiwayatRepositoryImpl(client: client)),
             ),
           ),
           BlocProvider(

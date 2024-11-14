@@ -1,34 +1,29 @@
 import 'package:disoriza/core/common/effects.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
-import '../pages/riwayat_detail.dart';
 
 class RiwayatCard extends StatelessWidget {
+  // final String id;
   final String image;
   final String title;
   final String timeAgo;
-
+  final VoidCallback onTap;
+  
   const RiwayatCard({
     super.key,
+    required this.onTap,
     required this.image,
     required this.title,
     required this.timeAgo,
+    // required this.id,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          PageTransition(
-            child: const RiwayatDetail(),
-            type: PageTransitionType.rightToLeft,
-          ),
-        );
-      },
+      onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width / 2 - 24,
         decoration: BoxDecoration(
@@ -69,3 +64,4 @@ class RiwayatCard extends StatelessWidget {
     );
   }
 }
+
