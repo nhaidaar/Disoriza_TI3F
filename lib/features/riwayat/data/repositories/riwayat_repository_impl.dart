@@ -5,7 +5,6 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../domain/repositories/riwayat_repository.dart';
 import '../models/riwayat_model.dart';
-import '../models/disease_model.dart';
 
 class RiwayatRepositoryImpl implements RiwayatRepository {
   final Client client;
@@ -47,7 +46,6 @@ Future<Either<AppwriteException, List<RiwayatModel>>> fetchAllRiwayat({
           Query.equal('id_riwayat', histId),
         ],
       );
-
       if (documents.documents.isNotEmpty) {
         final documentId = documents.documents.first.$id;
         await Databases(client).deleteDocument(
@@ -65,21 +63,21 @@ Future<Either<AppwriteException, List<RiwayatModel>>> fetchAllRiwayat({
   }
 
 @override
-Future<Either<AppwriteException, DiseaseModel>> fetchDisease({
+Future<Either<AppwriteException, RiwayatModel>> fetchDisease({
   required String id_disease,
   }) async {
     try {
       // Fetch disease documents matching id_disease
       final diseaseResponse = await Databases(client).listDocuments(
         databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_DISEASES_COLLECTION_ID"),
+        collectionId: dotenv.get("FLASK_APPWRITE_DETAILS_HISTORY_COLLECTION_ID"),
         queries: [
           Query.equal('id_disease', id_disease),
         ],
       );
 
       // Map disease documents to DiseaseModel
-      final disease = DiseaseModel.fromMap(diseaseResponse.documents.first.data);
+      final disease = RiwayatModel.fromMap(diseaseResponse.documents.first.data);
       return Right(disease);
     } on AppwriteException catch (e) {
       return Left(e);
