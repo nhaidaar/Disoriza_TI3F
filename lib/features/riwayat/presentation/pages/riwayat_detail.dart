@@ -1,5 +1,9 @@
+import 'package:appwrite/models.dart';
 import 'package:disoriza/core/common/effects.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import '../../../../core/common/custom_button.dart';
@@ -7,11 +11,17 @@ import '../../../../core/common/custom_popup.dart';
 import '../../../home/presentation/widgets/disoriza_logo.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../../data/models/riwayat_model.dart';
+import '../cubit/riwayat_cubit.dart';
 import '../widgets/riwayat_detail_card.dart';
 import '../widgets/riwayat_detail_remote.dart';
 
 class RiwayatDetail extends StatefulWidget {
-  const RiwayatDetail({super.key});
+  const RiwayatDetail({super.key, required this.image, required this.title, required this.riwayat, required this.user});
+  final User user;
+  final String image;
+  final String title;
+  final RiwayatModel riwayat;
 
   @override
   State<RiwayatDetail> createState() => _RiwayatDetailState();
@@ -47,7 +57,10 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
 
         // Back Button
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            // context.read<RiwayatCubit>().fetchAllRiwayat(user: widget.user);
+            Navigator.of(context).pop();
+          },
           icon: const Icon(IconsaxPlusLinear.arrow_left),
         ),
 
@@ -72,8 +85,8 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             height: 380,
             decoration: BoxDecoration(
               borderRadius: defaultSmoothRadius,
-              image: const DecorationImage(
-                image: AssetImage('assets/images/cardhist.jpeg'),
+              image:  DecorationImage(
+                image: AssetImage(widget.image),
                 fit: BoxFit.cover,
               ),
             ),
@@ -98,7 +111,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Bacterial Leaf Blight',
+                            widget.title,
                             style: mediumTS.copyWith(fontSize: 18, color: neutral100),
                           ),
                         ],
@@ -130,7 +143,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             controller: _scrollController,
             title: 'Definisi',
             content:
-                'Hawar daun bakteri adalah penyakit yang disebabkan oleh bakteri Xanthomonas oryzae pv. oryzae, yang merupakan salah satu penyakit paling merusak pada tanaman padi. Penyakit ini menyerang daun, menyebabkan daun menjadi kuning, layu, dan akhirnya kering. Jika infeksi parah, tanaman dapat mati sebelum mencapai fase pematangan.',
+                widget.riwayat.id_disease!.definition.toString(),
           ),
 
           const SizedBox(height: 8),
@@ -141,7 +154,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             controller: _scrollController,
             title: 'Gejala',
             content:
-                '1. Awalnya, muncul garis-garis atau bercak-bercak kecil berwarna hijau gelap pada tepi daun.\n2. Bercak tersebut kemudian membesar dan memanjang, berwarna coklat kekuningan, sehingga menyebabkan daun menjadi layu dan mati.\n3. Pada kondisi lembab, penyakit ini dapat menyebar dengan cepat, mengakibatkan kerusakan yang lebih parah.\n4. Pada infeksi berat, tanaman bisa mengalami kematian dini, yang sangat mempengaruhi hasil panen.',
+            widget.riwayat.id_disease!.symtomps.toString(),
           ),
 
           const SizedBox(height: 8),
@@ -152,7 +165,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             controller: _scrollController,
             title: 'Solusi',
             content:
-                '1. Penggunaan Varietas Tahan\nMenanam varietas padi yang tahan terhadap Xanthomonas oryzae pv. oryzae merupakan salah satu cara yang efektif untuk mengurangi risiko serangan penyakit ini.\n2. Pengaturan Irigasi \nMenghindari genangan air yang berlebihan dan mengatur sistem irigasi dengan baik dapat membantu mengurangi penyebaran bakteri. Irigasi yang berlebihan dapat memperparah penyebaran penyakit ini.\n3. Rotasi Tanaman \nMelakukan rotasi tanaman dengan tanaman non- padi untuk memutus siklus hidup bakteri penyebab penyakit ini.\n4. Pengendalian Serangga Vektor \nMengendalikan serangga vektor yang bisa menyebarkan bakteri, seperti wereng hijau, juga penting dalam manajemen penyakit ini.\n5. Aplikasi Bakterisida \nJika serangan sudah terjadi, penggunaan bakterisida berbahan dasar tembaga (copper- based bactericides) dapat digunakan untuk mengurangi penyebaran infeksi. Namun, efektivitasnya terbatas dan harus digunakan sebagai upaya terakhir.',
+               widget.riwayat.id_disease!.solution.toString(),
           ),
 
           const SizedBox(height: 150),
@@ -195,10 +208,11 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
     );
   }
 
-  Future<void> handleDeleteRiwayat(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => CustomPopup(
+Future<void> handleDeleteRiwayat(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (context) => Builder(
+      builder: (dialogContext) => CustomPopup(
         icon: IconsaxPlusLinear.trash,
         iconColor: dangerMain,
         title: 'Ingin menghapus riwayat ini?',
@@ -210,7 +224,13 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                 child: CustomButton(
                   backgroundColor: dangerMain,
                   pressedColor: dangerPressed,
-                  onTap: () {},
+                  onTap: () {
+                    dialogContext
+                        .read<RiwayatCubit>()
+                        .deleteRiwayat(histId: widget.riwayat.id.toString());
+                        // .deleteRiwayat(histId: widget.riwayat.id.toString(), user: widget.user);
+                    Navigator.of(context).pop();
+                  },
                   text: 'Ya, hapus',
                 ),
               ),
@@ -227,8 +247,10 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   void _onScroll() {
     // Get the current scroll position

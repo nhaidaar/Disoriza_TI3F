@@ -1,7 +1,9 @@
+import 'package:disoriza/features/riwayat/presentation/pages/riwayat_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../widgets/riwayat_card.dart';
 import '../../../../core/common/custom_empty_state.dart';
@@ -9,7 +11,6 @@ import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
 import '../cubit/riwayat_cubit.dart';
-import '../../data/models/riwayat_model.dart';
 
 class RiwayatPage extends StatefulWidget {
   final User user;
@@ -70,41 +71,63 @@ class _RiwayatPageState extends State<RiwayatPage> {
           ],
         ),
       ),
-      body: BlocBuilder<RiwayatCubit, RiwayatState>(
-        builder: (context, state) {
-          if (state is RiwayatLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is RiwayatLoaded) {
-            // Filter the list based on the search query
-            final filteredList = state.histModels.where((riwayat) {
-              final title = riwayat.id_disease?.name?.toLowerCase() ?? '';
-              return title.contains(_searchQuery.toLowerCase());
-            }).toList();
-
-            if (filteredList.isEmpty) {
-              return const Center(child: RiwayatEmptyState());
-            }
-            return ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: filteredList.map((riwayat) {
-                    return RiwayatCard(
-                      image: 'assets/images/cardhist.jpeg',
-                      title: riwayat.id_disease?.name ?? 'Unknown Disease',
-                      timeAgo: 'Some time ago',
-                    );
-                  }).toList(),
-                ),
-              ],
-            );
-          } else if (state is RiwayatError) {
-            return Center(child: Text('Error: ${state.message}'));
-          }
-          return const Center(child: RiwayatEmptyState());
+      body: BlocListener<RiwayatCubit, RiwayatState>(
+        listener: (context, state) {
+                if (state is RiwayatDiseaseLoaded) {
+                            Navigator.of(context).push(
+                              PageTransition(
+                                child: RiwayatDetail(
+                                  user: widget.user,
+                                  riwayat: state.diseaseModel,
+                                  image: 'assets/images/cardhist.jpeg',
+                                  title: state.diseaseModel.id_disease!.name.toString(),
+                                ),
+                                type: PageTransitionType.rightToLeft,
+                              ),
+                            );
+                          }
         },
+        child: BlocBuilder<RiwayatCubit, RiwayatState>(
+          builder: (context, state) {
+            if (state is RiwayatLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is RiwayatLoaded) {
+              // Filter the list based on the search query
+              final filteredList = state.histModels.where((riwayat) {
+                final title = riwayat.id_disease?.name?.toLowerCase() ?? '';
+                return title.contains(_searchQuery.toLowerCase());
+              }).toList();
+
+              if (filteredList.isEmpty) {
+                return const Center(child: RiwayatEmptyState());
+              }
+              return ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: filteredList.map((riwayat) {
+                      return RiwayatCard(
+                        // id: riwayat.id_disease?.id ?? '',
+                        image: 'assets/images/cardhist.jpeg',
+                        title: riwayat.id_disease?.name ?? 'Unknown Disease',
+                        timeAgo: 'Some time ago',
+                        onTap: () {
+                          context.read<RiwayatCubit>().fetchDisease(
+                              id_disease: riwayat.id_disease?.id ?? '');
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+              );
+            } else if (state is RiwayatError) {
+              return Center(child: Text('Error: ${state.message}'));
+            }
+            return const Center(child: RiwayatEmptyState());
+          },
+        ),
       ),
     );
   }
