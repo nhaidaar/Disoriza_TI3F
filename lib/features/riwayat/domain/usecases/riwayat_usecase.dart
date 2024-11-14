@@ -3,7 +3,6 @@ import 'package:appwrite/models.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/riwayat_model.dart';
-import '../../data/models/disease_model.dart';
 import '../repositories/riwayat_repository.dart';
 
 class RiwayatUsecase {
@@ -24,7 +23,7 @@ class RiwayatUsecase {
     }) {
       return _RiwayatRepository.deleteRiwayat(histId: histId);
     }
-    Future<Either<AppwriteException, DiseaseModel>> fetchDisease({
+    Future<Either<AppwriteException, RiwayatModel>> fetchDisease({
       required String id_disease,
     }) {
       return _RiwayatRepository.fetchDisease(

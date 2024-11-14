@@ -3,7 +3,6 @@ import 'package:appwrite/models.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/riwayat_model.dart';
-import '../../data/models/disease_model.dart';
 
 abstract class RiwayatRepository {
   Future<Either<AppwriteException, List<RiwayatModel>>> fetchAllRiwayat({
@@ -13,7 +12,7 @@ abstract class RiwayatRepository {
   Future<Either<AppwriteException, void>> deleteRiwayat({
     required String histId,
   });
-  Future<Either<AppwriteException, DiseaseModel>> fetchDisease({
+  Future<Either<AppwriteException, RiwayatModel>> fetchDisease({
     required String id_disease,
   });
 }
