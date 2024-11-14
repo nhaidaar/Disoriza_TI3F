@@ -93,7 +93,7 @@ class _PostPageState extends State<PostPage> {
                     if (commentController.text.isNotEmpty) {
                       final comment = CommentModel(
                         idPost: PostModel(id: widget.postModel.id),
-                        idCommentator: UserModel(id: widget.user.$id),
+                        commentator: UserModel(id: widget.user.$id),
                         value: commentController.text,
                         date: DateTime.now().millisecondsSinceEpoch,
                       );

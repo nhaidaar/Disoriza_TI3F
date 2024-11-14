@@ -13,6 +13,6 @@ abstract class RiwayatRepository {
     required String histId,
   });
   Future<Either<AppwriteException, RiwayatModel>> fetchDisease({
-    required String id_disease,
+    required String idDisease,
   });
 }

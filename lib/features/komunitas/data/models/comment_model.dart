@@ -3,7 +3,7 @@ import 'post_model.dart';
 
 class CommentModel {
   final String? id;
-  final UserModel? idCommentator;
+  final UserModel? commentator;
   final String? value;
   final List<String>? likes;
   final PostModel? idPost;
@@ -11,7 +11,7 @@ class CommentModel {
 
   const CommentModel({
     this.id,
-    this.idCommentator,
+    this.commentator,
     this.value,
     this.likes,
     this.idPost,
@@ -21,9 +21,11 @@ class CommentModel {
   factory CommentModel.fromMap(Map<String, dynamic> map) {
     return CommentModel(
       id: map['\$id'],
-      idCommentator: UserModel.fromMap(map['id_commentator']),
+      commentator: UserModel.fromMap(map['commentator']),
       value: map['value'],
-      likes: [],
+      likes: (map['likes'] as List<dynamic>?)?.map((like) {
+        return like['\$id'].toString();
+      }).toList(),
       idPost: PostModel.fromMap(map['id_post']),
       date: map['date'],
     );
@@ -32,7 +34,7 @@ class CommentModel {
   // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
-      'id_commentator': idCommentator?.id,
+      'commentator': commentator?.id,
       'value': value,
       'id_post': idPost?.id,
       'likes': likes ?? [],
@@ -42,7 +44,7 @@ class CommentModel {
 
   CommentModel copyWith({
     String? id,
-    UserModel? idCommentator,
+    UserModel? commentator,
     String? value,
     List<String>? likes,
     PostModel? idPost,
@@ -50,7 +52,7 @@ class CommentModel {
   }) {
     return CommentModel(
       id: id ?? this.id,
-      idCommentator: idCommentator ?? this.idCommentator,
+      commentator: commentator ?? this.commentator,
       value: value ?? this.value,
       likes: likes ?? this.likes,
       idPost: idPost ?? this.idPost,

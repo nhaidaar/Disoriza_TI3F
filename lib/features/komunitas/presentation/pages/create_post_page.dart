@@ -234,7 +234,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                   post: PostModel(
                                     title: _titleController.text,
                                     content: _descriptionController.text,
-                                    creator: UserModel(id: widget.user.$id),
+                                    author: UserModel(id: widget.user.$id),
                                     date: DateTime.now().millisecondsSinceEpoch,
                                   ),
                                 );

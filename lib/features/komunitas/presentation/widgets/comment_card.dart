@@ -51,7 +51,7 @@ class _CommentCardState extends State<CommentCard> {
           Row(
             children: [
               // Avatar
-              CustomAvatar(link: widget.commentModel.idCommentator!.profilePicture),
+              CustomAvatar(link: widget.commentModel.commentator!.profilePicture),
 
               const SizedBox(width: 12),
 
@@ -60,8 +60,8 @@ class _CommentCardState extends State<CommentCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.commentModel.idCommentator != null
-                        ? widget.commentModel.idCommentator!.name.toString()
+                    widget.commentModel.commentator != null
+                        ? widget.commentModel.commentator!.name.toString()
                         : 'Disoriza User',
                     style: mediumTS.copyWith(color: neutral100),
                   ),

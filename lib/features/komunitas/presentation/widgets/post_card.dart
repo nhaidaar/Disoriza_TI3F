@@ -76,7 +76,7 @@ class _PostCardState extends State<PostCard> {
             Row(
               children: [
                 // Avatar
-                CustomAvatar(link: widget.postModel.creator!.profilePicture),
+                CustomAvatar(link: widget.postModel.author!.profilePicture),
 
                 const SizedBox(width: 12),
 
@@ -85,8 +85,8 @@ class _PostCardState extends State<PostCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.postModel.creator != null
-                          ? widget.postModel.creator!.name.toString()
+                      widget.postModel.author != null
+                          ? widget.postModel.author!.name.toString()
                           : 'Disoriza User',
                       style: mediumTS.copyWith(color: neutral100),
                     ),
@@ -182,7 +182,7 @@ class _PostCardState extends State<PostCard> {
 
                 if (isLiked && !widget.fullPost && widget.isAktivitas) ...[
                   CustomAvatar(
-                    link: widget.postModel.creator!.profilePicture,
+                    link: widget.postModel.author!.profilePicture,
                     radius: 10,
                   ),
                   const SizedBox(width: 4),

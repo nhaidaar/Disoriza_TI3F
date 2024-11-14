@@ -1,5 +1,3 @@
-// import '../../../komunitas/data/models/post_model.dart';
-
 class UserModel {
   final String? id;
   final String? email;
@@ -38,7 +36,7 @@ class UserModel {
       comments: (map['comments'] as List<dynamic>?)?.map((like) {
         return like['\$id'].toString();
       }).toList(),
-      profilePicture: map['profile_picture'],
+      profilePicture: map['url_image'],
     );
   }
 
@@ -51,7 +49,7 @@ class UserModel {
       'liked_comments': likedComments ?? [],
       'posts': posts ?? [],
       'comments': comments ?? [],
-      'profile_picture': profilePicture,
+      'url_image': profilePicture,
     };
   }
 

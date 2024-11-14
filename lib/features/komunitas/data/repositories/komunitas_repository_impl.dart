@@ -22,8 +22,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
       if (max != null) queries.add(Query.limit(max));
 
       final response = await Databases(client).listDocuments(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
         queries: queries,
       );
 
@@ -54,8 +54,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
       // Get user data
       final response = await Databases(client)
           .getDocument(
-            databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-            collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
+            databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+            collectionId: dotenv.get("APPWRITE_USER_COLLECTION_ID"),
             documentId: user.$id,
           )
           .then((doc) => UserModel.fromMap(doc.data));
@@ -102,8 +102,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
       if (queries.isEmpty) return const Right([]);
 
       final userActivity = await Databases(client).listDocuments(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
         queries: queries,
       );
 
@@ -124,8 +124,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       await Databases(client).createDocument(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
         documentId: ID.unique(),
         data: post.toMap(),
       );
@@ -140,14 +140,14 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   Future<Either<AppwriteException, void>> deleteAllPosts() async {
     try {
       final documents = await Databases(client).listDocuments(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
       );
 
       for (final document in documents.documents) {
         await Databases(client).deleteDocument(
-          databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-          collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+          databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+          collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
           documentId: document.$id,
         );
       }
@@ -165,8 +165,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       await Databases(client).updateDocument(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
         documentId: post.id.toString(),
         data: {'likes': post.likes},
       );
@@ -184,8 +184,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       final response = await Databases(client).listDocuments(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_COMMENT_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_COMMENT_COLLECTION_ID"),
         queries: [
           Query.equal('id_post', postId),
           Query.orderDesc("\$createdAt"),
@@ -221,8 +221,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       await Databases(client).createDocument(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_COMMENT_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_COMMENT_COLLECTION_ID"),
         documentId: ID.unique(),
         data: comment.toMap(),
       );
@@ -240,8 +240,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       await Databases(client).updateDocument(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_COMMENT_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_COMMENT_COLLECTION_ID"),
         documentId: comment.id.toString(),
         data: {'likes': comment.likes},
       );

@@ -5,7 +5,7 @@ class PostModel {
   final String? title;
   final String? content;
   final String? urlImage;
-  final UserModel? creator;
+  final UserModel? author;
   final List<String>? likes;
   final List<String>? comments;
   final int? date;
@@ -15,7 +15,7 @@ class PostModel {
     this.title,
     this.content,
     this.urlImage,
-    this.creator,
+    this.author,
     this.likes,
     this.comments,
     this.date,
@@ -27,7 +27,7 @@ class PostModel {
       title: map['title'],
       content: map['content'],
       urlImage: map['url_image'],
-      creator: UserModel.fromMap(map['id_creator']),
+      author: UserModel.fromMap(map['author']),
       likes: (map['likes'] as List<dynamic>?)?.map((like) {
         return like['\$id'].toString();
       }).toList(),
@@ -44,7 +44,7 @@ class PostModel {
       'title': title,
       'content': content,
       'url_image': urlImage,
-      'id_creator': creator?.id,
+      'author': author?.id,
       'likes': likes ?? [],
       'comments': comments ?? [],
       'date': date,
@@ -56,7 +56,7 @@ class PostModel {
     String? title,
     String? content,
     String? urlImage,
-    UserModel? creator,
+    UserModel? author,
     List<String>? likes,
     List<String>? comments,
     int? date,
@@ -66,7 +66,7 @@ class PostModel {
       title: title ?? this.title,
       content: content ?? this.content,
       urlImage: urlImage ?? this.urlImage,
-      creator: creator ?? this.creator,
+      author: author ?? this.author,
       likes: likes ?? this.likes,
       comments: comments ?? this.comments,
       date: date ?? this.date,

@@ -68,8 +68,8 @@ class _BerandaKomunitasCardState extends State<BerandaKomunitasCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.postModel.creator != null
-                          ? widget.postModel.creator!.name.toString()
+                      widget.postModel.author != null
+                          ? widget.postModel.author!.name.toString()
                           : 'Disoriza User',
                       style: mediumTS.copyWith(color: neutral100),
                     ),

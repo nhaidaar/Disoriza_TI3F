@@ -17,7 +17,12 @@ import '../widgets/riwayat_detail_card.dart';
 import '../widgets/riwayat_detail_remote.dart';
 
 class RiwayatDetail extends StatefulWidget {
-  const RiwayatDetail({super.key, required this.image, required this.title, required this.riwayat, required this.user});
+  const RiwayatDetail(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.riwayat,
+      required this.user});
   final User user;
   final String image;
   final String title;
@@ -85,7 +90,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             height: 380,
             decoration: BoxDecoration(
               borderRadius: defaultSmoothRadius,
-              image:  DecorationImage(
+              image: DecorationImage(
                 image: AssetImage(widget.image),
                 fit: BoxFit.cover,
               ),
@@ -142,8 +147,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             index: 0,
             controller: _scrollController,
             title: 'Definisi',
-            content:
-                widget.riwayat.id_disease!.definition.toString(),
+            content: widget.riwayat.idDisease!.definition.toString(),
           ),
 
           const SizedBox(height: 8),
@@ -153,8 +157,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             index: 1,
             controller: _scrollController,
             title: 'Gejala',
-            content:
-            widget.riwayat.id_disease!.symtomps.toString(),
+            content: widget.riwayat.idDisease!.symtomps.toString(),
           ),
 
           const SizedBox(height: 8),
@@ -164,8 +167,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             index: 2,
             controller: _scrollController,
             title: 'Solusi',
-            content:
-               widget.riwayat.id_disease!.solution.toString(),
+            content: widget.riwayat.idDisease!.solution.toString(),
           ),
 
           const SizedBox(height: 150),
@@ -208,49 +210,48 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
     );
   }
 
-Future<void> handleDeleteRiwayat(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) => Builder(
-      builder: (dialogContext) => CustomPopup(
-        icon: IconsaxPlusLinear.trash,
-        iconColor: dangerMain,
-        title: 'Ingin menghapus riwayat ini?',
-        subtitle: 'Setelah dihapus, data tidak dapat diurungkan.',
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  backgroundColor: dangerMain,
-                  pressedColor: dangerPressed,
-                  onTap: () {
-                    dialogContext
-                        .read<RiwayatCubit>()
-                        .deleteRiwayat(histId: widget.riwayat.id.toString());
-                        // .deleteRiwayat(histId: widget.riwayat.id.toString(), user: widget.user);
-                    Navigator.of(context).pop();
-                  },
-                  text: 'Ya, hapus',
+  Future<void> handleDeleteRiwayat(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => Builder(
+        builder: (dialogContext) => CustomPopup(
+          icon: IconsaxPlusLinear.trash,
+          iconColor: dangerMain,
+          title: 'Ingin menghapus riwayat ini?',
+          subtitle: 'Setelah dihapus, data tidak dapat diurungkan.',
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    backgroundColor: dangerMain,
+                    pressedColor: dangerPressed,
+                    onTap: () {
+                      dialogContext
+                          .read<RiwayatCubit>()
+                          .deleteRiwayat(histId: widget.riwayat.id.toString());
+                      // .deleteRiwayat(histId: widget.riwayat.id.toString(), user: widget.user);
+                      Navigator.of(context).pop();
+                    },
+                    text: 'Ya, hapus',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: CustomButton(
-                  backgroundColor: neutral10,
-                  pressedColor: neutral50,
-                  onTap: () => Navigator.of(context).pop(),
-                  text: 'Batal',
+                const SizedBox(width: 4),
+                Expanded(
+                  child: CustomButton(
+                    backgroundColor: neutral10,
+                    pressedColor: neutral50,
+                    onTap: () => Navigator.of(context).pop(),
+                    text: 'Batal',
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   void _onScroll() {
     // Get the current scroll position

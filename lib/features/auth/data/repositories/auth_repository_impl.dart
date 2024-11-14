@@ -37,8 +37,8 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       await Databases(client).createDocument(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_USER_COLLECTION_ID"),
         documentId: account.$id,
         data: UserModel(
           name: name,

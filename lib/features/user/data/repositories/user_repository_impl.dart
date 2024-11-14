@@ -15,8 +15,8 @@ class UserRepositoryImpl implements UserRepository {
   }) async {
     try {
       final response = await Databases(client).getDocument(
-        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
+        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("APPWRITE_USER_COLLECTION_ID"),
         documentId: uid,
       );
 

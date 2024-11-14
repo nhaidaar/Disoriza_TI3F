@@ -8,15 +8,18 @@ import '../../domain/usecases/riwayat_usecase.dart';
 part 'riwayat_state.dart';
 
 class RiwayatCubit extends Cubit<RiwayatState> {
-  final RiwayatUsecase _RiwayatUsecase;
+  final RiwayatUsecase _riwayatUsecase;
 
-  RiwayatCubit(this._RiwayatUsecase) : super(RiwayatInitial());
+  RiwayatCubit(this._riwayatUsecase) : super(RiwayatInitial());
 
-  Future<void> fetchAllRiwayat({bool latest = false, required User user,}) async {
+  Future<void> fetchAllRiwayat({
+    bool latest = false,
+    required User user,
+  }) async {
     try {
       emit(RiwayatLoading());
 
-      final response = await _RiwayatUsecase.fetchAllRiwayat(latest: latest, user: user);
+      final response = await _riwayatUsecase.fetchAllRiwayat(latest: latest, user: user);
       response.fold(
         (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
         (success) => emit(RiwayatLoaded(histModels: success)),
@@ -26,13 +29,12 @@ class RiwayatCubit extends Cubit<RiwayatState> {
     }
   }
 
-
   // Future<void> deleteRiwayat({required String histId, required User user}) async {
   Future<void> deleteRiwayat({required String histId}) async {
     try {
       emit(RiwayatLoading());
 
-      final response = await _RiwayatUsecase.deleteRiwayat(histId: histId);
+      final response = await _riwayatUsecase.deleteRiwayat(histId: histId);
       response.fold(
         (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
         (success) {
@@ -45,11 +47,11 @@ class RiwayatCubit extends Cubit<RiwayatState> {
     }
   }
 
-  Future<void> fetchDisease({required String id_disease}) async {
+  Future<void> fetchDisease({required String idDisease}) async {
     try {
       emit(RiwayatLoading());
 
-      final response = await _RiwayatUsecase.fetchDisease(id_disease: id_disease);
+      final response = await _riwayatUsecase.fetchDisease(idDisease: idDisease);
       response.fold(
         (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
         (success) => emit(RiwayatDiseaseLoaded(diseaseModel: success)),

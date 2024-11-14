@@ -80,7 +80,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
                   user: widget.user,
                   riwayat: state.diseaseModel,
                   image: 'assets/images/cardhist.jpeg',
-                  title: state.diseaseModel.id_disease!.name.toString(),
+                  title: state.diseaseModel.idDisease!.name.toString(),
                 ),
                 type: PageTransitionType.rightToLeft,
               ),
@@ -94,7 +94,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
             } else if (state is RiwayatLoaded) {
               // Filter the list based on the search query
               final filteredList = state.histModels.where((riwayat) {
-                final title = riwayat.id_disease?.name?.toLowerCase() ?? '';
+                final title = riwayat.idDisease?.name?.toLowerCase() ?? '';
                 return title.contains(_searchQuery.toLowerCase());
               }).toList();
 
@@ -109,14 +109,14 @@ class _RiwayatPageState extends State<RiwayatPage> {
                     runSpacing: 8,
                     children: filteredList.map((riwayat) {
                       return RiwayatCard(
-                        // id: riwayat.id_disease?.id ?? '',
+                        // id: riwayat.idDisease?.id ?? '',
                         image: 'assets/images/cardhist.jpeg',
-                        title: riwayat.id_disease?.name ?? 'Unknown Disease',
+                        title: riwayat.idDisease?.name ?? 'Unknown Disease',
                         timeAgo: 'Some time ago',
                         onTap: () {
                           context
                               .read<RiwayatCubit>()
-                              .fetchDisease(id_disease: riwayat.id_disease?.id ?? '');
+                              .fetchDisease(idDisease: riwayat.idDisease?.id ?? '');
                         },
                       );
                     }).toList(),

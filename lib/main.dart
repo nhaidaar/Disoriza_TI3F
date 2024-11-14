@@ -29,8 +29,8 @@ Future<void> main() async {
   await dotenv.load();
   Client client = Client();
   client
-      .setEndpoint(dotenv.get('FLASK_APPWRITE_URL'))
-      .setProject(dotenv.get('FLASK_APPWRITE_PROJECT_ID'))
+      .setEndpoint(dotenv.get('APPWRITE_URL'))
+      .setProject(dotenv.get('APPWRITE_PROJECT_ID'))
       .setSelfSigned(status: true);
 
   runApp(Disoriza(client: client));
