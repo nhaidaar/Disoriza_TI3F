@@ -18,12 +18,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int selectedIndex = 0;
+  int _selectedIndex = 0;
+
+  void updateIndex(int newIndex) {
+    setState(() => _selectedIndex = newIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
     final pages = [
-      BerandaPage(user: widget.user),
+      BerandaPage(user: widget.user, updateIndex: updateIndex),
       RiwayatPage(user: widget.user),
       KomunitasPage(user: widget.user),
       const SetelanPage(),
@@ -31,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       // Select pages by index
-      body: pages[selectedIndex],
+      body: pages[_selectedIndex],
 
       bottomNavigationBar: Container(
         height: 80,
@@ -48,9 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: IconsaxPlusLinear.home_2,
               activeIcon: IconsaxPlusBold.home_2,
               title: 'Beranda',
-              selected: selectedIndex == 0,
+              selected: _selectedIndex == 0,
               onTap: () {
-                if (selectedIndex != 0) setState(() => selectedIndex = 0);
+                if (_selectedIndex != 0) updateIndex(0);
               },
             ),
 
@@ -59,9 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: IconsaxPlusLinear.clipboard_text,
               activeIcon: IconsaxPlusBold.clipboard_text,
               title: 'Riwayat',
-              selected: selectedIndex == 1,
+              selected: _selectedIndex == 1,
               onTap: () {
-                if (selectedIndex != 1) setState(() => selectedIndex = 1);
+                if (_selectedIndex != 1) updateIndex(1);
               },
             ),
 
@@ -83,9 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: IconsaxPlusLinear.story,
               activeIcon: IconsaxPlusBold.story,
               title: 'Komunitas',
-              selected: selectedIndex == 2,
+              selected: _selectedIndex == 2,
               onTap: () {
-                if (selectedIndex != 2) setState(() => selectedIndex = 2);
+                if (_selectedIndex != 2) updateIndex(2);
               },
             ),
 
@@ -94,9 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: IconsaxPlusLinear.setting,
               activeIcon: IconsaxPlusBold.setting,
               title: 'Setelan',
-              selected: selectedIndex == 3,
+              selected: _selectedIndex == 3,
               onTap: () {
-                if (selectedIndex != 3) setState(() => selectedIndex = 3);
+                if (_selectedIndex != 3) updateIndex(3);
               },
             ),
           ],

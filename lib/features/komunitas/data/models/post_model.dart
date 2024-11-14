@@ -28,8 +28,12 @@ class PostModel {
       content: map['content'],
       urlImage: map['url_image'],
       creator: UserModel.fromMap(map['id_creator']),
-      likes: [],
-      comments: [],
+      likes: (map['likes'] as List<dynamic>?)?.map((like) {
+        return like['\$id'].toString();
+      }).toList(),
+      comments: (map['comments'] as List<dynamic>?)?.map((like) {
+        return like['\$id'].toString();
+      }).toList(),
       date: map['date'],
     );
   }

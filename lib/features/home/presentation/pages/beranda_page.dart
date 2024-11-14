@@ -19,7 +19,8 @@ import '../widgets/beranda_pindai_card.dart';
 
 class BerandaPage extends StatefulWidget {
   final User user;
-  const BerandaPage({super.key, required this.user});
+  final Function(int) updateIndex;
+  const BerandaPage({super.key, required this.user, required this.updateIndex});
 
   @override
   State<BerandaPage> createState() => _BerandaPageState();
@@ -39,7 +40,7 @@ class _BerandaPageState extends State<BerandaPage> {
 
   Future<void> fetchData() async {
     context.read<UserCubit>().fetchUserModel(uid: widget.user.$id);
-    context.read<KomunitasCubit>().fetchAllPosts();
+    context.read<KomunitasCubit>().fetchAllPosts(max: 3);
   }
 
   @override
@@ -119,9 +120,12 @@ class _BerandaPageState extends State<BerandaPage> {
                           style: mediumTS.copyWith(fontSize: 18, color: neutral100),
                         ),
                         const Spacer(),
-                        Text(
-                          'Lihat semua',
-                          style: mediumTS.copyWith(fontSize: 12, color: neutral70),
+                        GestureDetector(
+                          onTap: () => widget.updateIndex(2),
+                          child: Text(
+                            'Lihat semua',
+                            style: mediumTS.copyWith(fontSize: 12, color: neutral70),
+                          ),
                         ),
                       ],
                     ),
@@ -181,9 +185,12 @@ class _BerandaPageState extends State<BerandaPage> {
                           style: mediumTS.copyWith(fontSize: 18, color: neutral100),
                         ),
                         const Spacer(),
-                        Text(
-                          'Lihat semua',
-                          style: mediumTS.copyWith(fontSize: 12, color: neutral70),
+                        GestureDetector(
+                          onTap: () => widget.updateIndex(1),
+                          child: Text(
+                            'Lihat semua',
+                            style: mediumTS.copyWith(fontSize: 12, color: neutral70),
+                          ),
                         ),
                       ],
                     ),

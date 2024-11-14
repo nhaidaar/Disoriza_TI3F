@@ -11,11 +11,17 @@ class KomunitasCubit extends Cubit<KomunitasState> {
   final KomunitasUsecase _komunitasUsecase;
   KomunitasCubit(this._komunitasUsecase) : super(KomunitasInitial());
 
-  Future<void> fetchAllPosts({bool latest = false}) async {
+  Future<void> fetchAllPosts({
+    bool latest = false,
+    int? max,
+  }) async {
     try {
       emit(KomunitasLoading());
 
-      final response = await _komunitasUsecase.fetchAllPosts(latest: latest);
+      final response = await _komunitasUsecase.fetchAllPosts(
+        latest: latest,
+        max: max,
+      );
       response.fold(
         (error) => emit(KomunitasError(message: '${error.code} ${error.message}')),
         (success) => emit(KomunitasLoaded(postModels: success)),

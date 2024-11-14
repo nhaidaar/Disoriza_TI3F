@@ -1,16 +1,16 @@
-import 'package:disoriza/features/riwayat/presentation/pages/riwayat_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../widgets/riwayat_card.dart';
 import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
 import '../cubit/riwayat_cubit.dart';
+import '../widgets/riwayat_card.dart';
+import 'riwayat_detail.dart';
 
 class RiwayatPage extends StatefulWidget {
   final User user;
@@ -73,19 +73,19 @@ class _RiwayatPageState extends State<RiwayatPage> {
       ),
       body: BlocListener<RiwayatCubit, RiwayatState>(
         listener: (context, state) {
-                if (state is RiwayatDiseaseLoaded) {
-                            Navigator.of(context).push(
-                              PageTransition(
-                                child: RiwayatDetail(
-                                  user: widget.user,
-                                  riwayat: state.diseaseModel,
-                                  image: 'assets/images/cardhist.jpeg',
-                                  title: state.diseaseModel.id_disease!.name.toString(),
-                                ),
-                                type: PageTransitionType.rightToLeft,
-                              ),
-                            );
-                          }
+          if (state is RiwayatDiseaseLoaded) {
+            Navigator.of(context).push(
+              PageTransition(
+                child: RiwayatDetail(
+                  user: widget.user,
+                  riwayat: state.diseaseModel,
+                  image: 'assets/images/cardhist.jpeg',
+                  title: state.diseaseModel.id_disease!.name.toString(),
+                ),
+                type: PageTransitionType.rightToLeft,
+              ),
+            );
+          }
         },
         child: BlocBuilder<RiwayatCubit, RiwayatState>(
           builder: (context, state) {
@@ -114,8 +114,9 @@ class _RiwayatPageState extends State<RiwayatPage> {
                         title: riwayat.id_disease?.name ?? 'Unknown Disease',
                         timeAgo: 'Some time ago',
                         onTap: () {
-                          context.read<RiwayatCubit>().fetchDisease(
-                              id_disease: riwayat.id_disease?.id ?? '');
+                          context
+                              .read<RiwayatCubit>()
+                              .fetchDisease(id_disease: riwayat.id_disease?.id ?? '');
                         },
                       );
                     }).toList(),

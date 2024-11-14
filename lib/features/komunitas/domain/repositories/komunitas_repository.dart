@@ -8,6 +8,7 @@ import '../../data/models/post_model.dart';
 abstract class KomunitasRepository {
   Future<Either<AppwriteException, List<PostModel>>> fetchAllPosts({
     bool latest = false,
+    int? max,
   });
 
   Future<Either<AppwriteException, List<PostModel>>> fetchAktivitas({

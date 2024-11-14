@@ -15,28 +15,24 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   @override
   Future<Either<AppwriteException, List<PostModel>>> fetchAllPosts({
     bool latest = false,
+    int? max,
   }) async {
     try {
+      List<String> queries = [Query.orderDesc("\$createdAt")];
+      if (max != null) queries.add(Query.limit(max));
+
       final response = await Databases(client).listDocuments(
         databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
         collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
-        queries: [Query.orderDesc("\$createdAt")],
+        queries: queries,
       );
 
+      // Convert responses to PostModel
       List<PostModel> posts = List<PostModel>.from(
-        response.documents.map((doc) {
-          final post = PostModel.fromMap(doc.data);
-          return post.copyWith(
-            likes: (doc.data['likes'] as List<dynamic>?)
-                ?.map((like) => like['\$id'].toString())
-                .toList(),
-            comments: (doc.data['comments'] as List<dynamic>?)
-                ?.map((like) => like['\$id'].toString())
-                .toList(),
-          );
-        }),
+        response.documents.map((doc) => PostModel.fromMap(doc.data)),
       );
 
+      // If not sort by time, sort by likes count
       if (!latest) {
         posts.sort(
           (a, b) => (b.likes ?? []).length.compareTo((a.likes ?? []).length),
@@ -55,33 +51,66 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
     required String filter,
   }) async {
     try {
-      // final response = await Databases(client)
-      //     .getDocument(
-      //       databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
-      //       collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
-      //       documentId: user.$id,
-      //     )
-      //     .then((doc) => UserModel.fromMap(doc.data));
+      // Get user data
+      final response = await Databases(client)
+          .getDocument(
+            databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
+            collectionId: dotenv.get("FLASK_APPWRITE_USER_COLLECTION_ID"),
+            documentId: user.$id,
+          )
+          .then((doc) => UserModel.fromMap(doc.data));
 
-      List<PostModel> posts = [];
+      // Set all queries by filter
+      List<String> queries = [];
+      switch (filter) {
+        case 'Postingan':
+          if (response.posts?.isNotEmpty ?? false) {
+            queries.add(Query.equal("\$id", response.posts));
+          }
+          break;
+        case 'Disukai':
+          if (response.likedPosts?.isNotEmpty ?? false) {
+            queries.add(Query.equal("\$id", response.likedPosts));
+          }
+          break;
+        case 'Komentar':
+          if (response.likedComments?.isNotEmpty ?? false) {
+            queries.add(Query.equal("\$id", response.likedComments));
+          }
+          break;
+        default:
+          List<String> combineQueries = [];
+          if (response.posts?.isNotEmpty ?? false) {
+            combineQueries.add(Query.equal("\$id", response.posts));
+          }
+          if (response.likedPosts?.isNotEmpty ?? false) {
+            combineQueries.add(Query.equal("\$id", response.likedPosts));
+          }
+          if (response.likedComments?.isNotEmpty ?? false) {
+            combineQueries.add(Query.equal("\$id", response.likedComments));
+          }
 
-      // switch (filter) {
-      //   case 'Semua':
-      //     posts.addAll(response.posts ?? []);
-      //     posts.addAll(response.likedPosts ?? []);
-      //     break;
-      //   case 'Postingan':
-      //     posts.addAll(response.posts ?? []);
-      //     break;
-      //   case 'Disukai':
-      //     posts.addAll(response.likedPosts ?? []);
-      //     break;
-      //   case 'Komentar':
-      //     // queries.add(Query.contains('comments.\$id', user!.$id));
-      //     break;
-      //   default:
-      //     break;
-      // }
+          if (combineQueries.length == 1) {
+            queries.add(combineQueries[0]);
+          } else if (combineQueries.length > 1) {
+            queries.add(Query.or(combineQueries));
+          }
+          break;
+      }
+
+      // If user doesn't have activity, return []
+      if (queries.isEmpty) return const Right([]);
+
+      final userActivity = await Databases(client).listDocuments(
+        databaseId: dotenv.get("FLASK_APPWRITE_DATABASES_ID"),
+        collectionId: dotenv.get("FLASK_APPWRITE_POST_COLLECTION_ID"),
+        queries: queries,
+      );
+
+      //  Convert to PostModel
+      List<PostModel> posts = List<PostModel>.from(
+        userActivity.documents.map((doc) => PostModel.fromMap(doc.data)),
+      );
 
       return Right(posts);
     } on AppwriteException catch (e) {

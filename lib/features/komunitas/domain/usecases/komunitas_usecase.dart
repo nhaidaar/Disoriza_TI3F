@@ -12,9 +12,11 @@ class KomunitasUsecase {
 
   Future<Either<AppwriteException, List<PostModel>>> fetchAllPosts({
     bool latest = false,
+    int? max,
   }) {
     return _komunitasRepository.fetchAllPosts(
       latest: latest,
+      max: max,
     );
   }
 
