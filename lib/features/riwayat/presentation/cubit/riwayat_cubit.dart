@@ -1,10 +1,8 @@
 import 'package:appwrite/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/riwayat_model.dart';
-import '../../data/models/disease_model.dart';
 import '../../domain/usecases/riwayat_usecase.dart';
 
 part 'riwayat_state.dart';
@@ -29,7 +27,8 @@ class RiwayatCubit extends Cubit<RiwayatState> {
   }
 
 
-  Future<void> deleteRiwayat({required String histId, required User user}) async {
+  // Future<void> deleteRiwayat({required String histId, required User user}) async {
+  Future<void> deleteRiwayat({required String histId}) async {
     try {
       emit(RiwayatLoading());
 
@@ -38,7 +37,7 @@ class RiwayatCubit extends Cubit<RiwayatState> {
         (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
         (success) {
           emit(RiwayatDeleted());
-          fetchAllRiwayat(user: user);
+          // fetchAllRiwayat(user: user);
         },
       );
     } catch (_) {

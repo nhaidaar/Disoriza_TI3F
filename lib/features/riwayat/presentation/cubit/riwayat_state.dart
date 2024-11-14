@@ -20,7 +20,7 @@ class RiwayatLoaded extends RiwayatState {
 }
 
 class RiwayatDiseaseLoaded extends RiwayatState {
-  final DiseaseModel diseaseModel;
+  final RiwayatModel diseaseModel;
 
   const RiwayatDiseaseLoaded({required this.diseaseModel});
 
