@@ -189,7 +189,7 @@ class _BerandaPageState extends State<BerandaPage> {
                     ),
                   ),
                   !isRiwayatEmpty
-                      ? const Wrap(
+                      ? Wrap(
                           spacing: 8,
                           runSpacing: 8,
                           children: [
@@ -197,21 +197,25 @@ class _BerandaPageState extends State<BerandaPage> {
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
+                              onTap: () { },
                             ),
                             RiwayatCard(
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
+                              onTap: () { },
                             ),
                             RiwayatCard(
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
+                              onTap: () { },
                             ),
                             RiwayatCard(
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
+                              onTap: () { },
                             ),
                           ],
                         )
