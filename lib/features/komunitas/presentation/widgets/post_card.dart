@@ -39,11 +39,13 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLiked = false;
+  bool isCommented = false;
   bool isLatest = false;
 
   @override
   void initState() {
     isLiked = (widget.postModel.likes ?? []).contains(widget.user.$id);
+    isCommented = (widget.postModel.comments ?? []).contains(widget.user.$id);
     super.initState();
   }
 
@@ -92,9 +94,7 @@ class _PostCardState extends State<PostCard> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      timeago.format(
-                        DateTime.fromMillisecondsSinceEpoch(widget.postModel.date ?? 0),
-                      ),
+                      timeago.format(widget.postModel.date ?? DateTime.now()),
                       style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                     )
                   ],
@@ -178,9 +178,8 @@ class _PostCardState extends State<PostCard> {
                   style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                 ),
 
-                const Spacer(),
-
-                if (isLiked && !widget.fullPost && widget.isAktivitas) ...[
+                if ((isLiked || isCommented) && !widget.fullPost && widget.isAktivitas) ...[
+                  const Spacer(),
                   CustomAvatar(
                     link: widget.postModel.author!.profilePicture,
                     radius: 10,
@@ -192,7 +191,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Kamu menyukai postingan ini',
+                    'Kamu ${isCommented ? 'mengomentari' : 'menyukai'} postingan ini',
                     style: mediumTS.copyWith(fontSize: 12, color: neutral70),
                   ),
                 ]

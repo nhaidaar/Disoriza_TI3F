@@ -24,18 +24,31 @@ class UserModel {
       id: map['\$id'],
       email: map['email'],
       name: map['name'],
-      likedPosts: (map['liked_post'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+
+      // Take the id of liked_post entity
+      likedPosts: (map['liked_post'] as List<dynamic>?)?.map((likedPost) {
+        return likedPost['\$id'].toString();
       }).toList(),
-      likedComments: (map['liked_comment'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+
+      // Take the id_post of liked_comment entity
+      likedComments: (map['liked_comment'] as List<dynamic>?)?.where((likedComment) {
+        return likedComment is Map<String, dynamic> && likedComment.containsKey('id_post');
+      }).map((likedComment) {
+        return (likedComment['id_post'] as Map<String, dynamic>)['\$id'].toString();
       }).toList(),
-      posts: (map['posts'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+
+      // Take the id of post entity
+      posts: (map['posts'] as List<dynamic>?)?.map((post) {
+        return post['\$id'].toString();
       }).toList(),
-      comments: (map['comments'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+
+      // Take the id_post of comments entity
+      comments: (map['comments'] as List<dynamic>?)?.where((comment) {
+        return comment is Map<String, dynamic> && comment.containsKey('id_post');
+      }).map((comment) {
+        return (comment['id_post'] as Map<String, dynamic>)['\$id'].toString();
       }).toList(),
+
       profilePicture: map['url_image'],
     );
   }

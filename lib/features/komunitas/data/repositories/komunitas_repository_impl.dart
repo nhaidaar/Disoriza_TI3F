@@ -74,8 +74,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
           }
           break;
         case 'Komentar':
-          if (response.likedComments?.isNotEmpty ?? false) {
-            queries.add(Query.equal("\$id", response.likedComments));
+          if (response.comments?.isNotEmpty ?? false) {
+            queries.add(Query.equal("\$id", response.comments));
           }
           break;
         default:
@@ -86,8 +86,8 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
           if (response.likedPosts?.isNotEmpty ?? false) {
             combineQueries.add(Query.equal("\$id", response.likedPosts));
           }
-          if (response.likedComments?.isNotEmpty ?? false) {
-            combineQueries.add(Query.equal("\$id", response.likedComments));
+          if (response.comments?.isNotEmpty ?? false) {
+            combineQueries.add(Query.equal("\$id", response.comments));
           }
 
           if (combineQueries.length == 1) {

@@ -67,9 +67,7 @@ class _CommentCardState extends State<CommentCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    timeago.format(
-                      DateTime.fromMillisecondsSinceEpoch(widget.commentModel.date ?? 0),
-                    ),
+                    timeago.format(widget.commentModel.date ?? DateTime.now()),
                     style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                   )
                 ],

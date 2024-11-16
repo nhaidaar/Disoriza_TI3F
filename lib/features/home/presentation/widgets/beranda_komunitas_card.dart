@@ -75,9 +75,7 @@ class _BerandaKomunitasCardState extends State<BerandaKomunitasCard> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      timeago.format(
-                        DateTime.fromMillisecondsSinceEpoch(widget.postModel.date ?? 0),
-                      ),
+                      timeago.format(widget.postModel.date ?? DateTime.now()),
                       style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                     )
                   ],

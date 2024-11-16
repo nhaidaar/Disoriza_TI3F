@@ -135,41 +135,43 @@ class _BerandaPageState extends State<BerandaPage> {
                       if (state is KomunitasLoading) {
                         return const BerandaLoadingCard();
                       } else if (state is KomunitasLoaded) {
-                        return Column(
-                          children: [
-                            CarouselSlider(
-                              carouselController: carouselController,
-                              items: state.postModels.map((post) {
-                                return BerandaKomunitasCard(
-                                  user: widget.user,
-                                  postModel: post,
-                                );
-                              }).toList(),
-                              options: CarouselOptions(
-                                enableInfiniteScroll: false,
-                                height: 160,
-                                viewportFraction: 0.975,
-                                initialPage: carouselIndex,
-                                onPageChanged: (index, _) {
-                                  setState(() => carouselIndex = index);
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            DotsIndicator(
-                              dotsCount: state.postModels.length,
-                              position: carouselIndex,
-                              decorator: const DotsDecorator(
-                                spacing: EdgeInsets.all(4),
-                                color: neutral50,
-                                activeColor: accentGreenMain,
-                              ),
-                              onTap: (index) {
-                                carouselController.animateToPage(index);
-                              },
-                            ),
-                          ],
-                        );
+                        return state.postModels.isNotEmpty
+                            ? Column(
+                                children: [
+                                  CarouselSlider(
+                                    carouselController: carouselController,
+                                    items: state.postModels.map((post) {
+                                      return BerandaKomunitasCard(
+                                        user: widget.user,
+                                        postModel: post,
+                                      );
+                                    }).toList(),
+                                    options: CarouselOptions(
+                                      enableInfiniteScroll: false,
+                                      height: 160,
+                                      viewportFraction: 0.975,
+                                      initialPage: carouselIndex,
+                                      onPageChanged: (index, _) {
+                                        setState(() => carouselIndex = index);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  DotsIndicator(
+                                    dotsCount: state.postModels.length,
+                                    position: carouselIndex,
+                                    decorator: const DotsDecorator(
+                                      spacing: EdgeInsets.all(4),
+                                      color: neutral50,
+                                      activeColor: accentGreenMain,
+                                    ),
+                                    onTap: (index) {
+                                      carouselController.animateToPage(index);
+                                    },
+                                  ),
+                                ],
+                              )
+                            : const DiskusiEmptyState();
                       }
                       return const DiskusiEmptyState();
                     },
@@ -204,25 +206,25 @@ class _BerandaPageState extends State<BerandaPage> {
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
-                              onTap: () { },
+                              onTap: () {},
                             ),
                             RiwayatCard(
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
-                              onTap: () { },
+                              onTap: () {},
                             ),
                             RiwayatCard(
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
-                              onTap: () { },
+                              onTap: () {},
                             ),
                             RiwayatCard(
                               image: 'assets/images/cardhist.jpeg',
                               title: 'Bacterial Leaf Blight',
                               timeAgo: '30 menit lalu',
-                              onTap: () { },
+                              onTap: () {},
                             ),
                           ],
                         )

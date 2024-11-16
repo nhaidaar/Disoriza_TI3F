@@ -95,7 +95,6 @@ class _PostPageState extends State<PostPage> {
                         idPost: PostModel(id: widget.postModel.id),
                         commentator: UserModel(id: widget.user.$id),
                         value: commentController.text,
-                        date: DateTime.now().millisecondsSinceEpoch,
                       );
 
                       context.read<CommentCubit>().createComment(comment: comment);

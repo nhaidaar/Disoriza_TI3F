@@ -8,7 +8,7 @@ class PostModel {
   final UserModel? author;
   final List<String>? likes;
   final List<String>? comments;
-  final int? date;
+  final DateTime? date;
 
   const PostModel({
     this.id,
@@ -31,10 +31,15 @@ class PostModel {
       likes: (map['likes'] as List<dynamic>?)?.map((like) {
         return like['\$id'].toString();
       }).toList(),
-      comments: (map['comments'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+
+      // Take the uid of commentator in comments
+      comments: (map['comments'] as List<dynamic>?)?.where((comment) {
+        return comment is Map<String, dynamic> && comment.containsKey('commentator');
+      }).map((comment) {
+        return (comment['commentator'] as Map<String, dynamic>)['\$id'].toString();
       }).toList(),
-      date: map['date'],
+
+      date: DateTime.parse(map['\$createdAt']),
     );
   }
 
@@ -47,7 +52,6 @@ class PostModel {
       'author': author?.id,
       'likes': likes ?? [],
       'comments': comments ?? [],
-      'date': date,
     };
   }
 
@@ -59,7 +63,7 @@ class PostModel {
     UserModel? author,
     List<String>? likes,
     List<String>? comments,
-    int? date,
+    DateTime? date,
   }) {
     return PostModel(
       id: id ?? this.id,

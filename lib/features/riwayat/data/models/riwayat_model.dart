@@ -7,7 +7,7 @@ class RiwayatModel {
   final DiseaseModel? idDisease;
   final int? accuracy;
   final String? urlImage;
-  final int? date;
+  final DateTime? date;
 
   const RiwayatModel({
     this.id,
@@ -21,19 +21,19 @@ class RiwayatModel {
   factory RiwayatModel.fromMap(Map<String, dynamic> map) {
     return RiwayatModel(
       id: map['\$id'],
-      idUser: UserModel.fromMap(map['idUser']),
-      idDisease: DiseaseModel.fromMap(map['idDisease']),
+      idUser: UserModel.fromMap(map['id_user']),
+      idDisease: DiseaseModel.fromMap(map['id_disease']),
       accuracy: map['accuracy'],
       urlImage: map['url_image'],
-      date: map['date'],
+      date: DateTime.parse(map['\$createdAt']),
     );
   }
 
   // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
-      'idUser': idUser?.id,
-      'idDisease': idDisease?.id,
+      'id_user': idUser?.id,
+      'id_disease': idDisease?.id,
       'accuracy': accuracy ?? 0,
       'url_image': urlImage,
     };
@@ -45,7 +45,7 @@ class RiwayatModel {
     DiseaseModel? idDisease,
     String? urlImage,
     int? accuracy,
-    int? date,
+    DateTime? date,
   }) {
     return RiwayatModel(
       id: id ?? this.id,

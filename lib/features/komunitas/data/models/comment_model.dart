@@ -7,7 +7,7 @@ class CommentModel {
   final String? value;
   final List<String>? likes;
   final PostModel? idPost;
-  final int? date;
+  final DateTime? date;
 
   const CommentModel({
     this.id,
@@ -27,7 +27,7 @@ class CommentModel {
         return like['\$id'].toString();
       }).toList(),
       idPost: PostModel.fromMap(map['id_post']),
-      date: map['date'],
+      date: DateTime.parse(map['\$createdAt']),
     );
   }
 
@@ -38,7 +38,6 @@ class CommentModel {
       'value': value,
       'id_post': idPost?.id,
       'likes': likes ?? [],
-      'date': date,
     };
   }
 
@@ -48,7 +47,7 @@ class CommentModel {
     String? value,
     List<String>? likes,
     PostModel? idPost,
-    int? date,
+    DateTime? date,
   }) {
     return CommentModel(
       id: id ?? this.id,
