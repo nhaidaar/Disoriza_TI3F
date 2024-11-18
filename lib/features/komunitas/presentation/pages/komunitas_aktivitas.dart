@@ -1,22 +1,21 @@
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/common/custom_empty_state.dart';
-import '../cubit/komunitas/komunitas_cubit.dart';
+import '../../../auth/data/models/user_model.dart';
+import '../cubit/post/post_cubit.dart';
 import '../widgets/aktivitasmu_category.dart';
 import '../widgets/post_card.dart';
-import '../widgets/post_loading_card.dart';
 
-class AktivitasmuPage extends StatefulWidget {
-  final User user;
-  const AktivitasmuPage({super.key, required this.user});
+class KomunitasAktivitas extends StatefulWidget {
+  final UserModel user;
+  const KomunitasAktivitas({super.key, required this.user});
 
   @override
-  State<AktivitasmuPage> createState() => _AktivitasmuPageState();
+  State<KomunitasAktivitas> createState() => _KomunitasAktivitasState();
 }
 
-class _AktivitasmuPageState extends State<AktivitasmuPage> {
+class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
   int _selectedIndex = 0;
 
   final aktivitasCategory = [
@@ -28,8 +27,8 @@ class _AktivitasmuPageState extends State<AktivitasmuPage> {
 
   @override
   void initState() {
-    context.read<KomunitasCubit>().fetchAktivitas(
-          user: widget.user,
+    context.read<PostCubit>().fetchAktivitas(
+          uid: widget.user.id.toString(),
           filter: aktivitasCategory[_selectedIndex],
         );
     super.initState();
@@ -57,8 +56,8 @@ class _AktivitasmuPageState extends State<AktivitasmuPage> {
                   onTap: () => setState(() {
                     if (_selectedIndex != index) {
                       _selectedIndex = index;
-                      context.read<KomunitasCubit>().fetchAktivitas(
-                            user: widget.user,
+                      context.read<PostCubit>().fetchAktivitas(
+                            uid: widget.user.id.toString(),
                             filter: aktivitasCategory[_selectedIndex],
                           );
                     }
@@ -76,8 +75,8 @@ class _AktivitasmuPageState extends State<AktivitasmuPage> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              await context.read<KomunitasCubit>().fetchAktivitas(
-                    user: widget.user,
+              await context.read<PostCubit>().fetchAktivitas(
+                    uid: widget.user.id.toString(),
                     filter: aktivitasCategory[_selectedIndex],
                   );
             },
@@ -85,29 +84,25 @@ class _AktivitasmuPageState extends State<AktivitasmuPage> {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               children: [
-                BlocBuilder<KomunitasCubit, KomunitasState>(
+                BlocBuilder<PostCubit, PostState>(
                   key: ObjectKey(_selectedIndex),
                   builder: (context, state) {
-                    if (state is KomunitasLoading) {
+                    if (state is PostLoading) {
                       return const PostLoadingCard();
-                    } else if (state is KomunitasLoaded) {
+                    } else if (state is PostLoaded) {
                       return state.postModels.isNotEmpty
                           ? Column(
                               children: state.postModels.map((post) {
                                 return PostCard(
-                                  user: widget.user,
+                                  uid: widget.user.id.toString(),
                                   postModel: post,
                                   isAktivitas: true,
                                 );
                               }).toList(),
                             )
-                          : AktivitasEmptyState(
-                              title: aktivitasCategory[_selectedIndex],
-                            );
+                          : const AktivitasEmptyState();
                     }
-                    return AktivitasEmptyState(
-                      title: aktivitasCategory[_selectedIndex],
-                    );
+                    return const AktivitasEmptyState();
                   },
                 ),
               ],

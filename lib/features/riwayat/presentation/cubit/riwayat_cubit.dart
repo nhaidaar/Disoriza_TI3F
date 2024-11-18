@@ -1,4 +1,3 @@
-import 'package:appwrite/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,48 +12,33 @@ class RiwayatCubit extends Cubit<RiwayatState> {
   RiwayatCubit(this._riwayatUsecase) : super(RiwayatInitial());
 
   Future<void> fetchAllRiwayat({
-    bool latest = false,
-    required User user,
+    required String uid,
+    int? max,
   }) async {
     try {
       emit(RiwayatLoading());
 
-      final response = await _riwayatUsecase.fetchAllRiwayat(latest: latest, user: user);
+      final response = await _riwayatUsecase.fetchAllRiwayat(uid: uid, max: max);
       response.fold(
-        (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
-        (success) => emit(RiwayatLoaded(histModels: success)),
+        (error) => emit(RiwayatError(message: error.toString())),
+        (success) => emit(RiwayatLoaded(riwayatModel: success)),
       );
     } catch (_) {
       rethrow;
     }
   }
 
-  // Future<void> deleteRiwayat({required String histId, required User user}) async {
-  Future<void> deleteRiwayat({required String histId}) async {
+  Future<void> deleteRiwayat({required String riwayatId}) async {
     try {
       emit(RiwayatLoading());
 
-      final response = await _riwayatUsecase.deleteRiwayat(histId: histId);
+      final response = await _riwayatUsecase.deleteRiwayat(riwayatId: riwayatId);
       response.fold(
-        (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
+        (error) => emit(RiwayatError(message: error.toString())),
         (success) {
           emit(RiwayatDeleted());
-          // fetchAllRiwayat(user: user);
+          // fetchAllRiwayat(uid: uid);
         },
-      );
-    } catch (_) {
-      rethrow;
-    }
-  }
-
-  Future<void> fetchDisease({required String idDisease}) async {
-    try {
-      emit(RiwayatLoading());
-
-      final response = await _riwayatUsecase.fetchDisease(idDisease: idDisease);
-      response.fold(
-        (error) => emit(RiwayatError(message: '${error.code} ${error.message}')),
-        (success) => emit(RiwayatDiseaseLoaded(diseaseModel: success)),
       );
     } catch (_) {
       rethrow;

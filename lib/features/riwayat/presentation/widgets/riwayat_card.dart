@@ -1,29 +1,29 @@
-import 'package:disoriza/core/common/effects.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
-import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../../../../core/common/effects.dart';
+import '../../../../core/common/fontstyles.dart';
+import '../../data/models/riwayat_model.dart';
+import '../pages/riwayat_detail.dart';
 
 class RiwayatCard extends StatelessWidget {
-  // final String id;
-  final String image;
-  final String title;
-  final String timeAgo;
-  final VoidCallback onTap;
-  
-  const RiwayatCard({
-    super.key,
-    required this.onTap,
-    required this.image,
-    required this.title,
-    required this.timeAgo,
-    // required this.id,
-  });
+  final RiwayatModel riwayatModel;
+
+  const RiwayatCard({super.key, required this.riwayatModel});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.of(context).push(
+          PageTransition(
+            child: RiwayatDetail(riwayat: riwayatModel),
+            type: PageTransitionType.leftToRight,
+          ),
+        );
+      },
       child: Container(
         width: MediaQuery.of(context).size.width / 2 - 24,
         decoration: BoxDecoration(
@@ -36,7 +36,7 @@ class RiwayatCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset(
-              image,
+              riwayatModel.urlImage.toString(),
               height: 102,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -47,12 +47,12 @@ class RiwayatCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    riwayatModel.idDisease!.name.toString(),
                     style: mediumTS.copyWith(color: neutral100),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    timeAgo,
+                    timeago.format(riwayatModel.date ?? DateTime.now()),
                     style: mediumTS.copyWith(fontSize: 12, color: neutral70),
                   ),
                 ],
@@ -64,4 +64,3 @@ class RiwayatCard extends StatelessWidget {
     );
   }
 }
-

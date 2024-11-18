@@ -33,14 +33,13 @@ class CustomEmptyState extends StatelessWidget {
 }
 
 class AktivitasEmptyState extends StatelessWidget {
-  final String title;
-  const AktivitasEmptyState({super.key, required this.title});
+  const AktivitasEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CustomEmptyState(
+    return const CustomEmptyState(
       icon: IconsaxPlusLinear.clipboard_close,
-      text: 'Belum ada aktivitas ${title.toLowerCase()} yang bisa ditampilkan',
+      text: 'Belum ada aktivitas yang bisa ditampilkan',
     );
   }
 }

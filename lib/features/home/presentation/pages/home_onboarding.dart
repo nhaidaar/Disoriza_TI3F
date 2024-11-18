@@ -1,18 +1,18 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../widgets/disoriza_logo.dart';
 import 'home_screen.dart';
 
 class HomeOnboarding extends StatelessWidget {
-  final Client client;
-  final User user;
+  final SupabaseClient client;
+  final UserModel user;
   const HomeOnboarding({
     super.key,
     required this.client,

@@ -1,84 +1,46 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/repositories/riwayat_repository.dart';
 import '../models/riwayat_model.dart';
 
 class RiwayatRepositoryImpl implements RiwayatRepository {
-  final Client client;
+  final SupabaseClient client;
   const RiwayatRepositoryImpl({required this.client});
 
   @override
-  Future<Either<AppwriteException, List<RiwayatModel>>> fetchAllRiwayat({
-    bool latest = false,
-    required User user,
+  Future<Either<Exception, List<RiwayatModel>>> fetchAllRiwayat({
+    required String uid,
+    int? max,
   }) async {
     try {
-      final response = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_DETAILS_HISTORY_COLLECTION_ID"),
-        queries: [
-          Query.orderDesc("\$createdAt"),
-          // Query.equal('id_user', user),
-        ],
-      );
+      final response = await client.from('histories').select('''
+            *,
+            disease:id_disease(
+              id,
+              name,
+              definition,
+              solution,
+              symtomp
+            )
+          ''').eq('id_user', uid).order('created_at', ascending: false);
 
       List<RiwayatModel> riwayat = List<RiwayatModel>.from(
-        response.documents.map((doc) => RiwayatModel.fromMap(doc.data)),
+        response.map((doc) => RiwayatModel.fromMap(doc)),
       );
 
-      return Right(riwayat);
-    } on AppwriteException catch (e) {
+      return Right(max == null ? riwayat : riwayat.take(max).toList());
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, void>> deleteRiwayat({required String histId}) async {
+  Future<Either<Exception, void>> deleteRiwayat({required String riwayatId}) async {
     try {
-      final documents = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_DETAILS_HISTORY_COLLECTION_ID"),
-        queries: [
-          Query.equal('id_riwayat', histId),
-        ],
-      );
-      if (documents.documents.isNotEmpty) {
-        final documentId = documents.documents.first.$id;
-        await Databases(client).deleteDocument(
-          databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-          collectionId: dotenv.get("APPWRITE_DETAILS_HISTORY_COLLECTION_ID"),
-          documentId: documentId,
-        );
-        return const Right(null);
-      } else {
-        return const Right(null);
-      }
-    } on AppwriteException catch (e) {
-      return Left(e);
-    }
-  }
-
-  @override
-  Future<Either<AppwriteException, RiwayatModel>> fetchDisease({
-    required String idDisease,
-  }) async {
-    try {
-      // Fetch disease documents matching idDisease
-      final diseaseResponse = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_DETAILS_HISTORY_COLLECTION_ID"),
-        queries: [
-          Query.equal('idDisease', idDisease),
-        ],
-      );
-
-      // Map disease documents to DiseaseModel
-      final disease = RiwayatModel.fromMap(diseaseResponse.documents.first.data);
-      return Right(disease);
-    } on AppwriteException catch (e) {
+      await client.from('riwayat').delete().eq('id', riwayatId);
+      return const Right(null);
+    } on Exception catch (e) {
       return Left(e);
     }
   }

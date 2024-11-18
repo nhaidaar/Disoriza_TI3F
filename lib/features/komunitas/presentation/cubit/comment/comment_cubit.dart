@@ -23,7 +23,7 @@ class CommentCubit extends Cubit<CommentState> {
       );
 
       response.fold(
-        (error) => emit(CommentError(message: '${error.code} ${error.message}')),
+        (error) => emit(CommentError(message: error.toString())),
         (success) => emit(CommentLoaded(commentModels: success)),
       );
     } catch (_) {
@@ -35,24 +35,47 @@ class CommentCubit extends Cubit<CommentState> {
     try {
       final response = await _komunitasUsecase.createComment(comment: comment);
       response.fold(
-        (error) => emit(CommentError(message: '${error.code} ${error.message}')),
+        (error) => emit(CommentError(message: error.toString())),
         (success) {},
       );
-      await fetchComments(postId: comment.idPost!.id.toString());
+
+      await fetchComments(postId: comment.idPost.toString());
     } catch (_) {
       rethrow;
     }
   }
 
-  Future<void> likeComment({required String uid, required CommentModel comment}) async {
+  Future<void> likeComment({
+    required String uid,
+    required String commentId,
+  }) async {
     try {
       final response = await _komunitasUsecase.likeComment(
         uid: uid,
-        comment: comment,
+        commentId: commentId,
       );
 
       response.fold(
-        (error) => emit(CommentError(message: error.message.toString())),
+        (error) => emit(CommentError(message: error.toString())),
+        (success) {},
+      );
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> unlikeComment({
+    required String uid,
+    required String commentId,
+  }) async {
+    try {
+      final response = await _komunitasUsecase.unlikeComment(
+        uid: uid,
+        commentId: commentId,
+      );
+
+      response.fold(
+        (error) => emit(CommentError(message: error.toString())),
         (success) {},
       );
     } catch (_) {

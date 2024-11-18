@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:appwrite/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../cubit/riwayat_cubit.dart';
 import '../widgets/riwayat_card.dart';
-import 'riwayat_detail.dart';
 
 class RiwayatPage extends StatefulWidget {
-  final User user;
+  final UserModel user;
   const RiwayatPage({super.key, required this.user});
 
   @override
@@ -27,13 +25,11 @@ class _RiwayatPageState extends State<RiwayatPage> {
   @override
   void initState() {
     super.initState();
-    context.read<RiwayatCubit>().fetchAllRiwayat(user: widget.user);
+    context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString());
 
     // Add a listener to update the search query on text change
     _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text;
-      });
+      setState(() => _searchQuery = _searchController.text);
     });
   }
 
@@ -71,64 +67,37 @@ class _RiwayatPageState extends State<RiwayatPage> {
           ],
         ),
       ),
-      body: BlocListener<RiwayatCubit, RiwayatState>(
-        listener: (context, state) {
-          if (state is RiwayatDiseaseLoaded) {
-            Navigator.of(context).push(
-              PageTransition(
-                child: RiwayatDetail(
-                  user: widget.user,
-                  riwayat: state.diseaseModel,
-                  image: 'assets/images/cardhist.jpeg',
-                  title: state.diseaseModel.idDisease!.name.toString(),
-                ),
-                type: PageTransitionType.rightToLeft,
-              ),
-            );
-          }
-        },
-        child: BlocBuilder<RiwayatCubit, RiwayatState>(
-          builder: (context, state) {
-            if (state is RiwayatLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is RiwayatLoaded) {
-              // Filter the list based on the search query
-              final filteredList = state.histModels.where((riwayat) {
-                final title = riwayat.idDisease?.name?.toLowerCase() ?? '';
-                return title.contains(_searchQuery.toLowerCase());
-              }).toList();
+      body: BlocBuilder<RiwayatCubit, RiwayatState>(
+        builder: (context, state) {
+          if (state is RiwayatLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is RiwayatLoaded) {
+            // Filter the list based on the search query
+            final filteredList = state.riwayatModel.where((riwayat) {
+              final title = riwayat.idDisease?.name?.toLowerCase() ?? '';
+              return title.contains(_searchQuery.toLowerCase());
+            }).toList();
 
-              if (filteredList.isEmpty) {
-                return const Center(child: RiwayatEmptyState());
-              }
-              return ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: filteredList.map((riwayat) {
-                      return RiwayatCard(
-                        // id: riwayat.idDisease?.id ?? '',
-                        image: 'assets/images/cardhist.jpeg',
-                        title: riwayat.idDisease?.name ?? 'Unknown Disease',
-                        timeAgo: 'Some time ago',
-                        onTap: () {
-                          context
-                              .read<RiwayatCubit>()
-                              .fetchDisease(idDisease: riwayat.idDisease?.id ?? '');
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
-              );
-            } else if (state is RiwayatError) {
-              return Center(child: Text('Error: ${state.message}'));
+            if (filteredList.isEmpty) {
+              return const Center(child: RiwayatEmptyState());
             }
-            return const Center(child: RiwayatEmptyState());
-          },
-        ),
+            return ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: filteredList.map((riwayat) {
+                    return RiwayatCard(riwayatModel: riwayat);
+                  }).toList(),
+                ),
+              ],
+            );
+          } else if (state is RiwayatError) {
+            return Center(child: Text('Error: ${state.message}'));
+          }
+          return const Center(child: RiwayatEmptyState());
+        },
       ),
     );
   }

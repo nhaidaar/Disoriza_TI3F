@@ -1,60 +1,58 @@
-import '../../../user/data/models/user_model.dart';
-import 'post_model.dart';
+import '../../../auth/data/models/user_model.dart';
 
 class CommentModel {
-  final String? id;
-  final UserModel? commentator;
-  final String? value;
+  final int? id;
+  final UserModel? idUser;
+  final int? idPost;
+  final String? content;
   final List<String>? likes;
-  final PostModel? idPost;
   final DateTime? date;
 
   const CommentModel({
     this.id,
-    this.commentator,
-    this.value,
-    this.likes,
+    this.idUser,
     this.idPost,
+    this.content,
+    this.likes,
     this.date,
   });
 
   factory CommentModel.fromMap(Map<String, dynamic> map) {
     return CommentModel(
-      id: map['\$id'],
-      commentator: UserModel.fromMap(map['commentator']),
-      value: map['value'],
-      likes: (map['likes'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+      id: map['id'],
+      idUser: UserModel.fromMap(map['users']),
+      idPost: map['id_post'],
+      content: map['content'],
+      likes: (map['liked_comments'] as List).map((like) {
+        return like['id_user'].toString();
       }).toList(),
-      idPost: PostModel.fromMap(map['id_post']),
-      date: DateTime.parse(map['\$createdAt']),
+      date: DateTime.parse(map['created_at']),
     );
   }
 
   // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
-      'commentator': commentator?.id,
-      'value': value,
-      'id_post': idPost?.id,
-      'likes': likes ?? [],
+      'id_user': idUser?.id,
+      'id_post': idPost,
+      'content': content,
     };
   }
 
   CommentModel copyWith({
-    String? id,
-    UserModel? commentator,
-    String? value,
+    int? id,
+    UserModel? idUser,
+    int? idPost,
+    String? content,
     List<String>? likes,
-    PostModel? idPost,
     DateTime? date,
   }) {
     return CommentModel(
       id: id ?? this.id,
-      commentator: commentator ?? this.commentator,
-      value: value ?? this.value,
-      likes: likes ?? this.likes,
+      idUser: idUser ?? this.idUser,
       idPost: idPost ?? this.idPost,
+      content: content ?? this.content,
+      likes: likes ?? this.likes,
       date: date ?? this.date,
     );
   }

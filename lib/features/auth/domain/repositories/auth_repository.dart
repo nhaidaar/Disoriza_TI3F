@@ -1,20 +1,20 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:fpdart/fpdart.dart';
 
-abstract class AuthRepository {
-  Future<Either<AppwriteException, User>> checkSession();
+import '../../data/models/user_model.dart';
 
-  Future<Either<AppwriteException, User>> register({
+abstract class AuthRepository {
+  Future<Either<Exception, UserModel>> checkSession();
+
+  Future<Either<Exception, UserModel>> register({
     required String name,
     required String email,
     required String password,
   });
 
-  Future<Either<AppwriteException, Session>> login({
+  Future<Either<Exception, UserModel>> login({
     required String email,
     required String password,
   });
 
-  Future<Either<AppwriteException, void>> logout();
+  Future<Either<Exception, void>> logout();
 }

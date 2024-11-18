@@ -1,5 +1,3 @@
-import 'package:appwrite/models.dart';
-import 'package:disoriza/features/komunitas/presentation/cubit/komunitas/komunitas_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -7,10 +5,12 @@ import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../auth/data/models/user_model.dart';
+import '../cubit/post/post_cubit.dart';
 import '../pages/create_post_page.dart';
 
 class CreatePostButton extends StatelessWidget {
-  final User user;
+  final UserModel user;
   const CreatePostButton({
     super.key,
     required this.user,
@@ -31,7 +31,7 @@ class CreatePostButton extends StatelessWidget {
           Navigator.of(context).push(
             PageTransition(
               child: BlocProvider.value(
-                value: context.read<KomunitasCubit>(),
+                value: context.read<PostCubit>(),
                 child: CreatePostPage(user: user),
               ),
               type: PageTransitionType.rightToLeft,

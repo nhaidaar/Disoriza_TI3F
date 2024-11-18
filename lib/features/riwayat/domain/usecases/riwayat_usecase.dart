@@ -1,5 +1,3 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/riwayat_model.dart';
@@ -9,27 +7,17 @@ class RiwayatUsecase {
   final RiwayatRepository _riwayatRepository;
   const RiwayatUsecase(this._riwayatRepository);
 
-  Future<Either<AppwriteException, List<RiwayatModel>>> fetchAllRiwayat({
-    required User user,
-    bool latest = false,
+  Future<Either<Exception, List<RiwayatModel>>> fetchAllRiwayat({
+    required String uid,
+    int? max,
   }) async {
     return await _riwayatRepository.fetchAllRiwayat(
-      user: user,
-      latest: latest,
+      uid: uid,
+      max: max,
     );
   }
 
-  Future<Either<AppwriteException, void>> deleteRiwayat({
-    required String histId,
-  }) {
-    return _riwayatRepository.deleteRiwayat(histId: histId);
-  }
-
-  Future<Either<AppwriteException, RiwayatModel>> fetchDisease({
-    required String idDisease,
-  }) {
-    return _riwayatRepository.fetchDisease(
-      idDisease: idDisease,
-    );
+  Future<Either<Exception, void>> deleteRiwayat({required String riwayatId}) async {
+    return await _riwayatRepository.deleteRiwayat(riwayatId: riwayatId);
   }
 }

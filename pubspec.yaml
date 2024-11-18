@@ -9,7 +9,6 @@ environment:
 
 dependencies:
   animated_snack_bar: ^0.4.0
-  appwrite: ^12.0.4
   cached_network_image: ^3.4.0
   card_loading: ^0.3.2
   carousel_slider: ^5.0.0
@@ -25,6 +24,7 @@ dependencies:
   iconsax_plus: ^1.0.0
   page_transition: ^2.1.0
   scroll_to_index: ^3.0.1
+  supabase_flutter: ^2.8.0
   timeago: ^3.7.0
 
 dev_dependencies:

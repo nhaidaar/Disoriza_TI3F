@@ -1,4 +1,3 @@
-import 'package:appwrite/models.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +9,16 @@ import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../komunitas/presentation/cubit/komunitas/komunitas_cubit.dart';
+import '../../../komunitas/presentation/cubit/post/post_cubit.dart';
+import '../../../riwayat/presentation/cubit/riwayat_cubit.dart';
 import '../../../riwayat/presentation/widgets/riwayat_card.dart';
-import '../../../user/presentation/cubit/user_cubit.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../widgets/beranda_komunitas_card.dart';
 import '../widgets/beranda_loading_card.dart';
 import '../widgets/beranda_pindai_card.dart';
 
 class BerandaPage extends StatefulWidget {
-  final User user;
+  final UserModel user;
   final Function(int) updateIndex;
   const BerandaPage({super.key, required this.user, required this.updateIndex});
 
@@ -39,8 +39,8 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Future<void> fetchData() async {
-    context.read<UserCubit>().fetchUserModel(uid: widget.user.$id);
-    context.read<KomunitasCubit>().fetchAllPosts(max: 3);
+    context.read<PostCubit>().fetchAllPosts(max: 3);
+    context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString(), max: 3);
   }
 
   @override
@@ -58,14 +58,7 @@ class _BerandaPageState extends State<BerandaPage> {
             title: Row(
               children: [
                 // Avatar
-                BlocBuilder<UserCubit, UserState>(
-                  builder: (context, state) {
-                    if (state is UserFetched) {
-                      return CustomAvatar(link: state.userModel.profilePicture);
-                    }
-                    return const CustomAvatar();
-                  },
-                ),
+                CustomAvatar(link: widget.user.profilePicture),
 
                 const SizedBox(width: 8),
 
@@ -79,7 +72,7 @@ class _BerandaPageState extends State<BerandaPage> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      widget.user.name,
+                      widget.user.name.toString(),
                       style: mediumTS.copyWith(fontSize: 18, color: neutral100),
                     ),
                   ],
@@ -130,11 +123,11 @@ class _BerandaPageState extends State<BerandaPage> {
                       ],
                     ),
                   ),
-                  BlocBuilder<KomunitasCubit, KomunitasState>(
+                  BlocBuilder<PostCubit, PostState>(
                     builder: (context, state) {
-                      if (state is KomunitasLoading) {
+                      if (state is PostLoading) {
                         return const BerandaLoadingCard();
-                      } else if (state is KomunitasLoaded) {
+                      } else if (state is PostLoaded) {
                         return state.postModels.isNotEmpty
                             ? Column(
                                 children: [
@@ -142,7 +135,7 @@ class _BerandaPageState extends State<BerandaPage> {
                                     carouselController: carouselController,
                                     items: state.postModels.map((post) {
                                       return BerandaKomunitasCard(
-                                        user: widget.user,
+                                        uid: widget.user.id.toString(),
                                         postModel: post,
                                       );
                                     }).toList(),
@@ -197,38 +190,25 @@ class _BerandaPageState extends State<BerandaPage> {
                       ],
                     ),
                   ),
-                  !isRiwayatEmpty
-                      ? Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            RiwayatCard(
-                              image: 'assets/images/cardhist.jpeg',
-                              title: 'Bacterial Leaf Blight',
-                              timeAgo: '30 menit lalu',
-                              onTap: () {},
-                            ),
-                            RiwayatCard(
-                              image: 'assets/images/cardhist.jpeg',
-                              title: 'Bacterial Leaf Blight',
-                              timeAgo: '30 menit lalu',
-                              onTap: () {},
-                            ),
-                            RiwayatCard(
-                              image: 'assets/images/cardhist.jpeg',
-                              title: 'Bacterial Leaf Blight',
-                              timeAgo: '30 menit lalu',
-                              onTap: () {},
-                            ),
-                            RiwayatCard(
-                              image: 'assets/images/cardhist.jpeg',
-                              title: 'Bacterial Leaf Blight',
-                              timeAgo: '30 menit lalu',
-                              onTap: () {},
-                            ),
-                          ],
-                        )
-                      : const RiwayatEmptyState(),
+                  BlocBuilder<RiwayatCubit, RiwayatState>(
+                    builder: (context, state) {
+                      if (state is RiwayatLoading) {
+                        return const BerandaLoadingCard();
+                      } else if (state is RiwayatLoaded) {
+                        return state.riwayatModel.isNotEmpty
+                            ? Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: state.riwayatModel.map((riwayat) {
+                                  return RiwayatCard(riwayatModel: riwayat);
+                                }).toList(),
+                              )
+                            : const RiwayatEmptyState();
+                      }
+
+                      return const RiwayatEmptyState();
+                    },
+                  ),
 
                   const SizedBox(height: 20),
                 ],
