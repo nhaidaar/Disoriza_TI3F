@@ -1,4 +1,3 @@
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -10,15 +9,15 @@ import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../komunitas/data/models/post_model.dart';
 import '../../../komunitas/presentation/cubit/comment/comment_cubit.dart';
-import '../../../komunitas/presentation/cubit/komunitas/komunitas_cubit.dart';
-import '../../../komunitas/presentation/pages/post_page.dart';
+import '../../../komunitas/presentation/cubit/post/post_cubit.dart';
+import '../../../komunitas/presentation/pages/detail_post_page.dart';
 
 class BerandaKomunitasCard extends StatefulWidget {
-  final User user;
+  final String uid;
   final PostModel postModel;
   const BerandaKomunitasCard({
     super.key,
-    required this.user,
+    required this.uid,
     required this.postModel,
   });
 
@@ -31,7 +30,7 @@ class _BerandaKomunitasCardState extends State<BerandaKomunitasCard> {
 
   @override
   void initState() {
-    isLiked = (widget.postModel.likes ?? []).contains(widget.user.$id);
+    isLiked = (widget.postModel.likes ?? []).contains(widget.uid);
     super.initState();
   }
 
@@ -41,9 +40,16 @@ class _BerandaKomunitasCardState extends State<BerandaKomunitasCard> {
       onTap: () {
         Navigator.of(context).push(
           PageTransition(
-            child: BlocProvider.value(
-              value: context.read<CommentCubit>(),
-              child: PostPage(user: widget.user, postModel: widget.postModel),
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: context.read<CommentCubit>(),
+                ),
+                BlocProvider.value(
+                  value: context.read<PostCubit>(),
+                ),
+              ],
+              child: DetailPostPage(uid: widget.uid, postModel: widget.postModel),
             ),
             type: PageTransitionType.rightToLeft,
           ),
@@ -68,9 +74,7 @@ class _BerandaKomunitasCardState extends State<BerandaKomunitasCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.postModel.author != null
-                          ? widget.postModel.author!.name.toString()
-                          : 'Disoriza User',
+                      widget.postModel.author != null ? widget.postModel.author!.name.toString() : 'Disoriza User',
                       style: mediumTS.copyWith(color: neutral100),
                     ),
                     const SizedBox(height: 4),
@@ -120,13 +124,13 @@ class _BerandaKomunitasCardState extends State<BerandaKomunitasCard> {
                     setState(() {
                       isLiked = !isLiked;
                       isLiked
-                          ? (widget.postModel.likes ?? []).add(widget.user.$id)
-                          : (widget.postModel.likes ?? []).remove(widget.user.$id);
+                          ? (widget.postModel.likes ?? []).add(widget.uid)
+                          : (widget.postModel.likes ?? []).remove(widget.uid);
                     });
 
-                    context.read<KomunitasCubit>().likePost(
-                          uid: widget.user.$id,
-                          post: widget.postModel,
+                    context.read<PostCubit>().likePost(
+                          uid: widget.uid,
+                          postId: widget.postModel.id.toString(),
                         );
                   },
                   child: Icon(

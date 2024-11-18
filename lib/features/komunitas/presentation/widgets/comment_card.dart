@@ -1,4 +1,3 @@
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -12,12 +11,12 @@ import '../../data/models/comment_model.dart';
 import '../cubit/comment/comment_cubit.dart';
 
 class CommentCard extends StatefulWidget {
-  final User user;
+  final String uid;
   final CommentModel commentModel;
 
   const CommentCard({
     super.key,
-    required this.user,
+    required this.uid,
     required this.commentModel,
   });
 
@@ -30,7 +29,7 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   void initState() {
-    isLiked = (widget.commentModel.likes ?? []).contains(widget.user.$id);
+    isLiked = (widget.commentModel.likes ?? []).contains(widget.uid);
     super.initState();
   }
 
@@ -51,7 +50,7 @@ class _CommentCardState extends State<CommentCard> {
           Row(
             children: [
               // Avatar
-              CustomAvatar(link: widget.commentModel.commentator!.profilePicture),
+              CustomAvatar(link: widget.commentModel.idUser?.profilePicture),
 
               const SizedBox(width: 12),
 
@@ -60,9 +59,7 @@ class _CommentCardState extends State<CommentCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.commentModel.commentator != null
-                        ? widget.commentModel.commentator!.name.toString()
-                        : 'Disoriza User',
+                    widget.commentModel.idUser != null ? widget.commentModel.idUser!.name.toString() : 'Disoriza User',
                     style: mediumTS.copyWith(color: neutral100),
                   ),
                   const SizedBox(height: 4),
@@ -78,7 +75,7 @@ class _CommentCardState extends State<CommentCard> {
           const SizedBox(height: 8),
 
           Text(
-            widget.commentModel.value.toString(),
+            widget.commentModel.content.toString(),
             style: mediumTS.copyWith(color: neutral90),
           ),
 
@@ -88,19 +85,7 @@ class _CommentCardState extends State<CommentCard> {
           Row(
             children: [
               GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isLiked = !isLiked;
-                    isLiked
-                        ? (widget.commentModel.likes ?? []).add(widget.user.$id)
-                        : (widget.commentModel.likes ?? []).remove(widget.user.$id);
-                  });
-
-                  context.read<CommentCubit>().likeComment(
-                        uid: widget.user.$id,
-                        comment: widget.commentModel,
-                      );
-                },
+                onTap: () => handleLikeComment(context),
                 child: Icon(
                   isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
                   color: isLiked ? dangerMain : neutral100,
@@ -117,5 +102,24 @@ class _CommentCardState extends State<CommentCard> {
         ],
       ),
     );
+  }
+
+  void handleLikeComment(BuildContext context) {
+    setState(() {
+      isLiked = !isLiked;
+      isLiked
+          ? (widget.commentModel.likes ?? []).add(widget.uid)
+          : (widget.commentModel.likes ?? []).remove(widget.uid);
+    });
+
+    isLiked
+        ? context.read<CommentCubit>().likeComment(
+              uid: widget.uid,
+              commentId: widget.commentModel.id.toString(),
+            )
+        : context.read<CommentCubit>().unlikeComment(
+              uid: widget.uid,
+              commentId: widget.commentModel.id.toString(),
+            );
   }
 }

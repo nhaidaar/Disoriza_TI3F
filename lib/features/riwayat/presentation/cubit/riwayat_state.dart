@@ -9,23 +9,14 @@ abstract class RiwayatState extends Equatable {
 
 class RiwayatInitial extends RiwayatState {}
 
-class RiwayatLoading extends RiwayatState{}
+class RiwayatLoading extends RiwayatState {}
 
 class RiwayatLoaded extends RiwayatState {
-  final List<RiwayatModel> histModels;
-  const RiwayatLoaded({required this.histModels});
+  final List<RiwayatModel> riwayatModel;
+  const RiwayatLoaded({required this.riwayatModel});
 
   @override
-  List<Object> get props => [histModels];
-}
-
-class RiwayatDiseaseLoaded extends RiwayatState {
-  final RiwayatModel diseaseModel;
-
-  const RiwayatDiseaseLoaded({required this.diseaseModel});
-
-  @override
-  List<Object> get props => [diseaseModel];
+  List<Object> get props => [riwayatModel];
 }
 
 class RiwayatDeleted extends RiwayatState {}
@@ -37,6 +28,3 @@ class RiwayatError extends RiwayatState {
   @override
   List<Object> get props => [message];
 }
-
-class CreatePostSuccess extends RiwayatState {}
-

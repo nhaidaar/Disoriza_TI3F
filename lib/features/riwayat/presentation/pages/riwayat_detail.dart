@@ -1,32 +1,22 @@
-import 'package:appwrite/models.dart';
-import 'package:disoriza/core/common/effects.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
-import '../../../home/presentation/widgets/disoriza_logo.dart';
+import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../../../home/presentation/widgets/disoriza_logo.dart';
 import '../../data/models/riwayat_model.dart';
 import '../cubit/riwayat_cubit.dart';
 import '../widgets/riwayat_detail_card.dart';
 import '../widgets/riwayat_detail_remote.dart';
 
 class RiwayatDetail extends StatefulWidget {
-  const RiwayatDetail(
-      {super.key,
-      required this.image,
-      required this.title,
-      required this.riwayat,
-      required this.user});
-  final User user;
-  final String image;
-  final String title;
   final RiwayatModel riwayat;
+  const RiwayatDetail({super.key, required this.riwayat});
 
   @override
   State<RiwayatDetail> createState() => _RiwayatDetailState();
@@ -62,10 +52,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
 
         // Back Button
         leading: IconButton(
-          onPressed: () {
-            // context.read<RiwayatCubit>().fetchAllRiwayat(user: widget.user);
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(IconsaxPlusLinear.arrow_left),
         ),
 
@@ -91,7 +78,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             decoration: BoxDecoration(
               borderRadius: defaultSmoothRadius,
               image: DecorationImage(
-                image: AssetImage(widget.image),
+                image: AssetImage(widget.riwayat.urlImage.toString()),
                 fit: BoxFit.cover,
               ),
             ),
@@ -116,7 +103,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.title,
+                            widget.riwayat.idDisease!.name.toString(),
                             style: mediumTS.copyWith(fontSize: 18, color: neutral100),
                           ),
                         ],
@@ -227,10 +214,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                     backgroundColor: dangerMain,
                     pressedColor: dangerPressed,
                     onTap: () {
-                      dialogContext
-                          .read<RiwayatCubit>()
-                          .deleteRiwayat(histId: widget.riwayat.id.toString());
-                      // .deleteRiwayat(histId: widget.riwayat.id.toString(), user: widget.user);
+                      dialogContext.read<RiwayatCubit>().deleteRiwayat(riwayatId: widget.riwayat.id.toString());
                       Navigator.of(context).pop();
                     },
                     text: 'Ya, hapus',

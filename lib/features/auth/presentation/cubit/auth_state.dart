@@ -13,10 +13,12 @@ class LoginLoading extends AuthState {}
 
 class RegisterLoading extends AuthState {}
 
+class LogoutLoading extends AuthState {}
+
 class Unauthenticated extends AuthState {}
 
 class Authenticated extends AuthState {
-  final User user;
+  final UserModel user;
   final bool isFirstTime;
   const Authenticated({required this.user, this.isFirstTime = false});
 

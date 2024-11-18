@@ -1,11 +1,10 @@
 import './disease_model.dart';
-import '../../../user/data/models/user_model.dart';
 
 class RiwayatModel {
-  final String? id;
-  final UserModel? idUser;
+  final int? id;
+  final String? idUser;
   final DiseaseModel? idDisease;
-  final int? accuracy;
+  final double? accuracy;
   final String? urlImage;
   final DateTime? date;
 
@@ -20,19 +19,19 @@ class RiwayatModel {
 
   factory RiwayatModel.fromMap(Map<String, dynamic> map) {
     return RiwayatModel(
-      id: map['\$id'],
-      idUser: UserModel.fromMap(map['id_user']),
+      id: map['id'],
+      idUser: map['id_user'],
       idDisease: DiseaseModel.fromMap(map['id_disease']),
       accuracy: map['accuracy'],
       urlImage: map['url_image'],
-      date: DateTime.parse(map['\$createdAt']),
+      date: DateTime.parse(map['created_at']),
     );
   }
 
   // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
-      'id_user': idUser?.id,
+      'id_user': idUser,
       'id_disease': idDisease?.id,
       'accuracy': accuracy ?? 0,
       'url_image': urlImage,
@@ -40,11 +39,11 @@ class RiwayatModel {
   }
 
   RiwayatModel copyWith({
-    String? id,
-    UserModel? idUser,
+    int? id,
+    String? idUser,
     DiseaseModel? idDisease,
     String? urlImage,
-    int? accuracy,
+    double? accuracy,
     DateTime? date,
   }) {
     return RiwayatModel(

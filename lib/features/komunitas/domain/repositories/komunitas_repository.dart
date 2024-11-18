@@ -1,43 +1,47 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/comment_model.dart';
 import '../../data/models/post_model.dart';
 
 abstract class KomunitasRepository {
-  Future<Either<AppwriteException, List<PostModel>>> fetchAllPosts({
+  Future<Either<Exception, List<PostModel>>> fetchAllPosts({
     bool latest = false,
     int? max,
   });
 
-  Future<Either<AppwriteException, List<PostModel>>> fetchAktivitas({
-    required User user,
+  Future<Either<Exception, List<PostModel>>> fetchAktivitas({
+    required String uid,
     required String filter,
   });
 
-  Future<Either<AppwriteException, void>> createPost({
-    required PostModel post,
-  });
+  Future<Either<Exception, void>> createPost({required PostModel post});
 
-  Future<Either<AppwriteException, void>> deleteAllPosts();
-
-  Future<Either<AppwriteException, void>> likePost({
+  Future<Either<Exception, void>> likePost({
     required String uid,
-    required PostModel post,
+    required String postId,
   });
 
-  Future<Either<AppwriteException, List<CommentModel>>> fetchComments({
+  Future<Either<Exception, void>> unlikePost({
+    required String uid,
+    required String postId,
+  });
+
+  Future<Either<Exception, List<CommentModel>>> fetchComments({
     required String postId,
     bool latest = false,
   });
 
-  Future<Either<AppwriteException, void>> createComment({
+  Future<Either<Exception, void>> createComment({
     required CommentModel comment,
   });
 
-  Future<Either<AppwriteException, void>> likeComment({
+  Future<Either<Exception, void>> likeComment({
     required String uid,
-    required CommentModel comment,
+    required String commentId,
+  });
+
+  Future<Either<Exception, void>> unlikeComment({
+    required String uid,
+    required String commentId,
   });
 }

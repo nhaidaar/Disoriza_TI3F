@@ -1,9 +1,9 @@
-import 'package:appwrite/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+
 import 'package:disoriza/features/auth/domain/usecases/auth_usecase.dart';
 
-// import '../../../user/data/models/user_model.dart';
+import '../../data/models/user_model.dart';
 
 part 'auth_state.dart';
 
@@ -15,10 +15,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final sessionExists = await _authUsecase.checkSession();
       sessionExists.fold(
-        (error) {
-          emit(AuthError(message: error.message.toString()));
-          emit(Unauthenticated());
-        },
+        (error) => emit(Unauthenticated()),
         (success) => emit(Authenticated(user: success)),
       );
     } catch (_) {
@@ -40,8 +37,8 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
       );
       account.fold(
-        (error) => emit(AuthError(message: error.message.toString())),
-        (success) => login(email: email, password: password, isFirstTime: true),
+        (error) => emit(AuthError(message: error.toString())),
+        (success) => emit(Authenticated(user: success, isFirstTime: true)),
       );
     } catch (_) {
       rethrow;
@@ -54,18 +51,12 @@ class AuthCubit extends Cubit<AuthState> {
     bool isFirstTime = false,
   }) async {
     try {
-      isFirstTime ? emit(RegisterLoading()) : emit(LoginLoading());
+      emit(LoginLoading());
 
       final session = await _authUsecase.login(email: email, password: password);
       session.fold(
-        (error) => emit(AuthError(message: error.message.toString())),
-        (success) async {
-          final user = await _authUsecase.checkSession();
-          user.fold(
-            (l) => emit(AuthError(message: l.message.toString())),
-            (r) => emit(Authenticated(user: r, isFirstTime: isFirstTime)),
-          );
-        },
+        (error) => emit(AuthError(message: error.toString())),
+        (success) => emit(Authenticated(user: success)),
       );
     } catch (_) {
       rethrow;
@@ -74,9 +65,11 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> logout() async {
     try {
+      emit(LogoutLoading());
+
       final logout = await _authUsecase.logout();
       logout.fold(
-        (error) => emit(AuthError(message: error.message.toString())),
+        (error) => emit(AuthError(message: error.toString())),
         (success) => emit(Unauthenticated()),
       );
     } catch (_) {

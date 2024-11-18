@@ -1,5 +1,5 @@
-import 'package:appwrite/models.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -8,28 +8,22 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
-import '../../../../core/common/custom_dropdown.dart';
-import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../data/models/post_model.dart';
 import '../cubit/comment/comment_cubit.dart';
-import '../cubit/komunitas/komunitas_cubit.dart';
-import '../pages/post_page.dart';
-import 'comment_card.dart';
-import 'post_loading_card.dart';
+import '../cubit/post/post_cubit.dart';
+import '../pages/detail_post_page.dart';
 
 class PostCard extends StatefulWidget {
-  final User user;
-  final bool fullPost;
+  final String uid;
   final bool isAktivitas;
   final PostModel postModel;
 
   const PostCard({
     super.key,
-    required this.user,
+    required this.uid,
     required this.postModel,
-    this.fullPost = false,
     this.isAktivitas = false,
   });
 
@@ -44,27 +38,32 @@ class _PostCardState extends State<PostCard> {
 
   @override
   void initState() {
-    isLiked = (widget.postModel.likes ?? []).contains(widget.user.$id);
-    isCommented = (widget.postModel.comments ?? []).contains(widget.user.$id);
+    isLiked = (widget.postModel.likes ?? []).contains(widget.uid);
+    isCommented = (widget.postModel.comments ?? []).contains(widget.uid);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.fullPost
-          ? null
-          : () => Navigator.of(context).push(
-                PageTransition(
-                  child: BlocProvider.value(
-                    value: context.read<CommentCubit>(),
-                    child: PostPage(user: widget.user, postModel: widget.postModel),
-                  ),
-                  type: PageTransitionType.rightToLeft,
-                ),
+      onTap: () => Navigator.of(context).push(
+        PageTransition(
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(
+                value: context.read<CommentCubit>(),
               ),
+              BlocProvider.value(
+                value: context.read<PostCubit>(),
+              ),
+            ],
+            child: DetailPostPage(uid: widget.uid, postModel: widget.postModel),
+          ),
+          type: PageTransitionType.rightToLeft,
+        ),
+      ),
       child: Container(
-        margin: !widget.fullPost ? const EdgeInsets.only(bottom: 8) : null,
+        margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         width: double.infinity,
         decoration: BoxDecoration(
@@ -87,9 +86,7 @@ class _PostCardState extends State<PostCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.postModel.author != null
-                          ? widget.postModel.author!.name.toString()
-                          : 'Disoriza User',
+                      widget.postModel.author != null ? widget.postModel.author!.name.toString() : 'Disoriza User',
                       style: mediumTS.copyWith(color: neutral100),
                     ),
                     const SizedBox(height: 4),
@@ -107,8 +104,8 @@ class _PostCardState extends State<PostCard> {
             Text(
               widget.postModel.title.toString(),
               style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
-              maxLines: !widget.fullPost ? 2 : null,
-              overflow: !widget.fullPost ? TextOverflow.ellipsis : null,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
 
             const SizedBox(height: 4),
@@ -116,8 +113,8 @@ class _PostCardState extends State<PostCard> {
             Text(
               widget.postModel.content.toString(),
               style: mediumTS.copyWith(color: neutral90),
-              maxLines: !widget.fullPost ? 3 : null,
-              overflow: !widget.fullPost ? TextOverflow.ellipsis : null,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
 
             const SizedBox(height: 4),
@@ -139,19 +136,7 @@ class _PostCardState extends State<PostCard> {
               children: [
                 // Like
                 GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isLiked = !isLiked;
-                      isLiked
-                          ? (widget.postModel.likes ?? []).add(widget.user.$id)
-                          : (widget.postModel.likes ?? []).remove(widget.user.$id);
-                    });
-
-                    context.read<KomunitasCubit>().likePost(
-                          uid: widget.user.$id,
-                          post: widget.postModel,
-                        );
-                  },
+                  onTap: () => handleLikePost(context),
                   child: Icon(
                     isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
                     color: isLiked ? dangerMain : neutral100,
@@ -178,7 +163,7 @@ class _PostCardState extends State<PostCard> {
                   style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                 ),
 
-                if ((isLiked || isCommented) && !widget.fullPost && widget.isAktivitas) ...[
+                if ((isLiked || isCommented) && widget.isAktivitas) ...[
                   const Spacer(),
                   CustomAvatar(
                     link: widget.postModel.author!.profilePicture,
@@ -197,65 +182,47 @@ class _PostCardState extends State<PostCard> {
                 ]
               ],
             ),
-
-            if (widget.fullPost) ...[
-              const SizedBox(height: 12),
-
-              const Divider(thickness: 1, color: neutral30),
-
-              // Komentar title and Filter
-              Row(
-                children: [
-                  Text(
-                    'Komentar',
-                    style: mediumTS.copyWith(fontSize: 16, color: neutral100),
-                  ),
-                  const Spacer(),
-                  CustomDropdown(
-                    items: const [
-                      MapEntry('Terpopuler', false),
-                      MapEntry('Terbaru', true),
-                    ],
-                    initialValue: const MapEntry('Terpopuler', false),
-                    onChanged: (filter) async {
-                      if (isLatest != filter.value) {
-                        isLatest = !isLatest;
-                        context.read<CommentCubit>().fetchComments(
-                              postId: widget.postModel.id.toString(),
-                              latest: isLatest,
-                            );
-                      }
-                    },
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // List of Komentar
-              BlocBuilder<CommentCubit, CommentState>(
-                builder: (context, state) {
-                  if (state is CommentLoading) {
-                    return const PostLoadingCard();
-                  }
-                  if (state is CommentLoaded) {
-                    return state.commentModels.isNotEmpty
-                        ? Column(
-                            children: state.commentModels.map((comment) {
-                              return CommentCard(
-                                user: widget.user,
-                                commentModel: comment,
-                              );
-                            }).toList(),
-                          )
-                        : const Center(child: KomentarEmptyState());
-                  }
-                  return const Center(child: KomentarEmptyState());
-                },
-              ),
-            ]
           ],
         ),
+      ),
+    );
+  }
+
+  void handleLikePost(BuildContext context) {
+    setState(() {
+      isLiked = !isLiked;
+      isLiked ? (widget.postModel.likes ?? []).add(widget.uid) : (widget.postModel.likes ?? []).remove(widget.uid);
+    });
+
+    isLiked
+        ? context.read<PostCubit>().likePost(
+              uid: widget.uid,
+              postId: widget.postModel.id.toString(),
+            )
+        : context.read<PostCubit>().unlikePost(
+              uid: widget.uid,
+              postId: widget.postModel.id.toString(),
+            );
+  }
+}
+
+class PostLoadingCard extends StatelessWidget {
+  const PostLoadingCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        5,
+        (index) {
+          return CardLoading(
+            height: 170,
+            margin: const EdgeInsets.only(bottom: 8),
+            borderRadius: BorderRadius.circular(16),
+          );
+        },
       ),
     );
   }

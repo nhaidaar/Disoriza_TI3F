@@ -1,7 +1,7 @@
-import 'package:appwrite/appwrite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 
 import 'core/common/colors.dart';
 import 'core/utils/snackbar.dart';
@@ -16,19 +16,18 @@ import 'features/home/presentation/pages/splash_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Appwrite config
   await dotenv.load();
-  Client client = Client();
-  client
-      .setEndpoint(dotenv.get('APPWRITE_URL'))
-      .setProject(dotenv.get('APPWRITE_PROJECT_ID'))
-      .setSelfSigned(status: true);
+  final supabase = await supa.Supabase.initialize(
+    url: dotenv.get('SUPABASE_URL'),
+    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+    debug: true,
+  );
 
-  runApp(Disoriza(client: client));
+  runApp(Disoriza(client: supabase.client));
 }
 
 class Disoriza extends StatelessWidget {
-  final Client client;
+  final supa.SupabaseClient client;
   const Disoriza({super.key, required this.client});
 
   @override
@@ -39,9 +38,9 @@ class Disoriza extends StatelessWidget {
         scaffoldBackgroundColor: backgroundCanvas,
       ),
       home: BlocProvider(
-        create: (context) => AuthCubit(
-          AuthUsecase(AuthRepositoryImpl(client: client)),
-        )..checkSession(),
+        // Check session when app started
+        create: (context) => AuthCubit(AuthUsecase(AuthRepositoryImpl(client: client)))..checkSession(),
+
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {

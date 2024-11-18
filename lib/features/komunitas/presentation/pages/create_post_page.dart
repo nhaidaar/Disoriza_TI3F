@@ -1,21 +1,20 @@
-import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 
-import 'package:disoriza/core/common/custom_textfield.dart';
-import 'package:disoriza/core/common/fontstyles.dart';
-import 'package:disoriza/core/common/colors.dart';
-import 'package:disoriza/core/common/custom_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
+import '../../../../core/common/custom_textfield.dart';
+import '../../../../core/common/fontstyles.dart';
+import '../../../../core/common/colors.dart';
+import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/utils/snackbar.dart';
-import '../../../user/data/models/user_model.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../../data/models/post_model.dart';
-import '../cubit/komunitas/komunitas_cubit.dart';
+import '../cubit/post/post_cubit.dart';
 
 class CreatePostPage extends StatefulWidget {
-  final User user;
+  final UserModel user;
   const CreatePostPage({super.key, required this.user});
 
   @override
@@ -95,7 +94,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<KomunitasCubit, KomunitasState>(
+    return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state is CreatePostSuccess) {
           Navigator.of(context).pop();
@@ -224,17 +223,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 // Daftar Button
                 Container(
                   padding: const EdgeInsets.all(20),
-                  child: state is KomunitasLoading
+                  child: state is PostLoading
                       ? const CustomLoadingButton()
                       : CustomButton(
                           text: 'Posting',
                           disabled: areFieldsEmpty,
                           onTap: () {
-                            context.read<KomunitasCubit>().createPost(
+                            context.read<PostCubit>().createPost(
                                   post: PostModel(
                                     title: _titleController.text,
                                     content: _descriptionController.text,
-                                    author: UserModel(id: widget.user.$id),
+                                    author: UserModel(id: widget.user.id),
                                   ),
                                 );
                           },

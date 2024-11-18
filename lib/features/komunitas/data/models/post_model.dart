@@ -1,7 +1,7 @@
-import '../../../user/data/models/user_model.dart';
+import '../../../auth/data/models/user_model.dart';
 
 class PostModel {
-  final String? id;
+  final int? id;
   final String? title;
   final String? content;
   final String? urlImage;
@@ -23,23 +23,18 @@ class PostModel {
 
   factory PostModel.fromMap(Map<String, dynamic> map) {
     return PostModel(
-      id: map['\$id'],
+      id: map['id'],
       title: map['title'],
       content: map['content'],
       urlImage: map['url_image'],
-      author: UserModel.fromMap(map['author']),
-      likes: (map['likes'] as List<dynamic>?)?.map((like) {
-        return like['\$id'].toString();
+      author: UserModel.fromMap(map['users']),
+      likes: (map['liked_posts'] as List).map((like) {
+        return like['id_user'].toString();
       }).toList(),
-
-      // Take the uid of commentator in comments
-      comments: (map['comments'] as List<dynamic>?)?.where((comment) {
-        return comment is Map<String, dynamic> && comment.containsKey('commentator');
-      }).map((comment) {
-        return (comment['commentator'] as Map<String, dynamic>)['\$id'].toString();
+      comments: (map['comments'] as List).map((comment) {
+        return comment['id_user'].toString();
       }).toList(),
-
-      date: DateTime.parse(map['\$createdAt']),
+      date: DateTime.parse(map['created_at']),
     );
   }
 
@@ -49,14 +44,12 @@ class PostModel {
       'title': title,
       'content': content,
       'url_image': urlImage,
-      'author': author?.id,
-      'likes': likes ?? [],
-      'comments': comments ?? [],
+      'id_user': author?.id,
     };
   }
 
   PostModel copyWith({
-    String? id,
+    int? id,
     String? title,
     String? content,
     String? urlImage,

@@ -1,81 +1,92 @@
-// ignore_for_file: void_checks
-
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:disoriza/features/auth/domain/repositories/auth_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../user/data/models/user_model.dart';
+import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final Client client;
+  final SupabaseClient client;
   const AuthRepositoryImpl({required this.client});
 
   @override
-  Future<Either<AppwriteException, User>> checkSession() async {
+  Future<Either<Exception, UserModel>> checkSession() async {
     try {
-      final user = await Account(client).get();
-      return Right(user);
-    } on AppwriteException catch (e) {
+      final user = client.auth.currentSession;
+      if (user == null) return Left(Exception());
+
+      final userModel = await fetchUserModel(uid: user.user.id);
+      if (userModel != null) return Right(userModel);
+
+      return Right(UserModel.fromMap(user.user.toJson()));
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
+  Future<UserModel?> fetchUserModel({required String uid}) async {
+    try {
+      final user = await client.from('users').select().eq('id', uid).single();
+      if (user.isNotEmpty) return UserModel.fromMap(user);
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
-  Future<Either<AppwriteException, User>> register({
+  Future<Either<Exception, UserModel>> register({
     required String name,
     required String email,
     required String password,
   }) async {
     try {
-      final account = await Account(client).create(
-        userId: ID.unique(),
-        name: name,
+      final account = await client.auth.signUp(
         email: email,
         password: password,
       );
+      await client.from('users').insert({
+        'id': account.user?.id,
+        'name': name,
+        'email': email,
+      });
 
-      await Databases(client).createDocument(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_USER_COLLECTION_ID"),
-        documentId: account.$id,
-        data: UserModel(
-          name: name,
-          email: email,
-        ).toMap(),
-      );
-
-      return Right(account);
-    } on AppwriteException catch (e) {
+      return Right(UserModel(
+        id: account.user?.id,
+        name: name,
+        email: email,
+      ));
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, Session>> login({
+  Future<Either<Exception, UserModel>> login({
     required String email,
     required String password,
   }) async {
     try {
-      final session = await Account(client).createEmailPasswordSession(
+      final session = await client.auth.signInWithPassword(
         email: email,
         password: password,
       );
-      return Right(session);
-    } on AppwriteException catch (e) {
+      if (session.user == null) return Left(Exception('Error login!'));
+
+      final userModel = await fetchUserModel(uid: session.user!.id);
+      if (userModel != null) return Right(userModel);
+
+      return Right(UserModel.fromMap(session.user!.toJson()));
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, void>> logout() async {
+  Future<Either<Exception, void>> logout() async {
     try {
-      final clearedSession = await Account(client).deleteSession(
-        sessionId: 'current',
-      );
+      final clearedSession = await client.auth.signOut();
       return Right(clearedSession);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       return Left(e);
     }
   }

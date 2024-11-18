@@ -1,253 +1,249 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../user/data/models/user_model.dart';
 import '../../domain/repositories/komunitas_repository.dart';
 import '../models/comment_model.dart';
 import '../models/post_model.dart';
 
 class KomunitasRepositoryImpl implements KomunitasRepository {
-  final Client client;
+  final SupabaseClient client;
   const KomunitasRepositoryImpl({required this.client});
 
   @override
-  Future<Either<AppwriteException, List<PostModel>>> fetchAllPosts({
+  Future<Either<Exception, List<PostModel>>> fetchAllPosts({
     bool latest = false,
     int? max,
   }) async {
     try {
-      List<String> queries = [Query.orderDesc("\$createdAt")];
-      if (max != null) queries.add(Query.limit(max));
-
-      final response = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
-        queries: queries,
-      );
+      final response = await client.from('posts').select('''
+                    *,
+                    users (
+                      id,
+                      name,
+                      email,
+                      profile_picture
+                    ),
+                    comments (
+                      id_user
+                    ),
+                    liked_posts (
+                      id_user
+                    )
+                  ''').order('created_at', ascending: false);
 
       // Convert responses to PostModel
       List<PostModel> posts = List<PostModel>.from(
-        response.documents.map((doc) => PostModel.fromMap(doc.data)),
+        response.map((doc) => PostModel.fromMap(doc)),
       );
 
       // If not sort by time, sort by likes count
-      if (!latest) {
-        posts.sort(
-          (a, b) => (b.likes ?? []).length.compareTo((a.likes ?? []).length),
-        );
-      }
+      if (!latest) posts.sort((a, b) => (b.likes ?? []).length.compareTo((a.likes ?? []).length));
+
+      // If max set, take only max length of posts
+      if (max != null) return Right(posts.take(max).toList());
 
       return Right(posts);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, List<PostModel>>> fetchAktivitas({
-    required User user,
+  Future<Either<Exception, List<PostModel>>> fetchAktivitas({
+    required String uid,
     required String filter,
   }) async {
     try {
-      // Get user data
-      final response = await Databases(client)
-          .getDocument(
-            databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-            collectionId: dotenv.get("APPWRITE_USER_COLLECTION_ID"),
-            documentId: user.$id,
-          )
-          .then((doc) => UserModel.fromMap(doc.data));
+      late List<Map<String, dynamic>> response;
 
-      // Set all queries by filter
-      List<String> queries = [];
       switch (filter) {
         case 'Postingan':
-          if (response.posts?.isNotEmpty ?? false) {
-            queries.add(Query.equal("\$id", response.posts));
-          }
+          response = await client.from('posts').select('''
+                *,
+                users (
+                  id,
+                  name,
+                  email,
+                  profile_picture
+                ),
+                comments (
+                  id_user
+                ),
+                liked_posts (
+                  id_user
+                )
+              ''').eq('id_user', uid).order('created_at', ascending: false);
           break;
         case 'Disukai':
-          if (response.likedPosts?.isNotEmpty ?? false) {
-            queries.add(Query.equal("\$id", response.likedPosts));
-          }
+          response = await client.from('posts').select('''
+                *,
+                users (
+                  id,
+                  name,
+                  email,
+                  profile_picture
+                ),
+                comments (
+                  id_user
+                ),
+                liked_posts!inner (
+                  id_user
+                )
+              ''').eq('liked_posts.id_user', uid).order('created_at', ascending: false);
           break;
         case 'Komentar':
-          if (response.comments?.isNotEmpty ?? false) {
-            queries.add(Query.equal("\$id", response.comments));
-          }
+          response = await client.from('posts').select('''
+                *,
+                users (
+                  id,
+                  name,
+                  email,
+                  profile_picture
+                ),
+                comments!inner (
+                  id_user
+                ),
+                liked_posts (
+                  id_user
+                )
+              ''').eq('comments.id_user', uid).order('created_at', ascending: false);
           break;
         default:
-          List<String> combineQueries = [];
-          if (response.posts?.isNotEmpty ?? false) {
-            combineQueries.add(Query.equal("\$id", response.posts));
-          }
-          if (response.likedPosts?.isNotEmpty ?? false) {
-            combineQueries.add(Query.equal("\$id", response.likedPosts));
-          }
-          if (response.comments?.isNotEmpty ?? false) {
-            combineQueries.add(Query.equal("\$id", response.comments));
-          }
-
-          if (combineQueries.length == 1) {
-            queries.add(combineQueries[0]);
-          } else if (combineQueries.length > 1) {
-            queries.add(Query.or(combineQueries));
-          }
+          // response = await client
+          //     .from('posts')
+          //     .select(queries)
+          //     .or('id_user.eq.$uid,liked_posts.id_user.eq.$uid,comments.id_user.eq.$uid')
+          //     .order('created_at', ascending: false);
+          response = [];
           break;
       }
 
-      // If user doesn't have activity, return []
-      if (queries.isEmpty) return const Right([]);
-
-      final userActivity = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
-        queries: queries,
-      );
-
-      //  Convert to PostModel
       List<PostModel> posts = List<PostModel>.from(
-        userActivity.documents.map((doc) => PostModel.fromMap(doc.data)),
+        response.map((post) => PostModel.fromMap(post)),
       );
 
       return Right(posts);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
+      print(e);
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, void>> createPost({
+  Future<Either<Exception, void>> createPost({
     required PostModel post,
   }) async {
     try {
-      await Databases(client).createDocument(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
-        documentId: ID.unique(),
-        data: post.toMap(),
-      );
-
+      await client.from('posts').insert(post.toMap());
       return const Right(null);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, void>> deleteAllPosts() async {
-    try {
-      final documents = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
-      );
-
-      for (final document in documents.documents) {
-        await Databases(client).deleteDocument(
-          databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-          collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
-          documentId: document.$id,
-        );
-      }
-
-      return const Right(null);
-    } on AppwriteException catch (e) {
-      return Left(e);
-    }
-  }
-
-  @override
-  Future<Either<AppwriteException, void>> likePost({
+  Future<Either<Exception, void>> likePost({
     required String uid,
-    required PostModel post,
+    required String postId,
   }) async {
     try {
-      await Databases(client).updateDocument(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_POST_COLLECTION_ID"),
-        documentId: post.id.toString(),
-        data: {'likes': post.likes},
-      );
+      await client.from('liked_posts').insert({
+        'id_user': uid,
+        'id_post': postId,
+      });
 
       return const Right(null);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, List<CommentModel>>> fetchComments({
+  Future<Either<Exception, void>> unlikePost({
+    required String uid,
+    required String postId,
+  }) async {
+    try {
+      await client.from('liked_posts').delete().eq('id_user', uid).eq('id_post', postId);
+
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, List<CommentModel>>> fetchComments({
     required String postId,
     bool latest = false,
   }) async {
     try {
-      final response = await Databases(client).listDocuments(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_COMMENT_COLLECTION_ID"),
-        queries: [
-          Query.equal('id_post', postId),
-          Query.orderDesc("\$createdAt"),
-        ],
-      );
+      final response = await client.from('comments').select('''
+            *,
+            users (
+              id,
+              name,
+              email,
+              profile_picture
+            ),
+            liked_comments (
+              id_user
+            )
+          ''').eq('id_post', postId).order('created_at', ascending: true);
 
-      final comments = List<CommentModel>.from(
-        response.documents.map((doc) {
-          final comment = CommentModel.fromMap(doc.data);
-          return comment.copyWith(
-            likes: (doc.data['likes'] as List<dynamic>?)
-                ?.map((like) => like['\$id'].toString())
-                .toList(),
-          );
-        }),
+      List<CommentModel> comments = List<CommentModel>.from(
+        response.map((comment) => CommentModel.fromMap(comment)),
       );
 
       if (!latest) {
-        comments.sort(
-          (a, b) => (b.likes ?? []).length.compareTo((a.likes ?? []).length),
-        );
+        comments.sort((a, b) => (b.likes ?? []).length.compareTo((a.likes ?? []).length));
       }
 
       return Right(comments);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, void>> createComment({
+  Future<Either<Exception, void>> createComment({
     required CommentModel comment,
   }) async {
     try {
-      await Databases(client).createDocument(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_COMMENT_COLLECTION_ID"),
-        documentId: ID.unique(),
-        data: comment.toMap(),
-      );
-
+      await client.from('comments').insert(comment.toMap());
       return const Right(null);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
       return Left(e);
     }
   }
 
   @override
-  Future<Either<AppwriteException, void>> likeComment({
+  Future<Either<Exception, void>> likeComment({
     required String uid,
-    required CommentModel comment,
+    required String commentId,
   }) async {
     try {
-      await Databases(client).updateDocument(
-        databaseId: dotenv.get("APPWRITE_DATABASES_ID"),
-        collectionId: dotenv.get("APPWRITE_COMMENT_COLLECTION_ID"),
-        documentId: comment.id.toString(),
-        data: {'likes': comment.likes},
-      );
+      await client.from('liked_comments').insert({
+        'id_user': uid,
+        'id_comment': commentId,
+      });
 
       return const Right(null);
-    } on AppwriteException catch (e) {
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, void>> unlikeComment({
+    required String uid,
+    required String commentId,
+  }) async {
+    try {
+      await client.from('liked_comments').delete().eq('id_user', uid).eq('id_comment', commentId);
+
+      return const Right(null);
+    } on Exception catch (e) {
       return Left(e);
     }
   }
