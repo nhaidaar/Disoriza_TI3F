@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../../../core/common/custom_button.dart';
@@ -8,9 +11,12 @@ import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
+import '../../../../core/utils/camera.dart';
+import '../../../../core/utils/network_image.dart';
 import '../../../home/presentation/widgets/disoriza_logo.dart';
 import '../../data/models/riwayat_model.dart';
-import '../cubit/riwayat_cubit.dart';
+import '../cubit/disease/disease_cubit.dart';
+import '../cubit/riwayat/riwayat_cubit.dart';
 import '../widgets/riwayat_detail_card.dart';
 import '../widgets/riwayat_detail_remote.dart';
 
@@ -41,6 +47,9 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final riwayatCubit = context.read<RiwayatCubit>();
+    final diseaseCubit = context.read<DiseaseCubit>();
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
@@ -63,7 +72,40 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
         // Delete Button
         actions: [
           IconButton(
-            onPressed: () => handleDeleteRiwayat(context),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => CustomPopup(
+                icon: IconsaxPlusLinear.trash,
+                iconColor: dangerMain,
+                title: 'Ingin menghapus riwayat ini?',
+                subtitle: 'Setelah dihapus, data tidak dapat diurungkan.',
+                actions: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          backgroundColor: dangerMain,
+                          pressedColor: dangerPressed,
+                          onTap: () => riwayatCubit
+                              .deleteRiwayat(riwayatId: widget.riwayat.id.toString())
+                              .then((_) => Navigator.of(context).pop()),
+                          text: 'Ya, hapus',
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: CustomButton(
+                          backgroundColor: neutral10,
+                          pressedColor: neutral50,
+                          onTap: () => Navigator.of(context).pop(),
+                          text: 'Batal',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
           ),
         ],
@@ -78,7 +120,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             decoration: BoxDecoration(
               borderRadius: defaultSmoothRadius,
               image: DecorationImage(
-                image: AssetImage(widget.riwayat.urlImage.toString()),
+                image: getImageProvider(widget.riwayat.urlImage.toString()),
                 fit: BoxFit.cover,
               ),
             ),
@@ -109,15 +151,26 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                         ],
                       ),
                       const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          IconsaxPlusBold.scan,
-                          color: neutral10,
+                      GestureDetector(
+                        onTap: () async {
+                          final img = await pickImage(ImageSource.camera);
+                          if (img != null) {
+                            diseaseCubit.scanDisease(
+                              uid: widget.riwayat.idUser.toString(),
+                              image: img,
+                            );
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.orange,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: const Icon(
+                            IconsaxPlusBold.scan,
+                            color: neutral10,
+                          ),
                         ),
                       ),
                     ],
@@ -144,7 +197,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             index: 1,
             controller: _scrollController,
             title: 'Gejala',
-            content: widget.riwayat.idDisease!.symtomps.toString(),
+            content: widget.riwayat.idDisease!.symtomp.toString(),
           ),
 
           const SizedBox(height: 8),
@@ -197,46 +250,6 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
     );
   }
 
-  Future<void> handleDeleteRiwayat(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => Builder(
-        builder: (dialogContext) => CustomPopup(
-          icon: IconsaxPlusLinear.trash,
-          iconColor: dangerMain,
-          title: 'Ingin menghapus riwayat ini?',
-          subtitle: 'Setelah dihapus, data tidak dapat diurungkan.',
-          actions: [
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    backgroundColor: dangerMain,
-                    pressedColor: dangerPressed,
-                    onTap: () {
-                      dialogContext.read<RiwayatCubit>().deleteRiwayat(riwayatId: widget.riwayat.id.toString());
-                      Navigator.of(context).pop();
-                    },
-                    text: 'Ya, hapus',
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: CustomButton(
-                    backgroundColor: neutral10,
-                    pressedColor: neutral50,
-                    onTap: () => Navigator.of(context).pop(),
-                    text: 'Batal',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _onScroll() {
     // Get the current scroll position
     final double viewportHeight = _scrollController.position.viewportDimension;
@@ -278,7 +291,6 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
     // Apply additional offset after scrolling to position
     final targetContext = _scrollController.tagMap[index]?.context;
     if (targetContext != null) {
-      // ignore: use_build_context_synchronously
       final RenderObject? renderObject = targetContext.findRenderObject();
       if (renderObject is RenderBox) {
         final position = renderObject.localToGlobal(Offset.zero);

@@ -1,7 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disoriza/core/common/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+
+import '../utils/network_image.dart';
 
 class CustomAvatar extends StatelessWidget {
   final String? link;
@@ -13,7 +14,7 @@ class CustomAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: radius,
       backgroundColor: neutral10,
-      backgroundImage: link != null ? CachedNetworkImageProvider(link.toString()) : null,
+      backgroundImage: link != null ? getImageProvider(link.toString()) : null,
       child: link == null
           ? Icon(
               IconsaxPlusLinear.profile,

@@ -21,7 +21,7 @@ class RiwayatModel {
     return RiwayatModel(
       id: map['id'],
       idUser: map['id_user'],
-      idDisease: DiseaseModel.fromMap(map['id_disease']),
+      idDisease: DiseaseModel.fromMap(map['diseases']),
       accuracy: map['accuracy'],
       urlImage: map['url_image'],
       date: DateTime.parse(map['created_at']),

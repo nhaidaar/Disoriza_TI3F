@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../data/models/riwayat_model.dart';
 import '../repositories/riwayat_repository.dart';
@@ -14,6 +15,16 @@ class RiwayatUsecase {
     return await _riwayatRepository.fetchAllRiwayat(
       uid: uid,
       max: max,
+    );
+  }
+
+  Future<Either<Exception, RiwayatModel>> scanDisease({
+    required String uid,
+    required XFile image,
+  }) async {
+    return await _riwayatRepository.scanDisease(
+      uid: uid,
+      image: image,
     );
   }
 

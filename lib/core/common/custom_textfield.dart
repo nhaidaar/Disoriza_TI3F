@@ -18,6 +18,7 @@ class CustomFormField extends StatelessWidget {
   final double borderradius;
   final String? hint;
   final VoidCallback? onTap;
+  final Function(String)? onChanged;
   const CustomFormField({
     super.key,
     this.controller,
@@ -33,6 +34,7 @@ class CustomFormField extends StatelessWidget {
     this.borderradius = 40.0,
     this.hint,
     this.onTap,
+    this.onChanged,
   });
 
   @override
@@ -40,6 +42,7 @@ class CustomFormField extends StatelessWidget {
     return Opacity(
       opacity: isEnabled ? 1 : 0.6,
       child: TextFormField(
+        onChanged: onChanged,
         focusNode: focusNode,
         controller: controller,
         keyboardType: keyboardType,
@@ -54,9 +57,7 @@ class CustomFormField extends StatelessWidget {
           suffixIcon: isPassword
               ? GestureDetector(
                   onTap: onTap,
-                  child: !obscureText
-                      ? const Icon(IconsaxPlusLinear.eye)
-                      : const Icon(IconsaxPlusLinear.eye_slash),
+                  child: !obscureText ? const Icon(IconsaxPlusLinear.eye) : const Icon(IconsaxPlusLinear.eye_slash),
                 )
               : null,
           hintText: hint,

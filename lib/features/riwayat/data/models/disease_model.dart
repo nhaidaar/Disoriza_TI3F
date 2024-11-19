@@ -3,14 +3,14 @@ class DiseaseModel {
   final String? name;
   final String? definition;
   final String? solution;
-  final String? symtomps;
+  final String? symtomp;
 
   const DiseaseModel({
     this.id,
     this.name,
     this.definition,
     this.solution,
-    this.symtomps,
+    this.symtomp,
   });
 
   factory DiseaseModel.fromMap(Map<String, dynamic> map) {
@@ -19,7 +19,7 @@ class DiseaseModel {
       name: map['name'],
       definition: map['definition'],
       solution: map['solution'],
-      symtomps: map['symtomps'],
+      symtomp: map['symtomp'],
     );
   }
 
@@ -29,7 +29,7 @@ class DiseaseModel {
       'name': name,
       'definition': definition,
       'solution': solution,
-      'symtomps': symtomps,
+      'symtomp': symtomp,
     };
   }
 
@@ -38,13 +38,14 @@ class DiseaseModel {
     String? name,
     String? definition,
     String? solution,
-    String? symtomps,
+    String? symtomp,
   }) {
     return DiseaseModel(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        definition: definition ?? this.definition,
-        solution: solution ?? this.solution,
-        symtomps: symtomps ?? this.symtomps);
+      id: id ?? this.id,
+      name: name ?? this.name,
+      definition: definition ?? this.definition,
+      solution: solution ?? this.solution,
+      symtomp: symtomp ?? this.symtomp,
+    );
   }
 }

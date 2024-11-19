@@ -1,16 +1,19 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/custom_empty_state.dart';
-import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../../core/utils/camera.dart';
 import '../../../komunitas/presentation/cubit/post/post_cubit.dart';
-import '../../../riwayat/presentation/cubit/riwayat_cubit.dart';
+import '../../../riwayat/presentation/cubit/disease/disease_cubit.dart';
+import '../../../riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
 import '../../../riwayat/presentation/widgets/riwayat_card.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../widgets/beranda_komunitas_card.dart';
@@ -40,7 +43,7 @@ class _BerandaPageState extends State<BerandaPage> {
 
   Future<void> fetchData() async {
     context.read<PostCubit>().fetchAllPosts(max: 3);
-    context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString(), max: 3);
+    context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString(), max: 4);
   }
 
   @override
@@ -58,7 +61,10 @@ class _BerandaPageState extends State<BerandaPage> {
             title: Row(
               children: [
                 // Avatar
-                CustomAvatar(link: widget.user.profilePicture),
+                GestureDetector(
+                  onTap: () => widget.updateIndex(3),
+                  child: CustomAvatar(link: widget.user.profilePicture),
+                ),
 
                 const SizedBox(width: 8),
 
@@ -88,20 +94,20 @@ class _BerandaPageState extends State<BerandaPage> {
             children: [
               // Pindai dengan Disoriza AI
               BerandaPindaiCard(
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (context) => const CustomPopup(
-                    icon: IconsaxPlusBold.flash_1,
-                    iconColor: successMain,
-                    title: 'Sedang memproses',
-                    subtitle: 'Sabar ya, gambar sedang diproses.',
-                    isLoading: true,
-                  ),
-                ),
+                onTap: () async {
+                  final img = await pickImage(ImageSource.camera);
+                  if (img != null) {
+                    context.read<DiseaseCubit>().scanDisease(
+                          uid: widget.user.id.toString(),
+                          image: img,
+                        );
+                  }
+                },
               ),
 
               // Diskusi & Riwayat
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Diskusi petani
                   Padding(
@@ -193,15 +199,21 @@ class _BerandaPageState extends State<BerandaPage> {
                   BlocBuilder<RiwayatCubit, RiwayatState>(
                     builder: (context, state) {
                       if (state is RiwayatLoading) {
-                        return const BerandaLoadingCard();
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: RiwayatLoadingCard(),
+                        );
                       } else if (state is RiwayatLoaded) {
                         return state.riwayatModel.isNotEmpty
-                            ? Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: state.riwayatModel.map((riwayat) {
-                                  return RiwayatCard(riwayatModel: riwayat);
-                                }).toList(),
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: state.riwayatModel.map((riwayat) {
+                                    return RiwayatCard(riwayatModel: riwayat);
+                                  }).toList(),
+                                ),
                               )
                             : const RiwayatEmptyState();
                       }
@@ -209,8 +221,6 @@ class _BerandaPageState extends State<BerandaPage> {
                       return const RiwayatEmptyState();
                     },
                   ),
-
-                  const SizedBox(height: 20),
                 ],
               ),
             ],

@@ -12,6 +12,14 @@ import 'features/auth/presentation/pages/auth_page.dart';
 import 'features/home/presentation/pages/home_onboarding.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/home/presentation/pages/splash_screen.dart';
+import 'features/komunitas/data/repositories/komunitas_repository_impl.dart';
+import 'features/komunitas/domain/usecases/komunitas_usecase.dart';
+import 'features/komunitas/presentation/cubit/comment/comment_cubit.dart';
+import 'features/komunitas/presentation/cubit/post/post_cubit.dart';
+import 'features/riwayat/data/repositories/riwayat_repository_impl.dart';
+import 'features/riwayat/domain/usecases/riwayat_usecase.dart';
+import 'features/riwayat/presentation/cubit/disease/disease_cubit.dart';
+import 'features/riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,10 +45,24 @@ class Disoriza extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: backgroundCanvas,
       ),
-      home: BlocProvider(
-        // Check session when app started
-        create: (context) => AuthCubit(AuthUsecase(AuthRepositoryImpl(client: client)))..checkSession(),
-
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthCubit(AuthUsecase(AuthRepositoryImpl(client: client)))..checkSession(),
+          ),
+          BlocProvider(
+            create: (context) => CommentCubit(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
+          ),
+          BlocProvider(
+            create: (context) => PostCubit(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
+          ),
+          BlocProvider(
+            create: (context) => DiseaseCubit(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),
+          ),
+          BlocProvider(
+            create: (context) => RiwayatCubit(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),
+          ),
+        ],
         child: BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthError) {

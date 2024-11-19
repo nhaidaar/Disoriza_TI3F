@@ -63,7 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   // Avatar
                   const CircleAvatar(
                     radius: 60,
-                    backgroundImage: AssetImage('assets/images/cardhist.jpeg'),
+                    backgroundImage: AssetImage('assets/images/example.jpg'),
                   ),
 
                   // Edit Button

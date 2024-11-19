@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../data/models/riwayat_model.dart';
-import '../../domain/usecases/riwayat_usecase.dart';
+import '../../../data/models/riwayat_model.dart';
+import '../../../domain/usecases/riwayat_usecase.dart';
 
 part 'riwayat_state.dart';
 
@@ -35,10 +35,7 @@ class RiwayatCubit extends Cubit<RiwayatState> {
       final response = await _riwayatUsecase.deleteRiwayat(riwayatId: riwayatId);
       response.fold(
         (error) => emit(RiwayatError(message: error.toString())),
-        (success) {
-          emit(RiwayatDeleted());
-          // fetchAllRiwayat(uid: uid);
-        },
+        (success) => emit(RiwayatDeleted()),
       );
     } catch (_) {
       rethrow;
