@@ -30,4 +30,8 @@ class AuthUsecase {
   Future<Either<Exception, void>> logout() {
     return _authRepository.logout();
   }
+
+  Future<Either<Exception, void>> resetPassword({required String email}) {
+    return _authRepository.resetPassword(email: email);
+  }
 }

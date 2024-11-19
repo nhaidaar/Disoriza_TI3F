@@ -170,9 +170,9 @@ class _BerandaPageState extends State<BerandaPage> {
                                   ),
                                 ],
                               )
-                            : const DiskusiEmptyState();
+                            : const Center(child: DiskusiEmptyState());
                       }
-                      return const DiskusiEmptyState();
+                      return const Center(child: DiskusiEmptyState());
                     },
                   ),
 
@@ -215,10 +215,10 @@ class _BerandaPageState extends State<BerandaPage> {
                                   }).toList(),
                                 ),
                               )
-                            : const RiwayatEmptyState();
+                            : const Center(child: RiwayatEmptyState());
                       }
 
-                      return const RiwayatEmptyState();
+                      return const Center(child: RiwayatEmptyState());
                     },
                   ),
                 ],

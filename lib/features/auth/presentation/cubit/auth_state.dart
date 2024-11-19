@@ -11,10 +11,6 @@ class AuthInitial extends AuthState {}
 
 class LoginLoading extends AuthState {}
 
-class RegisterLoading extends AuthState {}
-
-class LogoutLoading extends AuthState {}
-
 class Unauthenticated extends AuthState {}
 
 class Authenticated extends AuthState {
@@ -25,6 +21,14 @@ class Authenticated extends AuthState {
   @override
   List<Object> get props => [user];
 }
+
+class RegisterLoading extends AuthState {}
+
+class LogoutLoading extends AuthState {}
+
+class ResetPasswordLoading extends AuthState {}
+
+class ResetPasswordSuccess extends AuthState {}
 
 class AuthError extends AuthState {
   final String message;

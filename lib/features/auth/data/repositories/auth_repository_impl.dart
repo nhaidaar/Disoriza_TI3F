@@ -90,4 +90,14 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e);
     }
   }
+
+  @override
+  Future<Either<Exception, void>> resetPassword({required String email}) async {
+    try {
+      await client.auth.resetPasswordForEmail(email);
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
 }

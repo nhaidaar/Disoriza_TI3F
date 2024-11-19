@@ -87,7 +87,10 @@ class _LoginPageState extends State<LoginPage> {
                 onTap: () {
                   Navigator.of(context).push(
                     PageTransition(
-                      child: const ForgotPasswordPage(),
+                      child: BlocProvider.value(
+                        value: context.read<AuthCubit>(),
+                        child: const ForgotPasswordPage(),
+                      ),
                       type: PageTransitionType.rightToLeft,
                     ),
                   );
