@@ -16,6 +16,7 @@ import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../../riwayat/presentation/cubit/disease/disease_cubit.dart';
 import '../../../riwayat/presentation/pages/riwayat_detail.dart';
+import '../../../setelan/presentation/cubit/setelan_cubit.dart';
 import 'beranda_page.dart';
 import '../../../riwayat/presentation/pages/riwayat_page.dart';
 import '../../../komunitas/presentation/pages/komunitas_page.dart';
@@ -56,6 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
           value: context.read<AuthCubit>(),
         ),
         BlocProvider.value(
+          value: context.read<SetelanCubit>(),
+        ),
+        BlocProvider.value(
           value: context.read<CommentCubit>(),
         ),
         BlocProvider.value(
@@ -70,6 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
       child: MultiBlocListener(
         listeners: [
+          BlocListener<SetelanCubit, SetelanState>(
+            listener: (context, state) {
+              if (state is SetelanError) showSnackbar(context, message: state.message, isError: true);
+            },
+          ),
           BlocListener<CommentCubit, CommentState>(
             listener: (context, state) {
               if (state is CommentError) showSnackbar(context, message: state.message, isError: true);

@@ -20,6 +20,7 @@ import 'features/riwayat/data/repositories/riwayat_repository_impl.dart';
 import 'features/riwayat/domain/usecases/riwayat_usecase.dart';
 import 'features/riwayat/presentation/cubit/disease/disease_cubit.dart';
 import 'features/riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
+import 'features/setelan/presentation/cubit/setelan_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +50,9 @@ class Disoriza extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => AuthCubit(AuthUsecase(AuthRepositoryImpl(client: client)))..checkSession(),
+          ),
+          BlocProvider(
+            create: (context) => SetelanCubit(AuthUsecase(AuthRepositoryImpl(client: client))),
           ),
           BlocProvider(
             create: (context) => CommentCubit(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
