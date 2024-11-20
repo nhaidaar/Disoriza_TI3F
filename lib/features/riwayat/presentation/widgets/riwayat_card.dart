@@ -35,7 +35,7 @@ class RiwayatCard extends StatelessWidget {
               ],
               child: RiwayatDetail(riwayat: riwayatModel),
             ),
-            type: PageTransitionType.leftToRight,
+            type: PageTransitionType.rightToLeft,
           ),
         );
       },

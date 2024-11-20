@@ -1,6 +1,7 @@
 import './disease_model.dart';
 
 class RiwayatModel {
+  final bool haveDisease;
   final int? id;
   final String? idUser;
   final DiseaseModel? idDisease;
@@ -9,6 +10,7 @@ class RiwayatModel {
   final DateTime? date;
 
   const RiwayatModel({
+    this.haveDisease = true,
     this.id,
     this.idUser,
     this.idDisease,
@@ -39,6 +41,7 @@ class RiwayatModel {
   }
 
   RiwayatModel copyWith({
+    bool? haveDisease,
     int? id,
     String? idUser,
     DiseaseModel? idDisease,
@@ -47,6 +50,7 @@ class RiwayatModel {
     DateTime? date,
   }) {
     return RiwayatModel(
+      haveDisease: haveDisease ?? this.haveDisease,
       id: id ?? this.id,
       idUser: idUser ?? this.idUser,
       idDisease: idDisease ?? this.idDisease,

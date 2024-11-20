@@ -4,7 +4,7 @@ abstract class DiseaseState extends Equatable {
   const DiseaseState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class DiseaseInitial extends DiseaseState {}
@@ -12,11 +12,11 @@ class DiseaseInitial extends DiseaseState {}
 class DiseaseLoading extends DiseaseState {}
 
 class DiseaseSuccess extends DiseaseState {
-  final RiwayatModel riwayatModel;
+  final RiwayatModel? riwayatModel;
   const DiseaseSuccess({required this.riwayatModel});
 
   @override
-  List<Object> get props => [riwayatModel];
+  List<Object?> get props => [riwayatModel];
 }
 
 class DiseaseError extends DiseaseState {

@@ -40,7 +40,7 @@ class RiwayatRepositoryImpl implements RiwayatRepository {
   }
 
   @override
-  Future<Either<Exception, RiwayatModel>> scanDisease({
+  Future<Either<Exception, RiwayatModel?>> scanDisease({
     required String uid,
     required XFile image,
   }) async {
@@ -52,6 +52,10 @@ class RiwayatRepositoryImpl implements RiwayatRepository {
 
       await client.storage.from('user_histories').uploadBinary(path, imageBytes);
       final url = client.storage.from('user_histories').getPublicUrl(path);
+
+      // Random sehat / sakit
+      final sehat = Random().nextBool();
+      if (sehat) return const Right(null);
 
       // Random type of disease (temporary)
       final id = Random().nextInt(5) + 1;
@@ -67,9 +71,9 @@ class RiwayatRepositoryImpl implements RiwayatRepository {
         accuracy: accuracy,
         urlImage: url,
       );
-      await client.from('histories').insert(riwayat.toMap());
+      final response = await client.from('histories').insert(riwayat.toMap()).select().single();
 
-      return Right(riwayat);
+      return Right(riwayat.copyWith(id: response['id']));
     } on Exception catch (e) {
       return Left(e);
     }

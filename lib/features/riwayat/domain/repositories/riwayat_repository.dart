@@ -9,7 +9,7 @@ abstract class RiwayatRepository {
     int? max,
   });
 
-  Future<Either<Exception, RiwayatModel>> scanDisease({
+  Future<Either<Exception, RiwayatModel?>> scanDisease({
     required String uid,
     required XFile image,
   });

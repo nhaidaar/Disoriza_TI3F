@@ -10,7 +10,7 @@ import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
 
 import '../../../../core/utils/camera.dart';
-import '../../../../core/utils/loading_dialog.dart';
+import '../../../../core/utils/dialog.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/data/models/user_model.dart';
@@ -84,45 +84,16 @@ class _HomeScreenState extends State<HomeScreen> {
             listener: (context, state) {
               if (state is DiseaseLoading) showDiseaseLoading(context);
 
-              if (state is DiseaseError) {
-                Navigator.of(context).pop();
+              if (state is DiseaseError) handleDiseaseError(context);
 
-                showSnackbar(context, message: state.message, isError: true);
-              }
-
-              if (state is DiseaseSuccess) {
-                Navigator.of(context).pop();
-
-                Navigator.of(context).push(
-                  PageTransition(
-                    child: MultiBlocProvider(
-                      providers: [
-                        BlocProvider.value(
-                          value: context.read<RiwayatCubit>(),
-                        ),
-                        BlocProvider.value(
-                          value: context.read<DiseaseCubit>(),
-                        ),
-                      ],
-                      child: RiwayatDetail(riwayat: state.riwayatModel),
-                    ),
-                    type: PageTransitionType.rightToLeft,
-                  ),
-                );
-              }
+              if (state is DiseaseSuccess) handleDiseaseSuccess(context, state);
             },
           ),
           BlocListener<RiwayatCubit, RiwayatState>(
             listener: (context, state) {
               if (state is RiwayatError) showSnackbar(context, message: state.message, isError: true);
 
-              if (state is RiwayatDeleted) {
-                Navigator.of(context).pop();
-
-                showSnackbar(context, message: 'Riwayat berhasil dihapus');
-
-                context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString());
-              }
+              if (state is RiwayatDeleted) handleRiwayatDeleted(context);
             },
           ),
         ],
@@ -166,15 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18),
                   child: GestureDetector(
-                    onTap: () async {
-                      final img = await pickImage(ImageSource.camera);
-                      if (img != null) {
-                        context.read<DiseaseCubit>().scanDisease(
-                              uid: widget.user.id.toString(),
-                              image: img,
-                            );
-                      }
-                    },
+                    onTap: () async => await handleScanDisease(context),
                     child: const CircleAvatar(
                       radius: 26,
                       backgroundColor: accentOrangeMain,
@@ -210,6 +173,68 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void handleRiwayatDeleted(BuildContext context) {
+    Navigator.of(context).pop();
+
+    showSnackbar(context, message: 'Riwayat berhasil dihapus');
+
+    context.read<RiwayatCubit>().fetchAllRiwayat(
+          uid: widget.user.id.toString(),
+          max: _selectedIndex == 0 ? 4 : null,
+        );
+  }
+
+  void handleDiseaseSuccess(BuildContext context, DiseaseSuccess state) {
+    Navigator.of(context).pop();
+
+    state.riwayatModel != null
+        ? Navigator.of(context).push(
+            PageTransition(
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(
+                    value: context.read<RiwayatCubit>(),
+                  ),
+                  BlocProvider.value(
+                    value: context.read<DiseaseCubit>(),
+                  ),
+                ],
+                child: RiwayatDetail(riwayat: state.riwayatModel!),
+              ),
+              type: PageTransitionType.rightToLeft,
+            ),
+          )
+        : showDiseaseSehat(
+            context,
+            onScan: () async {
+              Navigator.of(context).pop();
+              await handleScanDisease(context);
+            },
+          );
+  }
+
+  void handleDiseaseError(BuildContext context) {
+    Navigator.of(context).pop();
+
+    showDiseaseError(
+      context,
+      onScan: () async {
+        Navigator.of(context).pop();
+        await handleScanDisease(context);
+      },
+    );
+  }
+
+  Future<void> handleScanDisease(BuildContext context) async {
+    final img = await pickImage(ImageSource.camera);
+    if (img != null) {
+      context.read<DiseaseCubit>().scanDisease(
+            uid: widget.user.id.toString(),
+            image: img,
+          );
+    }
   }
 }
 
