@@ -16,6 +16,8 @@ abstract class KomunitasRepository {
 
   Future<Either<Exception, void>> createPost({required PostModel post});
 
+  Future<Either<Exception, void>> deletePost({required String postId});
+
   Future<Either<Exception, void>> likePost({
     required String uid,
     required String postId,

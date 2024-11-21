@@ -67,6 +67,23 @@ class PostCubit extends Cubit<PostState> {
     }
   }
 
+  Future<void> deletePost({required String postId}) async {
+    try {
+      emit(PostLoading());
+
+      final response = await _komunitasUsecase.deletePost(postId: postId);
+      response.fold(
+        (error) => emit(PostError(message: error.toString())),
+        (success) {
+          emit(DeletePostSuccess());
+          fetchAllPosts();
+        },
+      );
+    } catch (_) {
+      rethrow;
+    }
+  }
+
   Future<void> likePost({
     required String uid,
     required String postId,

@@ -142,6 +142,16 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }
 
   @override
+  Future<Either<Exception, void>> deletePost({required String postId}) async {
+    try {
+      await client.from('posts').delete().eq('id', postId);
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
   Future<Either<Exception, void>> likePost({
     required String uid,
     required String postId,

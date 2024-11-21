@@ -72,40 +72,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
         // Delete Button
         actions: [
           IconButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => CustomPopup(
-                icon: IconsaxPlusLinear.trash,
-                iconColor: dangerMain,
-                title: 'Ingin menghapus riwayat ini?',
-                subtitle: 'Setelah dihapus, data tidak dapat diurungkan.',
-                actions: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          backgroundColor: dangerMain,
-                          pressedColor: dangerPressed,
-                          onTap: () => riwayatCubit
-                              .deleteRiwayat(riwayatId: widget.riwayat.id.toString())
-                              .then((_) => Navigator.of(context).pop()),
-                          text: 'Ya, hapus',
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: CustomButton(
-                          backgroundColor: neutral10,
-                          pressedColor: neutral50,
-                          onTap: () => Navigator.of(context).pop(),
-                          text: 'Batal',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            onPressed: () => handleDeleteRiwayat(context, riwayatCubit),
             icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
           ),
         ],
@@ -246,6 +213,43 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> handleDeleteRiwayat(BuildContext context, RiwayatCubit riwayatCubit) {
+    return showDialog(
+      context: context,
+      builder: (context) => CustomPopup(
+        icon: IconsaxPlusLinear.trash,
+        iconColor: dangerMain,
+        title: 'Ingin menghapus riwayat ini?',
+        subtitle: 'Setelah dihapus, data tidak dapat diurungkan.',
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  backgroundColor: dangerMain,
+                  pressedColor: dangerPressed,
+                  onTap: () => riwayatCubit
+                      .deleteRiwayat(riwayatId: widget.riwayat.id.toString())
+                      .then((_) => Navigator.of(context).pop()),
+                  text: 'Ya, hapus',
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: CustomButton(
+                  backgroundColor: neutral10,
+                  pressedColor: neutral50,
+                  onTap: () => Navigator.of(context).pop(),
+                  text: 'Batal',
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

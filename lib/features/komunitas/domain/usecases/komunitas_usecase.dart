@@ -32,10 +32,14 @@ class KomunitasUsecase {
     return _komunitasRepository.createPost(post: post);
   }
 
+  Future<Either<Exception, void>> deletePost({required String postId}) {
+    return _komunitasRepository.deletePost(postId: postId);
+  }
+
   Future<Either<Exception, void>> likePost({
     required String uid,
     required String postId,
-  }) async {
+  }) {
     return _komunitasRepository.likePost(
       uid: uid,
       postId: postId,
@@ -45,7 +49,7 @@ class KomunitasUsecase {
   Future<Either<Exception, void>> unlikePost({
     required String uid,
     required String postId,
-  }) async {
+  }) {
     return _komunitasRepository.unlikePost(
       uid: uid,
       postId: postId,
@@ -55,7 +59,7 @@ class KomunitasUsecase {
   Future<Either<Exception, List<CommentModel>>> fetchComments({
     required String postId,
     bool latest = false,
-  }) async {
+  }) {
     return _komunitasRepository.fetchComments(
       postId: postId,
       latest: latest,
@@ -64,14 +68,14 @@ class KomunitasUsecase {
 
   Future<Either<Exception, void>> createComment({
     required CommentModel comment,
-  }) async {
+  }) {
     return _komunitasRepository.createComment(comment: comment);
   }
 
   Future<Either<Exception, void>> likeComment({
     required String uid,
     required String commentId,
-  }) async {
+  }) {
     return _komunitasRepository.likeComment(
       uid: uid,
       commentId: commentId,
@@ -81,7 +85,7 @@ class KomunitasUsecase {
   Future<Either<Exception, void>> unlikeComment({
     required String uid,
     required String commentId,
-  }) async {
+  }) {
     return _komunitasRepository.unlikeComment(
       uid: uid,
       commentId: commentId,

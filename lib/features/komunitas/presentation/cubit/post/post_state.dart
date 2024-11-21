@@ -28,3 +28,5 @@ class PostError extends PostState {
 }
 
 class CreatePostSuccess extends PostState {}
+
+class DeletePostSuccess extends PostState {}
