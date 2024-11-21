@@ -100,4 +100,38 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(e);
     }
   }
+
+  @override
+  Future<Either<Exception, UserModel>> edit({
+    required String uid,
+    String? name,
+    String? email,
+  }) async {
+    try {
+      final updates = <String, dynamic>{};
+      if (name != null) updates['name'] = name;
+      if (email != null) updates['email'] = email;
+
+      if (updates.isEmpty) {
+        return Left(Exception("No updates provided."));
+      }
+
+      final response = await client
+          .from('users')
+          .update(updates)
+          .eq('id', uid)
+          .select()
+          .single();
+          
+      final updatedUser = UserModel.fromMap(response);
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(email: email),
+      );
+      return Right(updatedUser);
+    } on PostgrestException catch (e) {
+      return Left(Exception(e.message));
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
 }

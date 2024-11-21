@@ -34,4 +34,12 @@ class AuthUsecase {
   Future<Either<Exception, void>> resetPassword({required String email}) {
     return _authRepository.resetPassword(email: email);
   }
+
+   Future<Either<Exception, UserModel>> edit({
+      required String uid,
+      String? name,
+      String? email,
+    }) async {
+      return _authRepository.edit(uid: uid, name: name, email: email);
+    }
 }

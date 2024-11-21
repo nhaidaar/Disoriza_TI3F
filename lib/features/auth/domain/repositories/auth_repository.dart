@@ -19,4 +19,10 @@ abstract class AuthRepository {
   Future<Either<Exception, void>> logout();
 
   Future<Either<Exception, void>> resetPassword({required String email});
+
+  Future<Either<Exception, UserModel>> edit({
+    required String uid,
+    String? name,
+    String? email,
+  });
 }
