@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       BerandaPage(user: widget.user, updateIndex: updateIndex),
       RiwayatPage(user: widget.user),
       KomunitasPage(user: widget.user),
-      const SetelanPage(),
+      SetelanPage(user: widget.user),
     ];
 
     return MultiBlocProvider(
