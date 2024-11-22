@@ -1,16 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
+import '../../../../core/utils/camera.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../../data/models/post_model.dart';
 import '../cubit/post/post_cubit.dart';
 
 class CreatePostPage extends StatefulWidget {
@@ -24,6 +27,7 @@ class CreatePostPage extends StatefulWidget {
 class _CreatePostPageState extends State<CreatePostPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  Uint8List? image;
 
   bool areFieldsEmpty = true;
 
@@ -184,21 +188,28 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           children: [
                             // Image preview
                             Container(
-                              padding: const EdgeInsets.all(58),
+                              height: image != null ? 212 : 141,
                               decoration: BoxDecoration(
                                 border: Border.all(color: neutral30),
                                 borderRadius: BorderRadius.circular(24),
+                                image: image != null
+                                    ? DecorationImage(image: MemoryImage(image!), fit: BoxFit.cover)
+                                    : null,
                               ),
-                              child: const Center(
-                                child: Icon(IconsaxPlusLinear.gallery_add),
-                              ),
+                              child: image != null ? null : const Center(child: Icon(IconsaxPlusLinear.gallery_add)),
                             ),
 
                             const SizedBox(height: 8),
 
                             // Upload Gambar button
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () async {
+                                XFile? pickedImage = await pickImage(context);
+                                if (pickedImage != null) {
+                                  final imageBytes = await pickedImage.readAsBytes();
+                                  setState(() => image = imageBytes);
+                                }
+                              },
                               child: Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(12),
@@ -207,7 +218,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                   borderRadius: BorderRadius.circular(24),
                                 ),
                                 child: Text(
-                                  'Upload Gambar',
+                                  image != null ? 'Ubah Gambar' : 'Upload Gambar',
                                   style: mediumTS.copyWith(fontSize: 12, color: neutral100),
                                   textAlign: TextAlign.center,
                                 ),
@@ -230,11 +241,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           disabled: areFieldsEmpty,
                           onTap: () {
                             context.read<PostCubit>().createPost(
-                                  post: PostModel(
-                                    title: _titleController.text,
-                                    content: _descriptionController.text,
-                                    author: UserModel(id: widget.user.id),
-                                  ),
+                                  title: _titleController.text,
+                                  description: _descriptionController.text,
+                                  uid: widget.user.id.toString(),
+                                  image: image,
                                 );
                           },
                         ),

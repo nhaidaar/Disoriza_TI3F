@@ -4,7 +4,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
@@ -95,7 +94,7 @@ class _BerandaPageState extends State<BerandaPage> {
               // Pindai dengan Disoriza AI
               BerandaPindaiCard(
                 onTap: () async {
-                  final img = await pickImage(ImageSource.camera);
+                  final img = await pickImage(context);
                   if (img != null) {
                     context.read<DiseaseCubit>().scanDisease(
                           uid: widget.user.id.toString(),

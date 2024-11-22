@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../auth/data/models/user_model.dart';
 import '../../domain/repositories/komunitas_repository.dart';
 import '../models/comment_model.dart';
 import '../models/post_model.dart';
@@ -131,9 +134,27 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
 
   @override
   Future<Either<Exception, void>> createPost({
-    required PostModel post,
+    required String title,
+    required String description,
+    required String uid,
+    Uint8List? image,
   }) async {
     try {
+      final time = DateTime.now().millisecondsSinceEpoch;
+      final path = '/$uid/$time.png';
+
+      String? url;
+      if (image != null) {
+        await client.storage.from('user_posts').uploadBinary(path, image);
+        url = client.storage.from('user_posts').getPublicUrl(path);
+      }
+
+      final post = PostModel(
+        title: title,
+        content: description,
+        author: UserModel(id: uid),
+        urlImage: url,
+      );
       await client.from('posts').insert(post.toMap());
       return const Right(null);
     } on Exception catch (e) {

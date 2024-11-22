@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../../../core/common/custom_button.dart';
@@ -120,7 +119,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                       const Spacer(),
                       GestureDetector(
                         onTap: () async {
-                          final img = await pickImage(ImageSource.camera);
+                          final img = await pickImage(context);
                           if (img != null) {
                             diseaseCubit.scanDisease(
                               uid: widget.riwayat.idUser.toString(),

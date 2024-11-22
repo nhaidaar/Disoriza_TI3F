@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -50,11 +52,21 @@ class PostCubit extends Cubit<PostState> {
     }
   }
 
-  Future<void> createPost({required PostModel post}) async {
+  Future<void> createPost({
+    required String title,
+    required String description,
+    required String uid,
+    Uint8List? image,
+  }) async {
     try {
       emit(PostLoading());
 
-      final response = await _komunitasUsecase.createPost(post: post);
+      final response = await _komunitasUsecase.createPost(
+        title: title,
+        description: description,
+        uid: uid,
+        image: image,
+      );
       response.fold(
         (error) => emit(PostError(message: error.toString())),
         (success) {

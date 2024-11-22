@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/comment_model.dart';
@@ -14,7 +16,12 @@ abstract class KomunitasRepository {
     required String filter,
   });
 
-  Future<Either<Exception, void>> createPost({required PostModel post});
+  Future<Either<Exception, void>> createPost({
+    required String title,
+    required String description,
+    required String uid,
+    Uint8List? image,
+  });
 
   Future<Either<Exception, void>> deletePost({required String postId});
 

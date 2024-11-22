@@ -19,3 +19,8 @@ BorderRadiusGeometry defaultSmoothRadius = SmoothBorderRadius(
   cornerRadius: 16,
   cornerSmoothing: 0.8,
 );
+
+BorderRadiusGeometry halfSmoothRadius = SmoothBorderRadius(
+  cornerRadius: 8,
+  cornerSmoothing: 0.8,
+);

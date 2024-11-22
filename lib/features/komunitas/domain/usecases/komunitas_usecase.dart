@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/comment_model.dart';
@@ -28,8 +30,18 @@ class KomunitasUsecase {
     );
   }
 
-  Future<Either<Exception, void>> createPost({required PostModel post}) {
-    return _komunitasRepository.createPost(post: post);
+  Future<Either<Exception, void>> createPost({
+    required String title,
+    required String description,
+    required String uid,
+    Uint8List? image,
+  }) {
+    return _komunitasRepository.createPost(
+      title: title,
+      description: description,
+      uid: uid,
+      image: image,
+    );
   }
 
   Future<Either<Exception, void>> deletePost({required String postId}) {

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/common/colors.dart';
@@ -237,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> handleScanDisease(BuildContext context) async {
-    final img = await pickImage(ImageSource.camera);
+    final img = await pickImage(context);
     if (img != null) {
       context.read<DiseaseCubit>().scanDisease(
             uid: widget.user.id.toString(),
