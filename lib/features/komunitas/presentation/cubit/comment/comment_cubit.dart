@@ -45,6 +45,23 @@ class CommentCubit extends Cubit<CommentState> {
     }
   }
 
+  Future<void> deleteComment({
+    required String postId,
+    required String commentId,
+  }) async {
+    try {
+      final response = await _komunitasUsecase.deleteComment(commentId: commentId);
+      response.fold(
+        (error) => emit(CommentError(message: error.toString())),
+        (success) => emit(DeleteCommentSuccess()),
+      );
+
+      await fetchComments(postId: postId);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
   Future<void> likeComment({
     required String uid,
     required String commentId,

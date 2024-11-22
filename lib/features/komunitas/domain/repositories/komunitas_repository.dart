@@ -33,9 +33,9 @@ abstract class KomunitasRepository {
     bool latest = false,
   });
 
-  Future<Either<Exception, void>> createComment({
-    required CommentModel comment,
-  });
+  Future<Either<Exception, void>> createComment({required CommentModel comment});
+
+  Future<Either<Exception, void>> deleteComment({required String commentId});
 
   Future<Either<Exception, void>> likeComment({
     required String uid,

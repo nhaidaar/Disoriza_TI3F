@@ -28,3 +28,5 @@ class CommentError extends CommentState {
 }
 
 class CreateCommentSuccess extends CommentState {}
+
+class DeleteCommentSuccess extends CommentState {}

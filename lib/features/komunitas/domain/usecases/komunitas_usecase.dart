@@ -66,10 +66,12 @@ class KomunitasUsecase {
     );
   }
 
-  Future<Either<Exception, void>> createComment({
-    required CommentModel comment,
-  }) {
+  Future<Either<Exception, void>> createComment({required CommentModel comment}) {
     return _komunitasRepository.createComment(comment: comment);
+  }
+
+  Future<Either<Exception, void>> deleteComment({required String commentId}) {
+    return _komunitasRepository.deleteComment(commentId: commentId);
   }
 
   Future<Either<Exception, void>> likeComment({

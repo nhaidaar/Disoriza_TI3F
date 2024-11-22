@@ -199,7 +199,7 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
             liked_comments (
               id_user
             )
-          ''').eq('id_post', postId).order('created_at', ascending: true);
+          ''').eq('id_post', postId).order('created_at', ascending: false);
 
       List<CommentModel> comments = List<CommentModel>.from(
         response.map((comment) => CommentModel.fromMap(comment)),
@@ -221,6 +221,16 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       await client.from('comments').insert(comment.toMap());
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, void>> deleteComment({required String commentId}) async {
+    try {
+      await client.from('comments').delete().eq('id', commentId);
       return const Right(null);
     } on Exception catch (e) {
       return Left(e);

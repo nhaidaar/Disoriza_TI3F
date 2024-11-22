@@ -59,244 +59,253 @@ class _DetailPostPageState extends State<DetailPostPage> {
   Widget build(BuildContext context) {
     final postCubit = context.read<PostCubit>();
 
-    return BlocConsumer<PostCubit, PostState>(
-      listener: (context, state) {
-        if (state is DeletePostSuccess) {
-          Navigator.of(context).pop();
-          showSnackbar(context, message: 'Postingan berhasil dihapus!');
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: neutral10,
-            surfaceTintColor: neutral10,
-            shape: const Border(
-              bottom: BorderSide(color: neutral30),
-            ),
-
-            // Back Button
-            leading: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(IconsaxPlusLinear.arrow_left),
-            ),
-
-            title: Text(
-              'Detail diskusi',
-              style: mediumTS.copyWith(fontSize: 16, color: neutral100),
-            ),
-            centerTitle: true,
-
-            actions: [
-              widget.postModel.author!.id == widget.uid
-                  ? IconButton(
-                      onPressed: () => handleDeletePost(context, postCubit),
-                      icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
-                    )
-                  : Container(),
-            ],
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<PostCubit, PostState>(
+          listener: (context, state) {
+            if (state is DeletePostSuccess) {
+              Navigator.of(context).pop();
+              showSnackbar(context, message: 'Postingan berhasil dihapus!');
+            }
+          },
+        ),
+        BlocListener<CommentCubit, CommentState>(
+          listener: (context, state) {
+            if (state is DeleteCommentSuccess) {
+              showSnackbar(context, message: 'Komentar berhasil dihapus!');
+            }
+          },
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: neutral10,
+          surfaceTintColor: neutral10,
+          shape: const Border(
+            bottom: BorderSide(color: neutral30),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(8),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: defaultSmoothRadius,
-                      border: Border.all(color: neutral30),
-                      color: neutral10,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            // Avatar
-                            CustomAvatar(link: widget.postModel.author!.profilePicture),
 
-                            const SizedBox(width: 12),
+          // Back Button
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(IconsaxPlusLinear.arrow_left),
+          ),
 
-                            // User details
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.postModel.author != null
-                                      ? widget.postModel.author!.name.toString()
-                                      : 'Disoriza User',
-                                  style: mediumTS.copyWith(color: neutral100),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  timeago.format(widget.postModel.date ?? DateTime.now()),
-                                  style: mediumTS.copyWith(fontSize: 12, color: neutral60),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
+          title: Text(
+            'Detail diskusi',
+            style: mediumTS.copyWith(fontSize: 16, color: neutral100),
+          ),
+          centerTitle: true,
 
-                        const SizedBox(height: 12),
+          actions: [
+            widget.postModel.author!.id == widget.uid
+                ? IconButton(
+                    onPressed: () => handleDeletePost(context, postCubit),
+                    icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
+                  )
+                : Container(),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(8),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: defaultSmoothRadius,
+                    border: Border.all(color: neutral30),
+                    color: neutral10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          // Avatar
+                          CustomAvatar(link: widget.postModel.author!.profilePicture),
 
-                        Text(
-                          widget.postModel.title.toString(),
-                          style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
-                        ),
+                          const SizedBox(width: 12),
 
-                        const SizedBox(height: 4),
-
-                        Text(
-                          widget.postModel.content.toString(),
-                          style: mediumTS.copyWith(color: neutral90),
-                        ),
-
-                        const SizedBox(height: 4),
-
-                        // Image (optional)
-                        if (widget.postModel.urlImage != null) ...[
-                          const SizedBox(height: 8),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: CachedNetworkImage(
-                              imageUrl: widget.postModel.urlImage.toString(),
-                            ),
-                          ),
-                        ],
-
-                        const SizedBox(height: 12),
-
-                        Row(
-                          children: [
-                            // Like
-                            GestureDetector(
-                              onTap: () => handleLikePost(context),
-                              child: Icon(
-                                isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
-                                color: isLiked ? dangerMain : neutral100,
-                                size: 20,
+                          // User details
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.postModel.author != null
+                                    ? widget.postModel.author!.name.toString()
+                                    : 'Disoriza User',
+                                style: mediumTS.copyWith(color: neutral100),
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              (widget.postModel.likes ?? []).length.toString(),
-                              style: mediumTS.copyWith(fontSize: 12, color: neutral80),
-                            ),
+                              const SizedBox(height: 4),
+                              Text(
+                                timeago.format(widget.postModel.date ?? DateTime.now()),
+                                style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
 
-                            const SizedBox(width: 16),
+                      const SizedBox(height: 12),
 
-                            // Comment
-                            const Icon(
-                              IconsaxPlusLinear.message_text_1,
-                              color: neutral100,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              (widget.postModel.comments ?? []).length.toString(),
-                              style: mediumTS.copyWith(fontSize: 12, color: neutral80),
-                            ),
-                          ],
-                        ),
+                      Text(
+                        widget.postModel.title.toString(),
+                        style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
+                      ),
 
-                        const SizedBox(height: 12),
+                      const SizedBox(height: 4),
 
-                        const Divider(thickness: 1, color: neutral30),
+                      Text(
+                        widget.postModel.content.toString(),
+                        style: mediumTS.copyWith(color: neutral90),
+                      ),
 
-                        // Komentar title and Filter
-                        Row(
-                          children: [
-                            Text(
-                              'Komentar',
-                              style: mediumTS.copyWith(fontSize: 16, color: neutral100),
-                            ),
-                            const Spacer(),
-                            CustomDropdown(
-                              items: const [
-                                MapEntry('Terpopuler', false),
-                                MapEntry('Terbaru', true),
-                              ],
-                              initialValue: const MapEntry('Terpopuler', false),
-                              onChanged: (filter) async {
-                                if (isLatest != filter.value) {
-                                  isLatest = !isLatest;
-                                  context.read<CommentCubit>().fetchComments(
-                                        postId: widget.postModel.id.toString(),
-                                        latest: isLatest,
-                                      );
-                                }
-                              },
-                            ),
-                          ],
-                        ),
+                      const SizedBox(height: 4),
 
-                        const SizedBox(height: 12),
-
-                        // List of Komentar
-                        BlocBuilder<CommentCubit, CommentState>(
-                          builder: (context, state) {
-                            if (state is CommentLoading) {
-                              return const PostLoadingCard();
-                            }
-                            if (state is CommentLoaded) {
-                              return state.commentModels.isNotEmpty
-                                  ? Column(
-                                      children: state.commentModels.map((comment) {
-                                        return CommentCard(
-                                          uid: widget.uid,
-                                          commentModel: comment,
-                                        );
-                                      }).toList(),
-                                    )
-                                  : const Center(child: KomentarEmptyState());
-                            }
-                            return const Center(child: KomentarEmptyState());
-                          },
+                      // Image (optional)
+                      if (widget.postModel.urlImage != null) ...[
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.postModel.urlImage.toString(),
+                          ),
                         ),
                       ],
-                    ),
+
+                      const SizedBox(height: 12),
+
+                      Row(
+                        children: [
+                          // Like
+                          GestureDetector(
+                            onTap: () => handleLikePost(context),
+                            child: Icon(
+                              isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
+                              color: isLiked ? dangerMain : neutral100,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            (widget.postModel.likes ?? []).length.toString(),
+                            style: mediumTS.copyWith(fontSize: 12, color: neutral80),
+                          ),
+
+                          const SizedBox(width: 16),
+
+                          // Comment
+                          const Icon(
+                            IconsaxPlusLinear.message_text_1,
+                            color: neutral100,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            (widget.postModel.comments ?? []).length.toString(),
+                            style: mediumTS.copyWith(fontSize: 12, color: neutral80),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      const Divider(thickness: 1, color: neutral30),
+
+                      // Komentar title and Filter
+                      Row(
+                        children: [
+                          Text(
+                            'Komentar',
+                            style: mediumTS.copyWith(fontSize: 16, color: neutral100),
+                          ),
+                          const Spacer(),
+                          CustomDropdown(
+                            items: const [
+                              MapEntry('Terpopuler', false),
+                              MapEntry('Terbaru', true),
+                            ],
+                            initialValue: const MapEntry('Terpopuler', false),
+                            onChanged: (filter) async {
+                              if (isLatest != filter.value) {
+                                isLatest = !isLatest;
+                                context.read<CommentCubit>().fetchComments(
+                                      postId: widget.postModel.id.toString(),
+                                      latest: isLatest,
+                                    );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // List of Komentar
+                      BlocBuilder<CommentCubit, CommentState>(
+                        builder: (context, state) {
+                          if (state is CommentLoading) {
+                            return const PostLoadingCard();
+                          }
+                          if (state is CommentLoaded) {
+                            return state.commentModels.isNotEmpty
+                                ? Column(
+                                    children: state.commentModels.map((comment) {
+                                      return CommentCard(
+                                        uid: widget.uid,
+                                        commentModel: comment,
+                                      );
+                                    }).toList(),
+                                  )
+                                : const Center(child: KomentarEmptyState());
+                          }
+                          return const Center(child: KomentarEmptyState());
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  border: Border.symmetric(horizontal: BorderSide(color: neutral30)),
-                  color: neutral10,
-                ),
-                child: Stack(
-                  alignment: Alignment.centerRight,
-                  children: [
-                    CustomFormField(
-                      controller: commentController,
-                      backgroundColor: backgroundCanvas,
-                      hint: 'Berikan komentar',
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        if (commentController.text.isNotEmpty) {
-                          final comment = CommentModel(
-                            idPost: widget.postModel.id,
-                            idUser: UserModel(id: widget.uid),
-                            content: commentController.text,
-                          );
-
-                          context.read<CommentCubit>().createComment(comment: comment);
-
-                          commentController.clear();
-                        }
-                      },
-                      icon: const Icon(IconsaxPlusLinear.send_1),
-                    ),
-                  ],
-                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                border: Border.symmetric(horizontal: BorderSide(color: neutral30)),
+                color: neutral10,
               ),
-            ],
-          ),
-        );
-      },
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  CustomFormField(
+                    controller: commentController,
+                    backgroundColor: backgroundCanvas,
+                    hint: 'Berikan komentar',
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (commentController.text.isNotEmpty) {
+                        final comment = CommentModel(
+                          idPost: widget.postModel.id,
+                          idUser: UserModel(id: widget.uid),
+                          content: commentController.text,
+                        );
+
+                        context.read<CommentCubit>().createComment(comment: comment);
+
+                        commentController.clear();
+                      }
+                    },
+                    icon: const Icon(IconsaxPlusLinear.send_1),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
