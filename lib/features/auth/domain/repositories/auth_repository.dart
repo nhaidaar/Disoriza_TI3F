@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/user_model.dart';
@@ -24,5 +26,6 @@ abstract class AuthRepository {
     required String uid,
     String? name,
     String? email,
+    Uint8List? profilePicture,
   });
 }

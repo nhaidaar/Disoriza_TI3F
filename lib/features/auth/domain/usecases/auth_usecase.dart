@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fpdart/fpdart.dart';
 
 import '../repositories/auth_repository.dart';
@@ -39,7 +41,8 @@ class AuthUsecase {
       required String uid,
       String? name,
       String? email,
+      Uint8List? profilePicture,
     }) async {
-      return _authRepository.edit(uid: uid, name: name, email: email);
+      return _authRepository.edit(uid: uid, name: name, email: email, profilePicture: profilePicture);
     }
 }

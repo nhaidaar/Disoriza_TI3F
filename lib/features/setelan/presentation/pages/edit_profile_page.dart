@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/effects.dart';
@@ -19,12 +24,19 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final _namaController = TextEditingController();
   final _emailController = TextEditingController();
+  XFile? _avatarFile; // XFile to store the image file
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     _namaController.text = widget.user.name ?? '';
     _emailController.text = widget.user.email ?? '';
+    // Initialize avatar if the user has one
+    _avatarFile = widget.user.profilePicture != null
+        ? XFile(widget.user.profilePicture!) // Assuming profilePicture is a path
+        : null;
   }
 
   @override
@@ -32,6 +44,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _namaController.dispose();
     _emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _avatarFile = image;
+      });
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    final name = _namaController.text;
+    final email = _emailController.text;
+
+    // If an avatar image was selected, convert it to Uint8List
+    Uint8List? imageBytes;
+    if (_avatarFile != null) {
+      imageBytes = await _avatarFile!.readAsBytes(); // Convert to Uint8List
+    }
+
+    // Trigger the profile update (including image if changed)
+    context.read<SetelanCubit>().editUser(
+      uid: widget.user.id!,
+      name: name,
+      email: email,
+      profilePicture: imageBytes, // Pass the Uint8List here
+    );
   }
 
   @override
@@ -92,13 +132,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     alignment: Alignment.bottomRight,
                     children: [
                       // Avatar
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 60,
-                        backgroundImage: AssetImage('assets/images/example.jpg'),
+                        backgroundImage: _avatarFile != null
+                            ? FileImage(File(_avatarFile!.path))
+                            : widget.user.profilePicture != null
+                                ? FileImage(File(widget.user.profilePicture!))
+                                : const AssetImage('assets/images/example.jpg')
+                                    as ImageProvider,
                       ),
 
                       // Edit Button
                       GestureDetector(
+                        onTap: _pickImage,
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
@@ -108,7 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           child: const Icon(IconsaxPlusLinear.edit, size: 20),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -138,13 +184,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                 // Save Button
                 GestureDetector(
-                  onTap: () {
-                    context.read<SetelanCubit>().editUser(
-                      uid: widget.user.id!,
-                      name: _namaController.text,
-                      email: _emailController.text,
-                    );
-                  },
+                  onTap: _updateProfile,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
