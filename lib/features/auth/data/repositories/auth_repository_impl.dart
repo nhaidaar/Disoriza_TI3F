@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:disoriza/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -106,27 +108,60 @@ class AuthRepositoryImpl implements AuthRepository {
     required String uid,
     String? name,
     String? email,
+    Uint8List? profilePicture,
   }) async {
     try {
+      final time = DateTime.now().millisecondsSinceEpoch;
+      final path = '/$uid/$time.png';
+
+      String? url;
+      
+      // Check if the user is updating their profile picture
+      if (profilePicture != null) {
+        // If the user already has a profile picture, delete the old one
+        final userResponse = await client
+            .from('users')
+            .select('profile_picture')
+            .eq('id', uid)
+            .single();
+        
+        final currentProfilePicture = userResponse['profile_picture'];
+        if (currentProfilePicture != null) {
+          // Delete the current profile picture from storage
+          final oldProfilePicturePath = Uri.parse(currentProfilePicture).path;
+          await client.storage.from('user_profile').remove([oldProfilePicturePath]);
+        }
+
+        // Upload the new profile picture
+        await client.storage.from('user_profile').uploadBinary(path, profilePicture);
+        url = client.storage.from('user_profile').getPublicUrl(path);
+      }
+
+      // Prepare the update fields
       final updates = <String, dynamic>{};
       if (name != null) updates['name'] = name;
       if (email != null) updates['email'] = email;
+      if (profilePicture != null) updates['profile_picture'] = url;
 
       if (updates.isEmpty) {
         return Left(Exception("No updates provided."));
       }
 
+      // Update the user's information in the database
       final response = await client
           .from('users')
           .update(updates)
           .eq('id', uid)
           .select()
           .single();
-          
+
       final updatedUser = UserModel.fromMap(response);
+
+      // Update the user's email in Supabase auth
       await Supabase.instance.client.auth.updateUser(
         UserAttributes(email: email),
       );
+
       return Right(updatedUser);
     } on PostgrestException catch (e) {
       return Left(Exception(e.message));
