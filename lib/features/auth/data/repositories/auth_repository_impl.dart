@@ -119,18 +119,18 @@ class AuthRepositoryImpl implements AuthRepository {
       // Check if the user is updating their profile picture
       if (profilePicture != null) {
         // If the user already has a profile picture, delete the old one
-        final userResponse = await client
-            .from('users')
-            .select('profile_picture')
-            .eq('id', uid)
-            .single();
+        // final userResponse = await client
+        //     .from('users')
+        //     .select('profile_picture')
+        //     .eq('id', uid)
+        //     .single();
         
-        final currentProfilePicture = userResponse['profile_picture'];
-        if (currentProfilePicture != null) {
-          // Delete the current profile picture from storage
-          final oldProfilePicturePath = Uri.parse(currentProfilePicture).path;
-          await client.storage.from('user_profile').remove([oldProfilePicturePath]);
-        }
+        // final currentProfilePicture = userResponse['profile_picture'];
+        // if (currentProfilePicture != null) {
+        //   // Delete the current profile picture from storage
+        //   final oldProfilePicturePath = Uri.parse(currentProfilePicture).path;
+        //   await client.storage.from('user_profile').remove([oldProfilePicturePath]);
+        // }
 
         // Upload the new profile picture
         await client.storage.from('user_profile').uploadBinary(path, profilePicture);
