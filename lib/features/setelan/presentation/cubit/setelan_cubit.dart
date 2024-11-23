@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../auth/data/models/user_model.dart';
 import '../../../auth/domain/usecases/auth_usecase.dart';
@@ -15,9 +18,10 @@ class SetelanCubit extends Cubit<SetelanState> {
     required String uid,
     String? name,
     String? email,
+    Uint8List? profilePicture,
   }) async {
     emit(SetelanLoading());
-    final result = await _authUsecase.edit(uid: uid, name: name, email: email);
+    final result = await _authUsecase.edit(uid: uid, name: name, email: email, profilePicture: profilePicture);
     result.fold(
       (error) => emit(SetelanError(message: error.toString())),
       (success) => emit(SetelanSuccess(userModel: success)),
