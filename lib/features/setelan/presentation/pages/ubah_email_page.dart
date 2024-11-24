@@ -10,27 +10,34 @@ import '../../../../core/common/fontstyles.dart';
 import '../../../Setelan/presentation/cubit/setelan_cubit.dart';
 import '../../../auth/data/models/user_model.dart';
 
-class UbahPasswordPage extends StatefulWidget {
+class UbahEmailPage extends StatefulWidget {
   final UserModel user;
-  const UbahPasswordPage({super.key, required this.user});
+  const UbahEmailPage({super.key, required this.user});
 
   @override
-  State<UbahPasswordPage> createState() => _UbahPasswordPageState();
+  State<UbahEmailPage> createState() => _UbahEmailPageState();
 }
 
-class _UbahPasswordPageState extends State<UbahPasswordPage> {
+class _UbahEmailPageState extends State<UbahEmailPage> {
   final _emailController = TextEditingController();
+  bool isEmailDifferent = false;
 
   @override
   void initState() {
     super.initState();
     _emailController.text = widget.user.email.toString();
+    _emailController.addListener(updateFieldState);
   }
 
   @override
   void dispose() {
+    _emailController.removeListener(updateFieldState);
     _emailController.dispose();
     super.dispose();
+  }
+
+  void updateFieldState() {
+    setState(() => isEmailDifferent = _emailController.text != widget.user.email.toString());
   }
 
   @override
@@ -52,7 +59,7 @@ class _UbahPasswordPageState extends State<UbahPasswordPage> {
               children: [
                 // Title
                 Text(
-                  'Ubah password',
+                  'Ubah email',
                   style: mediumTS.copyWith(fontSize: 24, color: neutral100),
                 ),
 
@@ -60,7 +67,7 @@ class _UbahPasswordPageState extends State<UbahPasswordPage> {
 
                 // Subtitle
                 Text(
-                  'Masukkan email anda untuk mendapatkan link reset password.',
+                  'Masukkan email anda untuk mendapatkan link konfirmasi ubah email.',
                   style: mediumTS.copyWith(color: neutral100.withOpacity(0.6)),
                   textAlign: TextAlign.center,
                 )
@@ -78,7 +85,6 @@ class _UbahPasswordPageState extends State<UbahPasswordPage> {
                 ),
                 const SizedBox(height: 8),
                 CustomFormField(
-                  isEnabled: false,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   hint: 'Masukkan email anda',
@@ -88,7 +94,8 @@ class _UbahPasswordPageState extends State<UbahPasswordPage> {
 
                 // Submit button
                 CustomButton(
-                  onTap: () => context.read<SetelanCubit>().resetPassword(email: _emailController.text),
+                  onTap: () => context.read<SetelanCubit>().changeEmail(email: _emailController.text),
+                  disabled: !isEmailDifferent,
                   text: 'Konfirmasi',
                 ),
               ],
@@ -99,14 +106,14 @@ class _UbahPasswordPageState extends State<UbahPasswordPage> {
     );
   }
 
-  void handleUbahPassword(BuildContext context) {
+  void handleUbahEmail(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => CustomPopup(
         icon: IconsaxPlusBold.tick_circle,
         iconColor: accentGreenMain,
         title: 'Email terkirim!',
-        subtitle: 'Kami telah mengirimkan link ubah password ke email ${_emailController.text}',
+        subtitle: 'Kami telah mengirimkan konfirmasi ubah email ke ${_emailController.text}',
         actions: [
           CustomButton(
             onTap: () => Navigator.of(context).pop(),

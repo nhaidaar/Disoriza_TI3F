@@ -37,12 +37,19 @@ class AuthUsecase {
     return _authRepository.resetPassword(email: email);
   }
 
-   Future<Either<Exception, UserModel>> edit({
-      required String uid,
-      String? name,
-      String? email,
-      Uint8List? profilePicture,
-    }) async {
-      return _authRepository.edit(uid: uid, name: name, email: email, profilePicture: profilePicture);
-    }
+  Future<Either<Exception, UserModel>> editProfile({
+    required String uid,
+    String? name,
+    Uint8List? image,
+  }) async {
+    return _authRepository.editProfile(
+      uid: uid,
+      name: name,
+      image: image,
+    );
+  }
+
+  Future<Either<Exception, void>> changeEmail({required String email}) {
+    return _authRepository.changeEmail(email: email);
+  }
 }

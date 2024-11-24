@@ -73,21 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
       child: MultiBlocListener(
         listeners: [
-          BlocListener<SetelanCubit, SetelanState>(
-            listener: (context, state) {
-              if (state is SetelanError) showSnackbar(context, message: state.message, isError: true);
-            },
-          ),
-          BlocListener<CommentCubit, CommentState>(
-            listener: (context, state) {
-              if (state is CommentError) showSnackbar(context, message: state.message, isError: true);
-            },
-          ),
-          BlocListener<PostCubit, PostState>(
-            listener: (context, state) {
-              if (state is PostError) showSnackbar(context, message: state.message, isError: true);
-            },
-          ),
           BlocListener<DiseaseCubit, DiseaseState>(
             listener: (context, state) {
               if (state is DiseaseLoading) showDiseaseLoading(context);

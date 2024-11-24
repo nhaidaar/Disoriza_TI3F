@@ -15,49 +15,45 @@ class BerandaPindaiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        image: const DecorationImage(
-          image: AssetImage('assets/images/background.png'),
-          fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Ink(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          image: const DecorationImage(
+            image: AssetImage('assets/images/background.png'),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          // Logo
-          const DisorizaLogo(),
+        child: Column(
+          children: [
+            // Logo
+            const DisorizaLogo(),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Text
-          Text(
-            'Pindai dengan Disoriza AI ✨',
-            style: mediumTS.copyWith(fontSize: 20, color: neutral10),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Pindai untuk mengetahui penyakit pada padi.',
-            style: mediumTS.copyWith(fontSize: 14, color: neutral10),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Button
-          Container(
-            decoration: BoxDecoration(
-              color: accentOrangeMain,
-              borderRadius: BorderRadius.circular(40),
+            // Text
+            Text(
+              'Pindai dengan Disoriza AI ✨',
+              style: mediumTS.copyWith(fontSize: 20, color: neutral10),
             ),
-            child: CustomButton(
+            const SizedBox(height: 4),
+            Text(
+              'Pindai untuk mengetahui penyakit pada padi.',
+              style: mediumTS.copyWith(fontSize: 14, color: neutral10),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Button
+            CustomButton(
               icon: IconsaxPlusBold.scan,
               text: 'Pindai',
               onTap: onTap,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -17,6 +17,7 @@ import '../pages/detail_post_page.dart';
 
 class PostCard extends StatefulWidget {
   final String uid;
+  final bool isBerandaCard;
   final bool isAktivitas;
   final PostModel postModel;
 
@@ -25,6 +26,7 @@ class PostCard extends StatefulWidget {
     required this.uid,
     required this.postModel,
     this.isAktivitas = false,
+    this.isBerandaCard = false,
   });
 
   @override
@@ -63,7 +65,7 @@ class _PostCardState extends State<PostCard> {
         ),
       ),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: widget.isBerandaCard ? const EdgeInsets.symmetric(horizontal: 10) : const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(12),
         width: double.infinity,
         decoration: BoxDecoration(
@@ -104,7 +106,7 @@ class _PostCardState extends State<PostCard> {
             Text(
               widget.postModel.title.toString(),
               style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
-              maxLines: 2,
+              maxLines: widget.isBerandaCard ? 1 : 2,
               overflow: TextOverflow.ellipsis,
             ),
 
@@ -113,14 +115,14 @@ class _PostCardState extends State<PostCard> {
             Text(
               widget.postModel.content.toString(),
               style: mediumTS.copyWith(color: neutral90),
-              maxLines: 3,
+              maxLines: widget.isBerandaCard ? 1 : 3,
               overflow: TextOverflow.ellipsis,
             ),
 
             const SizedBox(height: 4),
 
             // Image (optional)
-            if (widget.postModel.urlImage != null) ...[
+            if (!widget.isBerandaCard && widget.postModel.urlImage != null) ...[
               const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),

@@ -11,11 +11,11 @@ import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/utils/camera.dart';
 import '../../../komunitas/presentation/cubit/post/post_cubit.dart';
+import '../../../komunitas/presentation/widgets/post_card.dart';
 import '../../../riwayat/presentation/cubit/disease/disease_cubit.dart';
 import '../../../riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
 import '../../../riwayat/presentation/widgets/riwayat_card.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../widgets/beranda_komunitas_card.dart';
 import '../widgets/beranda_loading_card.dart';
 import '../widgets/beranda_pindai_card.dart';
 
@@ -139,9 +139,10 @@ class _BerandaPageState extends State<BerandaPage> {
                                   CarouselSlider(
                                     carouselController: carouselController,
                                     items: state.postModels.map((post) {
-                                      return BerandaKomunitasCard(
+                                      return PostCard(
                                         uid: widget.user.id.toString(),
                                         postModel: post,
+                                        isBerandaCard: true,
                                       );
                                     }).toList(),
                                     options: CarouselOptions(

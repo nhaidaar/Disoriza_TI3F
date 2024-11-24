@@ -16,8 +16,14 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = client.auth.currentSession;
       if (user == null) return Left(Exception());
 
-      final userModel = await fetchUserModel(uid: user.user.id);
-      if (userModel != null) return Right(userModel);
+      final uid = user.user.id;
+      final userModel = await fetchUserModel(uid: uid);
+      if (userModel != null) {
+        if (user.user.email != userModel.email) {
+          await client.from('users').update({'email': user.user.email}).eq('id', uid);
+        }
+        return Right(userModel);
+      }
 
       return Right(UserModel.fromMap(user.user.toJson()));
     } on Exception catch (e) {
@@ -74,8 +80,14 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       if (session.user == null) return Left(Exception('Error login!'));
 
-      final userModel = await fetchUserModel(uid: session.user!.id);
-      if (userModel != null) return Right(userModel);
+      final uid = session.user!.id;
+      final userModel = await fetchUserModel(uid: uid);
+      if (userModel != null) {
+        if (session.user?.email != userModel.email) {
+          await client.from('users').update({'email': session.user?.email}).eq('id', uid);
+        }
+        return Right(userModel);
+      }
 
       return Right(UserModel.fromMap(session.user!.toJson()));
     } on Exception catch (e) {
@@ -104,67 +116,44 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Exception, UserModel>> edit({
+  Future<Either<Exception, UserModel>> editProfile({
     required String uid,
     String? name,
-    String? email,
-    Uint8List? profilePicture,
+    Uint8List? image,
   }) async {
     try {
-      final time = DateTime.now().millisecondsSinceEpoch;
-      final path = '/$uid/$time.png';
-
-      String? url;
-      
-      // Check if the user is updating their profile picture
-      if (profilePicture != null) {
-        // If the user already has a profile picture, delete the old one
-        // final userResponse = await client
-        //     .from('users')
-        //     .select('profile_picture')
-        //     .eq('id', uid)
-        //     .single();
-        
-        // final currentProfilePicture = userResponse['profile_picture'];
-        // if (currentProfilePicture != null) {
-        //   // Delete the current profile picture from storage
-        //   final oldProfilePicturePath = Uri.parse(currentProfilePicture).path;
-        //   await client.storage.from('user_profile').remove([oldProfilePicturePath]);
-        // }
-
-        // Upload the new profile picture
-        await client.storage.from('user_profile').uploadBinary(path, profilePicture);
-        url = client.storage.from('user_profile').getPublicUrl(path);
-      }
-
-      // Prepare the update fields
       final updates = <String, dynamic>{};
       if (name != null) updates['name'] = name;
-      if (email != null) updates['email'] = email;
-      if (profilePicture != null) updates['profile_picture'] = url;
+      if (image != null) {
+        final path = '/$uid.png';
+        final user = await fetchUserModel(uid: uid);
 
-      if (updates.isEmpty) {
-        return Left(Exception("No updates provided."));
+        if (user?.profilePicture != null) {
+          await client.storage.from('user_profile').updateBinary(path, image);
+        } else {
+          await client.storage.from('user_profile').uploadBinary(path, image);
+        }
+        final url = client.storage.from('user_profile').getPublicUrl(path);
+
+        updates['profile_picture'] = url;
       }
 
-      // Update the user's information in the database
-      final response = await client
-          .from('users')
-          .update(updates)
-          .eq('id', uid)
-          .select()
-          .single();
+      final response = await client.from('users').update(updates).eq('id', uid).select().single();
 
       final updatedUser = UserModel.fromMap(response);
-
-      // Update the user's email in Supabase auth
-      await Supabase.instance.client.auth.updateUser(
-        UserAttributes(email: email),
-      );
-
       return Right(updatedUser);
-    } on PostgrestException catch (e) {
-      return Left(Exception(e.message));
+      // } on PostgrestException catch (e) {
+      //   return Left(Exception(e.message));
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, void>> changeEmail({required String email}) async {
+    try {
+      await client.auth.updateUser(UserAttributes(email: email));
+      return const Right(null);
     } on Exception catch (e) {
       return Left(e);
     }

@@ -47,7 +47,7 @@ class CustomFormField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        style: mediumTS.copyWith(fontSize: 14, color: isEnabled ? neutral100 : neutral60),
+        style: mediumTS.copyWith(fontSize: 14, color: isEnabled ? neutral100 : neutral80),
         maxLines: maxLines,
         decoration: InputDecoration(
           enabled: isEnabled,
@@ -73,6 +73,7 @@ class CustomFormField extends StatelessWidget {
           ),
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderradius),
+            borderSide: BorderSide.none,
           ),
         ),
       ),

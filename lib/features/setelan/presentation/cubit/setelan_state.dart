@@ -28,3 +28,5 @@ class SetelanError extends SetelanState {
 }
 
 class ResetPasswordSuccess extends SetelanState {}
+
+class ChangeEmailSuccess extends SetelanState {}

@@ -24,8 +24,6 @@ class Authenticated extends AuthState {
 
 class RegisterLoading extends AuthState {}
 
-class LogoutLoading extends AuthState {}
-
 class ResetPasswordLoading extends AuthState {}
 
 class ResetPasswordSuccess extends AuthState {}

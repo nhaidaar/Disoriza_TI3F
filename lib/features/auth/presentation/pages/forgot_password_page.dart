@@ -51,7 +51,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               icon: IconsaxPlusBold.tick_circle,
               iconColor: accentGreenMain,
               title: 'Email terkirim!',
-              subtitle: 'Kami telah mengirim link reset password ke email ${_emailController.text}',
+              subtitle: 'Kami telah mengirimkan link reset password ke email ${_emailController.text}',
               actions: [
                 CustomButton(
                   onTap: () => Navigator.of(context).pop(),

@@ -22,10 +22,11 @@ abstract class AuthRepository {
 
   Future<Either<Exception, void>> resetPassword({required String email});
 
-  Future<Either<Exception, UserModel>> edit({
+  Future<Either<Exception, UserModel>> editProfile({
     required String uid,
     String? name,
-    String? email,
-    Uint8List? profilePicture,
+    Uint8List? image,
   });
+
+  Future<Either<Exception, void>> changeEmail({required String email});
 }

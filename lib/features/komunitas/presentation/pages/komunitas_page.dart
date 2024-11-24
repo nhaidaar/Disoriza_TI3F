@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../../core/common/colors.dart';
 import '../../../../../core/common/fontstyles.dart';
+import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
+import '../cubit/comment/comment_cubit.dart';
+import '../cubit/post/post_cubit.dart';
 import 'komunitas_aktivitas.dart';
 import 'komunitas_diskusi.dart';
 
@@ -13,7 +17,19 @@ class KomunitasPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CommentCubit, CommentState>(
+          listener: (context, state) {
+            if (state is CommentError) showSnackbar(context, message: state.message, isError: true);
+          },
+        ),
+        BlocListener<PostCubit, PostState>(
+          listener: (context, state) {
+            if (state is PostError) showSnackbar(context, message: state.message, isError: true);
+          },
+        ),
+      ],
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
