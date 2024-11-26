@@ -1,4 +1,4 @@
-part of 'auth_cubit.dart';
+part of 'auth_bloc.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -9,7 +9,7 @@ abstract class AuthState extends Equatable {
 
 class AuthInitial extends AuthState {}
 
-class LoginLoading extends AuthState {}
+class AuthLoading extends AuthState {}
 
 class Unauthenticated extends AuthState {}
 
@@ -22,12 +22,6 @@ class Authenticated extends AuthState {
   List<Object> get props => [user];
 }
 
-class RegisterLoading extends AuthState {}
-
-class ResetPasswordLoading extends AuthState {}
-
-class ResetPasswordSuccess extends AuthState {}
-
 class AuthError extends AuthState {
   final String message;
   const AuthError({required this.message});
@@ -35,3 +29,5 @@ class AuthError extends AuthState {
   @override
   List<Object> get props => [message];
 }
+
+class AuthPasswordReseted extends AuthState {}

@@ -5,25 +5,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
-
 import '../../../../core/utils/camera.dart';
 import '../../../../core/utils/dialog.dart';
 import '../../../../core/utils/snackbar.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../../../riwayat/presentation/cubit/disease/disease_cubit.dart';
+import '../../../riwayat/presentation/blocs/riwayat_history/riwayat_history_bloc.dart';
+import '../../../riwayat/presentation/blocs/riwayat_scan/riwayat_scan_bloc.dart';
 import '../../../riwayat/presentation/pages/riwayat_detail.dart';
-import '../../../setelan/presentation/cubit/setelan_cubit.dart';
-import 'beranda_page.dart';
 import '../../../riwayat/presentation/pages/riwayat_page.dart';
 import '../../../komunitas/presentation/pages/komunitas_page.dart';
 import '../../../setelan/presentation/pages/setelan_page.dart';
-
-import '../../../komunitas/presentation/cubit/comment/comment_cubit.dart';
-import '../../../komunitas/presentation/cubit/post/post_cubit.dart';
-import '../../../riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
+import 'beranda_page.dart';
 
 class HomeScreen extends StatefulWidget {
   final SupabaseClient client;
@@ -41,6 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _selectedIndex = newIndex);
   }
 
+  void fetchRiwayats(BuildContext context) {
+    context.read<RiwayatHistoryBloc>().add(RiwayatFetchRiwayats(
+          uid: widget.user.id.toString(),
+          max: _selectedIndex == 0 ? 4 : null,
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = [
@@ -50,118 +52,96 @@ class _HomeScreenState extends State<HomeScreen> {
       SetelanPage(user: widget.user),
     ];
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(
-          value: context.read<AuthCubit>(),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<RiwayatHistoryBloc, RiwayatHistoryState>(
+          listener: (context, state) {
+            if (state is RiwayatHistoryError) handleDiseaseError(context);
+
+            if (state is RiwayatHistoryDeleted) handleRiwayatDeleted(context);
+          },
         ),
-        BlocProvider.value(
-          value: context.read<SetelanCubit>(),
-        ),
-        BlocProvider.value(
-          value: context.read<CommentCubit>(),
-        ),
-        BlocProvider.value(
-          value: context.read<PostCubit>(),
-        ),
-        BlocProvider.value(
-          value: context.read<DiseaseCubit>(),
-        ),
-        BlocProvider.value(
-          value: context.read<RiwayatCubit>(),
+        BlocListener<RiwayatScanBloc, RiwayatScanState>(
+          listener: (context, state) {
+            if (state is RiwayatScanError) handleDiseaseError(context);
+
+            if (state is RiwayatScanLoading) showDiseaseLoading(context);
+
+            if (state is RiwayatScanSuccess) handleDiseaseSuccess(context, state);
+          },
         ),
       ],
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<DiseaseCubit, DiseaseState>(
-            listener: (context, state) {
-              if (state is DiseaseLoading) showDiseaseLoading(context);
+      child: Scaffold(
+        // Select pages by index
+        body: pages[_selectedIndex],
 
-              if (state is DiseaseError) handleDiseaseError(context);
-
-              if (state is DiseaseSuccess) handleDiseaseSuccess(context, state);
-            },
+        bottomNavigationBar: Container(
+          height: 80,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: const BoxDecoration(
+            color: neutral10,
+            border: Border(top: BorderSide(color: neutral30)),
           ),
-          BlocListener<RiwayatCubit, RiwayatState>(
-            listener: (context, state) {
-              if (state is RiwayatError) showSnackbar(context, message: state.message, isError: true);
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Beranda
+              NavItem(
+                icon: IconsaxPlusLinear.home_2,
+                activeIcon: IconsaxPlusBold.home_2,
+                title: 'Beranda',
+                selected: _selectedIndex == 0,
+                onTap: () {
+                  if (_selectedIndex != 0) updateIndex(0);
+                },
+              ),
 
-              if (state is RiwayatDeleted) handleRiwayatDeleted(context);
-            },
-          ),
-        ],
-        child: Scaffold(
-          // Select pages by index
-          body: pages[_selectedIndex],
+              // Riwayat
+              NavItem(
+                icon: IconsaxPlusLinear.clipboard_text,
+                activeIcon: IconsaxPlusBold.clipboard_text,
+                title: 'Riwayat',
+                selected: _selectedIndex == 1,
+                onTap: () {
+                  if (_selectedIndex != 1) updateIndex(1);
+                },
+              ),
 
-          bottomNavigationBar: Container(
-            height: 80,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: const BoxDecoration(
-              color: neutral10,
-              border: Border(top: BorderSide(color: neutral30)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Beranda
-                NavItem(
-                  icon: IconsaxPlusLinear.home_2,
-                  activeIcon: IconsaxPlusBold.home_2,
-                  title: 'Beranda',
-                  selected: _selectedIndex == 0,
-                  onTap: () {
-                    if (_selectedIndex != 0) updateIndex(0);
-                  },
-                ),
-
-                // Riwayat
-                NavItem(
-                  icon: IconsaxPlusLinear.clipboard_text,
-                  activeIcon: IconsaxPlusBold.clipboard_text,
-                  title: 'Riwayat',
-                  selected: _selectedIndex == 1,
-                  onTap: () {
-                    if (_selectedIndex != 1) updateIndex(1);
-                  },
-                ),
-
-                // Scan
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
-                  child: GestureDetector(
-                    onTap: () async => await handleScanDisease(context),
-                    child: const CircleAvatar(
-                      radius: 26,
-                      backgroundColor: accentOrangeMain,
-                      child: Icon(IconsaxPlusBold.scan, color: neutral10),
-                    ),
+              // Scan
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: GestureDetector(
+                  onTap: () async => await handleScanDisease(context),
+                  child: const CircleAvatar(
+                    radius: 26,
+                    backgroundColor: accentOrangeMain,
+                    child: Icon(IconsaxPlusBold.scan, color: neutral10),
                   ),
                 ),
+              ),
 
-                // Komunitas
-                NavItem(
-                  icon: IconsaxPlusLinear.story,
-                  activeIcon: IconsaxPlusBold.story,
-                  title: 'Komunitas',
-                  selected: _selectedIndex == 2,
-                  onTap: () {
-                    if (_selectedIndex != 2) updateIndex(2);
-                  },
-                ),
+              // Komunitas
+              NavItem(
+                icon: IconsaxPlusLinear.story,
+                activeIcon: IconsaxPlusBold.story,
+                title: 'Komunitas',
+                selected: _selectedIndex == 2,
+                onTap: () {
+                  if (_selectedIndex != 2) updateIndex(2);
+                },
+              ),
 
-                // Setelan
-                NavItem(
-                  icon: IconsaxPlusLinear.setting,
-                  activeIcon: IconsaxPlusBold.setting,
-                  title: 'Setelan',
-                  selected: _selectedIndex == 3,
-                  onTap: () {
-                    if (_selectedIndex != 3) updateIndex(3);
-                  },
-                ),
-              ],
-            ),
+              // Setelan
+              NavItem(
+                icon: IconsaxPlusLinear.setting,
+                activeIcon: IconsaxPlusBold.setting,
+                title: 'Setelan',
+                selected: _selectedIndex == 3,
+                onTap: () {
+                  if (_selectedIndex != 3) updateIndex(3);
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -169,53 +149,64 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void handleRiwayatDeleted(BuildContext context) {
+    // Pop confirmation popup
+    Navigator.of(context).pop();
+
+    // Pop detail page
     Navigator.of(context).pop();
 
     showSnackbar(context, message: 'Riwayat berhasil dihapus');
 
-    context.read<RiwayatCubit>().fetchAllRiwayat(
-          uid: widget.user.id.toString(),
-          max: _selectedIndex == 0 ? 4 : null,
-        );
+    // Fetch new Riwayat
+    fetchRiwayats(context);
   }
 
-  void handleDiseaseSuccess(BuildContext context, DiseaseSuccess state) {
+  void handleDiseaseSuccess(BuildContext context, RiwayatScanSuccess state) {
+    // Pop loading popup
     Navigator.of(context).pop();
 
+    // Return the model (although sakit/sehat)
     state.riwayatModel != null
-        ? Navigator.of(context).push(
-            PageTransition(
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider.value(
-                    value: context.read<RiwayatCubit>(),
-                  ),
-                  BlocProvider.value(
-                    value: context.read<DiseaseCubit>(),
-                  ),
-                ],
-                child: RiwayatDetail(riwayat: state.riwayatModel!),
+        ? Navigator.of(context)
+            .push(
+              PageTransition(
+                child: MultiBlocProvider(
+                  providers: [
+                    BlocProvider.value(
+                      value: context.read<RiwayatHistoryBloc>(),
+                    ),
+                    BlocProvider.value(
+                      value: context.read<RiwayatScanBloc>(),
+                    ),
+                  ],
+                  child: RiwayatDetail(riwayat: state.riwayatModel!),
+                ),
+                type: PageTransitionType.rightToLeft,
               ),
-              type: PageTransitionType.rightToLeft,
-            ),
-          )
+            )
+            .then((_) => fetchRiwayats(context))
         : showDiseaseSehat(
             context,
-            onScan: () async {
+            onScan: () {
+              // Pop sehat popup
               Navigator.of(context).pop();
-              await handleScanDisease(context);
+
+              handleScanDisease(context);
             },
           );
   }
 
   void handleDiseaseError(BuildContext context) {
+    // Pop loading popup
     Navigator.of(context).pop();
 
     showDiseaseError(
       context,
-      onScan: () async {
+      onScan: () {
+        // Pop error popup
         Navigator.of(context).pop();
-        await handleScanDisease(context);
+
+        handleScanDisease(context);
       },
     );
   }
@@ -223,10 +214,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> handleScanDisease(BuildContext context) async {
     final img = await pickImage(context);
     if (img != null) {
-      context.read<DiseaseCubit>().scanDisease(
+      context.read<RiwayatScanBloc>().add(RiwayatScanDisease(
             uid: widget.user.id.toString(),
             image: img,
-          );
+          ));
     }
   }
 }

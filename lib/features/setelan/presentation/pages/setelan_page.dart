@@ -1,5 +1,4 @@
 import 'package:disoriza/features/auth/data/models/user_model.dart';
-import 'package:disoriza/features/setelan/presentation/cubit/setelan_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -9,8 +8,8 @@ import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../../core/utils/snackbar.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../auth/presentation/blocs/auth_bloc.dart';
+import '../blocs/setelan_bloc.dart';
 import '../widgets/setelan_menu.dart';
 import 'edit_profile_page.dart';
 import 'ubah_email_page.dart';
@@ -27,12 +26,12 @@ class SetelanPage extends StatefulWidget {
 class _SetelanPageState extends State<SetelanPage> {
   @override
   Widget build(BuildContext context) {
-    final authCubit = context.read<AuthCubit>();
-    final setelanCubit = context.read<SetelanCubit>();
+    final authBloc = context.read<AuthBloc>();
+    final setelanBloc = context.read<SetelanBloc>();
 
-    return BlocListener<SetelanCubit, SetelanState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is SetelanError) showSnackbar(context, message: state.message, isError: true);
+        if (state is Unauthenticated) Navigator.of(context).pop(); // Pop the logout popup
       },
       child: Scaffold(
         appBar: AppBar(
@@ -54,8 +53,8 @@ class _SetelanPageState extends State<SetelanPage> {
               title: 'Edit profile',
               onTap: () => Navigator.of(context).push(
                 PageTransition(
-                  child: BlocProvider<SetelanCubit>.value(
-                    value: setelanCubit,
+                  child: BlocProvider.value(
+                    value: setelanBloc,
                     child: EditProfilePage(user: widget.user),
                   ),
                   type: PageTransitionType.rightToLeft,
@@ -67,8 +66,8 @@ class _SetelanPageState extends State<SetelanPage> {
               title: 'Ubah email',
               onTap: () => Navigator.of(context).push(
                 PageTransition(
-                  child: BlocProvider<SetelanCubit>.value(
-                    value: setelanCubit,
+                  child: BlocProvider.value(
+                    value: setelanBloc,
                     child: UbahEmailPage(user: widget.user),
                   ),
                   type: PageTransitionType.rightToLeft,
@@ -80,8 +79,8 @@ class _SetelanPageState extends State<SetelanPage> {
               title: 'Ubah password',
               onTap: () => Navigator.of(context).push(
                 PageTransition(
-                  child: BlocProvider<SetelanCubit>.value(
-                    value: setelanCubit,
+                  child: BlocProvider.value(
+                    value: setelanBloc,
                     child: UbahPasswordPage(user: widget.user),
                   ),
                   type: PageTransitionType.rightToLeft,
@@ -93,7 +92,7 @@ class _SetelanPageState extends State<SetelanPage> {
               iconColor: dangerMain,
               enableArrowRight: false,
               title: 'Keluar',
-              onTap: () => handleLogout(context, authCubit),
+              onTap: () => handleLogout(context, authBloc),
             ),
           ],
         ),
@@ -101,7 +100,7 @@ class _SetelanPageState extends State<SetelanPage> {
     );
   }
 
-  Future<void> handleLogout(BuildContext context, AuthCubit authCubit) {
+  Future<void> handleLogout(BuildContext context, AuthBloc authBloc) {
     return showDialog(
       context: context,
       builder: (context) => CustomPopup(
@@ -117,11 +116,7 @@ class _SetelanPageState extends State<SetelanPage> {
                   backgroundColor: dangerMain,
                   pressedColor: dangerPressed,
                   text: 'Ya, keluar',
-                  onTap: () async {
-                    await authCubit.logout().then((_) {
-                      Navigator.of(context).pop();
-                    });
-                  },
+                  onTap: () => authBloc.add(AuthLogout()),
                 ),
               ),
               const SizedBox(width: 4),

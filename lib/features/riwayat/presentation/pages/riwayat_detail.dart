@@ -14,8 +14,8 @@ import '../../../../core/utils/camera.dart';
 import '../../../../core/utils/network_image.dart';
 import '../../../home/presentation/widgets/disoriza_logo.dart';
 import '../../data/models/riwayat_model.dart';
-import '../cubit/disease/disease_cubit.dart';
-import '../cubit/riwayat/riwayat_cubit.dart';
+import '../blocs/riwayat_history/riwayat_history_bloc.dart';
+import '../blocs/riwayat_scan/riwayat_scan_bloc.dart';
 import '../widgets/riwayat_detail_card.dart';
 import '../widgets/riwayat_detail_remote.dart';
 
@@ -46,8 +46,8 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final riwayatCubit = context.read<RiwayatCubit>();
-    final diseaseCubit = context.read<DiseaseCubit>();
+    final historyBloc = context.read<RiwayatHistoryBloc>();
+    final scanBloc = context.read<RiwayatScanBloc>();
 
     return Scaffold(
       appBar: AppBar(
@@ -71,7 +71,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
         // Delete Button
         actions: [
           IconButton(
-            onPressed: () => handleDeleteRiwayat(context, riwayatCubit),
+            onPressed: () => handleDeleteRiwayat(context, historyBloc),
             icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
           ),
         ],
@@ -121,10 +121,10 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                         onTap: () async {
                           final img = await pickImage(context);
                           if (img != null) {
-                            diseaseCubit.scanDisease(
+                            scanBloc.add(RiwayatScanDisease(
                               uid: widget.riwayat.idUser.toString(),
                               image: img,
-                            );
+                            ));
                           }
                         },
                         child: Container(
@@ -216,7 +216,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
     );
   }
 
-  Future<void> handleDeleteRiwayat(BuildContext context, RiwayatCubit riwayatCubit) {
+  Future<void> handleDeleteRiwayat(BuildContext context, RiwayatHistoryBloc historyBloc) {
     return showDialog(
       context: context,
       builder: (context) => CustomPopup(
@@ -231,9 +231,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                 child: CustomButton(
                   backgroundColor: dangerMain,
                   pressedColor: dangerPressed,
-                  onTap: () => riwayatCubit
-                      .deleteRiwayat(riwayatId: widget.riwayat.id.toString())
-                      .then((_) => Navigator.of(context).pop()),
+                  onTap: () => historyBloc.add(RiwayatDeleteRiwayat(riwayatId: widget.riwayat.id.toString())),
                   text: 'Ya, hapus',
                 ),
               ),

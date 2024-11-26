@@ -7,8 +7,7 @@ import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../../core/utils/snackbar.dart';
-import '../cubit/auth_cubit.dart';
+import '../blocs/auth_bloc.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -40,27 +39,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthError) showSnackbar(context, message: state.message, isError: true);
-
-        if (state is ResetPasswordSuccess) {
-          showDialog(
-            context: context,
-            builder: (context) => CustomPopup(
-              icon: IconsaxPlusBold.tick_circle,
-              iconColor: accentGreenMain,
-              title: 'Email terkirim!',
-              subtitle: 'Kami telah mengirimkan link reset password ke email ${_emailController.text}',
-              actions: [
-                CustomButton(
-                  onTap: () => Navigator.of(context).pop(),
-                  text: 'Oke',
-                ),
-              ],
-            ),
-          );
-        }
+        if (state is AuthPasswordReseted) handlePasswordReseted(context);
       },
       builder: (context, state) {
         return Scaffold(
@@ -114,10 +95,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     const SizedBox(height: 24),
 
                     // Submit button
-                    state is ResetPasswordLoading
+                    state is AuthLoading
                         ? const CustomLoadingButton()
                         : CustomButton(
-                            onTap: () => context.read<AuthCubit>().resetPassword(email: _emailController.text),
+                            onTap: () => context.read<AuthBloc>().add(AuthResetPassword(email: _emailController.text)),
                             disabled: isEmailEmpty,
                             text: 'Konfirmasi',
                           ),
@@ -128,6 +109,24 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> handlePasswordReseted(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => CustomPopup(
+        icon: IconsaxPlusBold.tick_circle,
+        iconColor: accentGreenMain,
+        title: 'Email terkirim!',
+        subtitle: 'Kami telah mengirimkan link reset password ke email ${_emailController.text}',
+        actions: [
+          CustomButton(
+            onTap: () => Navigator.of(context).pop(),
+            text: 'Oke',
+          ),
+        ],
+      ),
     );
   }
 }

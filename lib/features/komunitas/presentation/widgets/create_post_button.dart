@@ -6,7 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../cubit/post/post_cubit.dart';
+import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../pages/create_post_page.dart';
 
 class CreatePostButton extends StatelessWidget {
@@ -31,7 +31,7 @@ class CreatePostButton extends StatelessWidget {
           Navigator.of(context).push(
             PageTransition(
               child: BlocProvider.value(
-                value: context.read<PostCubit>(),
+                value: context.read<KomunitasPostBloc>(),
                 child: CreatePostPage(user: user),
               ),
               type: PageTransitionType.rightToLeft,

@@ -5,7 +5,7 @@ import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../cubit/auth_cubit.dart';
+import '../blocs/auth_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -31,9 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void updateFieldState() {
-    setState(() => areFieldsEmpty = _namaController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty);
+    setState(() => areFieldsEmpty =
+        _namaController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty);
   }
 
   @override
@@ -92,18 +91,18 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 24),
 
           // Daftar Button
-          BlocBuilder<AuthCubit, AuthState>(
+          BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
-              if (state is RegisterLoading) return const CustomLoadingButton();
+              if (state is AuthLoading) return const CustomLoadingButton();
               return CustomButton(
                 text: 'Daftar',
                 disabled: areFieldsEmpty,
                 onTap: () {
-                  context.read<AuthCubit>().register(
+                  context.read<AuthBloc>().add(AuthRegister(
                         name: _namaController.text,
                         email: _emailController.text,
                         password: _passwordController.text,
-                      );
+                      ));
                 },
               );
             },

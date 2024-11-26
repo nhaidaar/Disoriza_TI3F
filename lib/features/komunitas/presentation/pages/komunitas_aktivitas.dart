@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/common/custom_empty_state.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../cubit/post/post_cubit.dart';
+import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../widgets/aktivitasmu_category.dart';
 import '../widgets/post_card.dart';
 
@@ -27,10 +27,10 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
 
   @override
   void initState() {
-    context.read<PostCubit>().fetchAktivitas(
+    context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
           uid: widget.user.id.toString(),
           filter: aktivitasCategory[_selectedIndex],
-        );
+        ));
     super.initState();
   }
 
@@ -56,10 +56,10 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
                   onTap: () => setState(() {
                     if (_selectedIndex != index) {
                       _selectedIndex = index;
-                      context.read<PostCubit>().fetchAktivitas(
+                      context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
                             uid: widget.user.id.toString(),
                             filter: aktivitasCategory[_selectedIndex],
-                          );
+                          ));
                     }
                   }),
                   title: aktivitasCategory[index],
@@ -74,22 +74,20 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
 
         Expanded(
           child: RefreshIndicator(
-            onRefresh: () async {
-              await context.read<PostCubit>().fetchAktivitas(
-                    uid: widget.user.id.toString(),
-                    filter: aktivitasCategory[_selectedIndex],
-                  );
-            },
+            onRefresh: () async => context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
+                  uid: widget.user.id.toString(),
+                  filter: aktivitasCategory[_selectedIndex],
+                )),
             displacement: 10,
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               children: [
-                BlocBuilder<PostCubit, PostState>(
+                BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
                   key: ObjectKey(_selectedIndex),
                   builder: (context, state) {
-                    if (state is PostLoading) {
+                    if (state is KomunitasPostLoading) {
                       return const PostLoadingCard();
-                    } else if (state is PostLoaded) {
+                    } else if (state is KomunitasPostLoaded) {
                       return state.postModels.isNotEmpty
                           ? Column(
                               children: state.postModels.map((post) {

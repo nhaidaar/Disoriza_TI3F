@@ -9,8 +9,8 @@ import '../../../../core/common/colors.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../data/models/riwayat_model.dart';
-import '../cubit/disease/disease_cubit.dart';
-import '../cubit/riwayat/riwayat_cubit.dart';
+import '../blocs/riwayat_history/riwayat_history_bloc.dart';
+import '../blocs/riwayat_scan/riwayat_scan_bloc.dart';
 import '../pages/riwayat_detail.dart';
 
 class RiwayatCard extends StatelessWidget {
@@ -27,10 +27,10 @@ class RiwayatCard extends StatelessWidget {
             child: MultiBlocProvider(
               providers: [
                 BlocProvider.value(
-                  value: context.read<RiwayatCubit>(),
+                  value: context.read<RiwayatHistoryBloc>(),
                 ),
                 BlocProvider.value(
-                  value: context.read<DiseaseCubit>(),
+                  value: context.read<RiwayatScanBloc>(),
                 ),
               ],
               child: RiwayatDetail(riwayat: riwayatModel),

@@ -1,4 +1,4 @@
-part of 'setelan_cubit.dart';
+part of 'setelan_bloc.dart';
 
 abstract class SetelanState extends Equatable {
   const SetelanState();
@@ -11,14 +11,6 @@ class SetelanInitial extends SetelanState {}
 
 class SetelanLoading extends SetelanState {}
 
-class SetelanSuccess extends SetelanState {
-  final UserModel userModel;
-  const SetelanSuccess({required this.userModel});
-
-  @override
-  List<Object> get props => [userModel];
-}
-
 class SetelanError extends SetelanState {
   final String message;
   const SetelanError({required this.message});
@@ -27,6 +19,14 @@ class SetelanError extends SetelanState {
   List<Object> get props => [message];
 }
 
-class ResetPasswordSuccess extends SetelanState {}
+class SetelanPasswordChanged extends SetelanState {}
 
-class ChangeEmailSuccess extends SetelanState {}
+class SetelanEmailChanged extends SetelanState {}
+
+class SetelanProfileChanged extends SetelanState {
+  final UserModel userModel;
+  const SetelanProfileChanged({required this.userModel});
+
+  @override
+  List<Object> get props => [userModel];
+}

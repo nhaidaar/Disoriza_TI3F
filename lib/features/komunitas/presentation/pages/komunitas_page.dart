@@ -6,8 +6,8 @@ import '../../../../../core/common/colors.dart';
 import '../../../../../core/common/fontstyles.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../cubit/comment/comment_cubit.dart';
-import '../cubit/post/post_cubit.dart';
+import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
+import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 import 'komunitas_aktivitas.dart';
 import 'komunitas_diskusi.dart';
 
@@ -19,14 +19,14 @@ class KomunitasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<CommentCubit, CommentState>(
+        BlocListener<KomunitasPostBloc, KomunitasPostState>(
           listener: (context, state) {
-            if (state is CommentError) showSnackbar(context, message: state.message, isError: true);
+            if (state is KomunitasPostError) showSnackbar(context, message: state.message, isError: true);
           },
         ),
-        BlocListener<PostCubit, PostState>(
+        BlocListener<KomunitasCommentBloc, KomunitasCommentState>(
           listener: (context, state) {
-            if (state is PostError) showSnackbar(context, message: state.message, isError: true);
+            if (state is KomunitasCommentError) showSnackbar(context, message: state.message, isError: true);
           },
         ),
       ],

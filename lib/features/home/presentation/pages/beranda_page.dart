@@ -10,10 +10,10 @@ import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/custom_empty_state.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/utils/camera.dart';
-import '../../../komunitas/presentation/cubit/post/post_cubit.dart';
+import '../../../komunitas/presentation/blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../../../komunitas/presentation/widgets/post_card.dart';
-import '../../../riwayat/presentation/cubit/disease/disease_cubit.dart';
-import '../../../riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
+import '../../../riwayat/presentation/blocs/riwayat_history/riwayat_history_bloc.dart';
+import '../../../riwayat/presentation/blocs/riwayat_scan/riwayat_scan_bloc.dart';
 import '../../../riwayat/presentation/widgets/riwayat_card.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../widgets/beranda_loading_card.dart';
@@ -32,8 +32,6 @@ class _BerandaPageState extends State<BerandaPage> {
   final carouselController = CarouselSliderController();
   int carouselIndex = 0;
 
-  bool isRiwayatEmpty = true;
-
   @override
   void initState() {
     fetchData();
@@ -41,8 +39,8 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Future<void> fetchData() async {
-    context.read<PostCubit>().fetchAllPosts(max: 3);
-    context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString(), max: 4);
+    context.read<KomunitasPostBloc>().add(const KomunitasFetchPosts(max: 3));
+    context.read<RiwayatHistoryBloc>().add(RiwayatFetchRiwayats(uid: widget.user.id.toString(), max: 4));
   }
 
   @override
@@ -96,10 +94,10 @@ class _BerandaPageState extends State<BerandaPage> {
                 onTap: () async {
                   final img = await pickImage(context);
                   if (img != null) {
-                    context.read<DiseaseCubit>().scanDisease(
+                    context.read<RiwayatScanBloc>().add(RiwayatScanDisease(
                           uid: widget.user.id.toString(),
                           image: img,
-                        );
+                        ));
                   }
                 },
               ),
@@ -128,11 +126,11 @@ class _BerandaPageState extends State<BerandaPage> {
                       ],
                     ),
                   ),
-                  BlocBuilder<PostCubit, PostState>(
+                  BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
                     builder: (context, state) {
-                      if (state is PostLoading) {
+                      if (state is KomunitasPostLoading) {
                         return const BerandaLoadingCard();
-                      } else if (state is PostLoaded) {
+                      } else if (state is KomunitasPostLoaded) {
                         return state.postModels.isNotEmpty
                             ? Column(
                                 children: [
@@ -147,7 +145,7 @@ class _BerandaPageState extends State<BerandaPage> {
                                     }).toList(),
                                     options: CarouselOptions(
                                       enableInfiniteScroll: false,
-                                      height: 160,
+                                      height: 162,
                                       viewportFraction: 0.975,
                                       initialPage: carouselIndex,
                                       onPageChanged: (index, _) {
@@ -196,14 +194,14 @@ class _BerandaPageState extends State<BerandaPage> {
                       ],
                     ),
                   ),
-                  BlocBuilder<RiwayatCubit, RiwayatState>(
+                  BlocBuilder<RiwayatHistoryBloc, RiwayatHistoryState>(
                     builder: (context, state) {
-                      if (state is RiwayatLoading) {
+                      if (state is RiwayatHistoryLoading) {
                         return const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: RiwayatLoadingCard(),
                         );
-                      } else if (state is RiwayatLoaded) {
+                      } else if (state is RiwayatHistoryLoaded) {
                         return state.riwayatModel.isNotEmpty
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20),

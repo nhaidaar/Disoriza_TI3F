@@ -7,20 +7,20 @@ import 'core/common/colors.dart';
 import 'core/utils/snackbar.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/usecases/auth_usecase.dart';
-import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/auth/presentation/blocs/auth_bloc.dart';
 import 'features/auth/presentation/pages/auth_page.dart';
 // import 'features/home/presentation/pages/home_onboarding.dart';
 import 'features/home/presentation/pages/home_screen.dart';
 import 'features/home/presentation/pages/splash_screen.dart';
 import 'features/komunitas/data/repositories/komunitas_repository_impl.dart';
 import 'features/komunitas/domain/usecases/komunitas_usecase.dart';
-import 'features/komunitas/presentation/cubit/comment/comment_cubit.dart';
-import 'features/komunitas/presentation/cubit/post/post_cubit.dart';
+import 'features/komunitas/presentation/blocs/komunitas_comment/komunitas_comment_bloc.dart';
+import 'features/komunitas/presentation/blocs/komunitas_post/komunitas_post_bloc.dart';
 import 'features/riwayat/data/repositories/riwayat_repository_impl.dart';
 import 'features/riwayat/domain/usecases/riwayat_usecase.dart';
-import 'features/riwayat/presentation/cubit/disease/disease_cubit.dart';
-import 'features/riwayat/presentation/cubit/riwayat/riwayat_cubit.dart';
-import 'features/setelan/presentation/cubit/setelan_cubit.dart';
+import 'features/riwayat/presentation/blocs/riwayat_history/riwayat_history_bloc.dart';
+import 'features/riwayat/presentation/blocs/riwayat_scan/riwayat_scan_bloc.dart';
+import 'features/setelan/presentation/blocs/setelan_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,29 +49,27 @@ class Disoriza extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => AuthCubit(AuthUsecase(AuthRepositoryImpl(client: client)))..checkSession(),
+            create: (context) => AuthBloc(AuthUsecase(AuthRepositoryImpl(client: client)))..add(AuthCheckSession()),
           ),
           BlocProvider(
-            create: (context) => SetelanCubit(AuthUsecase(AuthRepositoryImpl(client: client))),
+            create: (context) => KomunitasPostBloc(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
           ),
           BlocProvider(
-            create: (context) => CommentCubit(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
+            create: (context) => KomunitasCommentBloc(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
           ),
           BlocProvider(
-            create: (context) => PostCubit(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
+            create: (context) => RiwayatHistoryBloc(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),
           ),
           BlocProvider(
-            create: (context) => DiseaseCubit(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),
+            create: (context) => RiwayatScanBloc(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),
           ),
           BlocProvider(
-            create: (context) => RiwayatCubit(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),
+            create: (context) => SetelanBloc(AuthUsecase(AuthRepositoryImpl(client: client))),
           ),
         ],
-        child: BlocConsumer<AuthCubit, AuthState>(
+        child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is AuthError) {
-              showSnackbar(context, message: state.message, isError: true);
-            }
+            if (state is AuthError) showSnackbar(context, message: state.message, isError: true);
           },
           builder: (context, state) {
             if (state is AuthInitial) {
