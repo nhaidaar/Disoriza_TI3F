@@ -14,7 +14,7 @@ import '../../../../core/utils/camera.dart';
 import '../../../../core/utils/network_image.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../cubit/setelan_cubit.dart';
+import '../blocs/setelan_bloc.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserModel user;
@@ -62,11 +62,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
         centerTitle: true,
       ),
-      body: BlocConsumer<SetelanCubit, SetelanState>(
+      body: BlocConsumer<SetelanBloc, SetelanState>(
         listener: (context, state) {
-          if (state is SetelanSuccess) {
-            showSnackbar(context, message: 'Profil telah diperbarui');
-          }
+          if (state is SetelanProfileChanged) showSnackbar(context, message: 'Profil telah diperbarui');
         },
         builder: (context, state) {
           return Padding(
@@ -143,11 +141,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   state is SetelanLoading
                       ? const CustomLoadingButton()
                       : CustomButton(
-                          onTap: () => context.read<SetelanCubit>().editProfile(
+                          onTap: () => context.read<SetelanBloc>().add(SetelanChangeProfile(
                                 uid: widget.user.id!,
                                 name: _namaController.text,
                                 image: image,
-                              ),
+                              )),
                           text: 'Simpan',
                         )
                 ],

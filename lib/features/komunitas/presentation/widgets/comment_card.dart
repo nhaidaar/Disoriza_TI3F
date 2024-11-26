@@ -10,7 +10,7 @@ import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../data/models/comment_model.dart';
-import '../cubit/comment/comment_cubit.dart';
+import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 
 class CommentCard extends StatefulWidget {
   final String uid;
@@ -37,7 +37,7 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   Widget build(BuildContext context) {
-    final commentCubit = context.read<CommentCubit>();
+    final commentBloc = context.read<KomunitasCommentBloc>();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -79,7 +79,7 @@ class _CommentCardState extends State<CommentCard> {
 
                 // Delete Button
                 GestureDetector(
-                  onTap: () => handleDeleteComment(context, commentCubit),
+                  onTap: () => handleDeleteComment(context, commentBloc),
                   child: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
                 )
               ],
@@ -118,7 +118,7 @@ class _CommentCardState extends State<CommentCard> {
     );
   }
 
-  Future<void> handleDeleteComment(BuildContext context, CommentCubit commentCubit) {
+  Future<void> handleDeleteComment(BuildContext context, KomunitasCommentBloc commentBloc) {
     return showDialog(
       context: context,
       builder: (context) => CustomPopup(
@@ -133,12 +133,12 @@ class _CommentCardState extends State<CommentCard> {
                 child: CustomButton(
                   backgroundColor: dangerMain,
                   pressedColor: dangerPressed,
-                  onTap: () => commentCubit
-                      .deleteComment(
-                        postId: widget.commentModel.idPost.toString(),
-                        commentId: widget.commentModel.id.toString(),
-                      )
-                      .then((_) => Navigator.of(context).pop()),
+                  onTap: () {
+                    commentBloc.add(KomunitasDeleteComment(
+                      postId: widget.commentModel.idPost.toString(),
+                      commentId: widget.commentModel.id.toString(),
+                    ));
+                  },
                   text: 'Ya, hapus',
                 ),
               ),
@@ -167,13 +167,13 @@ class _CommentCardState extends State<CommentCard> {
     });
 
     isLiked
-        ? context.read<CommentCubit>().likeComment(
+        ? context.read<KomunitasCommentBloc>().add(KomunitasLikeComment(
               uid: widget.uid,
               commentId: widget.commentModel.id.toString(),
-            )
-        : context.read<CommentCubit>().unlikeComment(
+            ))
+        : context.read<KomunitasCommentBloc>().add(KomunitasUnlikeComment(
               uid: widget.uid,
               commentId: widget.commentModel.id.toString(),
-            );
+            ));
   }
 }

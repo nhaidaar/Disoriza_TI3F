@@ -14,7 +14,7 @@ import '../../../../core/common/custom_popup.dart';
 import '../../../../core/utils/camera.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../cubit/post/post_cubit.dart';
+import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 
 class CreatePostPage extends StatefulWidget {
   final UserModel user;
@@ -98,9 +98,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PostCubit, PostState>(
+    return BlocConsumer<KomunitasPostBloc, KomunitasPostState>(
       listener: (context, state) {
-        if (state is CreatePostSuccess) {
+        if (state is KomunitasPostCreated) {
           Navigator.of(context).pop();
           showSnackbar(context, message: 'Postingan berhasil terunggah');
         }
@@ -234,18 +234,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 // Daftar Button
                 Container(
                   padding: const EdgeInsets.all(20),
-                  child: state is PostLoading
+                  child: state is KomunitasPostLoading
                       ? const CustomLoadingButton()
                       : CustomButton(
                           text: 'Posting',
                           disabled: areFieldsEmpty,
                           onTap: () {
-                            context.read<PostCubit>().createPost(
+                            context.read<KomunitasPostBloc>().add(KomunitasCreatePost(
                                   title: _titleController.text,
                                   description: _descriptionController.text,
                                   uid: widget.user.id.toString(),
                                   image: image,
-                                );
+                                ));
                           },
                         ),
                 ),

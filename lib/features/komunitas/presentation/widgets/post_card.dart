@@ -11,8 +11,8 @@ import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../data/models/post_model.dart';
-import '../cubit/comment/comment_cubit.dart';
-import '../cubit/post/post_cubit.dart';
+import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
+import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../pages/detail_post_page.dart';
 
 class PostCard extends StatefulWidget {
@@ -53,10 +53,10 @@ class _PostCardState extends State<PostCard> {
           child: MultiBlocProvider(
             providers: [
               BlocProvider.value(
-                value: context.read<CommentCubit>(),
+                value: context.read<KomunitasPostBloc>(),
               ),
               BlocProvider.value(
-                value: context.read<PostCubit>(),
+                value: context.read<KomunitasCommentBloc>(),
               ),
             ],
             child: DetailPostPage(uid: widget.uid, postModel: widget.postModel),
@@ -197,14 +197,14 @@ class _PostCardState extends State<PostCard> {
     });
 
     isLiked
-        ? context.read<PostCubit>().likePost(
+        ? context.read<KomunitasPostBloc>().add(KomunitasLikePost(
               uid: widget.uid,
               postId: widget.postModel.id.toString(),
-            )
-        : context.read<PostCubit>().unlikePost(
+            ))
+        : context.read<KomunitasPostBloc>().add(KomunitasUnlikePost(
               uid: widget.uid,
               postId: widget.postModel.id.toString(),
-            );
+            ));
   }
 }
 

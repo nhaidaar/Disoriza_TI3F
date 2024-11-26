@@ -9,7 +9,7 @@ import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
 import '../../../auth/data/models/user_model.dart';
-import '../cubit/riwayat/riwayat_cubit.dart';
+import '../blocs/riwayat_history/riwayat_history_bloc.dart';
 import '../widgets/riwayat_card.dart';
 
 class RiwayatPage extends StatefulWidget {
@@ -27,13 +27,17 @@ class _RiwayatPageState extends State<RiwayatPage> {
   @override
   void initState() {
     super.initState();
-    context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString());
+    fetchRiwayats(context);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void fetchRiwayats(BuildContext context) {
+    context.read<RiwayatHistoryBloc>().add(RiwayatFetchRiwayats(uid: widget.user.id.toString()));
   }
 
   @override
@@ -71,16 +75,16 @@ class _RiwayatPageState extends State<RiwayatPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          context.read<RiwayatCubit>().fetchAllRiwayat(uid: widget.user.id.toString());
+          fetchRiwayats(context);
         },
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            BlocBuilder<RiwayatCubit, RiwayatState>(
+            BlocBuilder<RiwayatHistoryBloc, RiwayatHistoryState>(
               builder: (context, state) {
-                if (state is RiwayatLoading) {
+                if (state is RiwayatHistoryLoading) {
                   return const RiwayatLoadingCard();
-                } else if (state is RiwayatLoaded) {
+                } else if (state is RiwayatHistoryLoaded) {
                   // Filter by search
                   final filteredList = state.riwayatModel.where((riwayat) {
                     final title = riwayat.idDisease?.name?.toLowerCase() ?? '';
