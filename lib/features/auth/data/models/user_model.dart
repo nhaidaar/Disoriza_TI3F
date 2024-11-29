@@ -2,20 +2,12 @@ class UserModel {
   final String? id;
   final String? email;
   final String? name;
-  final List<String>? likedPosts;
-  final List<String>? likedComments;
-  final List<String>? posts;
-  final List<String>? comments;
   final String? profilePicture;
 
   UserModel({
     this.id,
     this.email,
     this.name,
-    this.likedPosts,
-    this.likedComments,
-    this.posts,
-    this.comments,
     this.profilePicture,
   });
 
@@ -28,7 +20,6 @@ class UserModel {
     );
   }
 
-  // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -42,20 +33,12 @@ class UserModel {
     String? id,
     String? email,
     String? name,
-    List<String>? likedPosts,
-    List<String>? likedComments,
-    List<String>? posts,
-    List<String>? comments,
     String? profilePicture,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
-      likedPosts: likedPosts ?? this.likedPosts,
-      likedComments: likedComments ?? this.likedComments,
-      posts: posts ?? this.posts,
-      comments: comments ?? this.comments,
       profilePicture: profilePicture ?? this.profilePicture,
     );
   }

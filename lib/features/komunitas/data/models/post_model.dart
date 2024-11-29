@@ -38,7 +38,6 @@ class PostModel {
     );
   }
 
-  // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
       'title': title,
