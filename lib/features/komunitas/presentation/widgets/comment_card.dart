@@ -74,15 +74,26 @@ class _CommentCardState extends State<CommentCard> {
                 ],
               ),
 
-              if (widget.commentModel.idUser!.id.toString() == widget.uid) ...[
-                const Spacer(),
+              const Spacer(),
 
-                // Delete Button
-                GestureDetector(
-                  onTap: () => handleDeleteComment(context, commentBloc),
-                  child: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
-                )
-              ],
+              // Delete Button
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => handleLikeComment(context),
+                    child: Icon(
+                      isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
+                      color: isLiked ? dangerMain : neutral100,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    (widget.commentModel.likes ?? []).length.toString(),
+                    style: mediumTS.copyWith(fontSize: 12, color: neutral80),
+                  ),
+                ],
+              ),
             ],
           ),
 
@@ -95,24 +106,22 @@ class _CommentCardState extends State<CommentCard> {
 
           const SizedBox(height: 8),
 
-          // Like
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => handleLikeComment(context),
-                child: Icon(
-                  isLiked ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
-                  color: isLiked ? dangerMain : neutral100,
-                  size: 20,
+          // Delete Button
+          widget.commentModel.idUser!.id.toString() == widget.uid
+              ? GestureDetector(
+                  onTap: () => handleDeleteComment(context, commentBloc),
+                  child: Text(
+                    'Hapus',
+                    style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    'Laporkan',
+                    style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                (widget.commentModel.likes ?? []).length.toString(),
-                style: mediumTS.copyWith(fontSize: 12, color: neutral80),
-              ),
-            ],
-          ),
         ],
       ),
     );
