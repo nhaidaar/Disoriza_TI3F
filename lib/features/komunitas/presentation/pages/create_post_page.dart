@@ -196,7 +196,15 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                     ? DecorationImage(image: MemoryImage(image!), fit: BoxFit.cover)
                                     : null,
                               ),
-                              child: image != null ? null : const Center(child: Icon(IconsaxPlusLinear.gallery_add)),
+                              child: image != null
+                                  ? null
+                                  : Center(
+                                      child: Text(
+                                        'Silahkan upload gambar\nterlebih dahulu',
+                                        style: mediumTS.copyWith(fontSize: 12, color: neutral70),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
                             ),
 
                             const SizedBox(height: 8),

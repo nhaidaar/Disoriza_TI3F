@@ -120,6 +120,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(8),
                   child: Container(
                     padding: const EdgeInsets.all(12),

@@ -30,7 +30,6 @@ class CommentModel {
     );
   }
 
-  // Convert to map for Appwrite
   Map<String, dynamic> toMap() {
     return {
       'id_user': idUser?.id,
