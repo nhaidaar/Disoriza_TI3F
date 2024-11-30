@@ -14,6 +14,7 @@ import '../../../../core/utils/camera.dart';
 import '../../../../core/utils/network_image.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
+import '../../../auth/presentation/blocs/auth_bloc.dart';
 import '../blocs/setelan_bloc.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -64,7 +65,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: BlocConsumer<SetelanBloc, SetelanState>(
         listener: (context, state) {
-          if (state is SetelanProfileChanged) showSnackbar(context, message: 'Profil telah diperbarui');
+          if (state is SetelanProfileChanged) {
+            showSnackbar(context, message: 'Profil telah diperbarui');
+
+            context.read<AuthBloc>().add(AuthCheckSession());
+          }
         },
         builder: (context, state) {
           return Padding(
