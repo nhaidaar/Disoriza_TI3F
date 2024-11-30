@@ -16,6 +16,8 @@ abstract class KomunitasRepository {
     required String filter,
   });
 
+  Future<Either<Exception, List<PostModel>>> searchPost({required String search});
+
   Future<Either<Exception, void>> createPost({
     required String title,
     required String description,

@@ -133,6 +133,36 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }
 
   @override
+  Future<Either<Exception, List<PostModel>>> searchPost({required String search}) async {
+    try {
+      final response = await client.from('posts').select('''
+                    *,
+                    users (
+                      id,
+                      name,
+                      email,
+                      profile_picture
+                    ),
+                    comments (
+                      id_user
+                    ),
+                    liked_posts (
+                      id_user
+                    )
+                  ''').like('title', '%$search%').order('created_at', ascending: false);
+
+      // Convert responses to PostModel
+      List<PostModel> posts = List<PostModel>.from(
+        response.map((doc) => PostModel.fromMap(doc)),
+      );
+
+      return Right(posts);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
   Future<Either<Exception, void>> createPost({
     required String title,
     required String description,
@@ -178,6 +208,9 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
     required String postId,
   }) async {
     try {
+      final existingLike = await client.from('liked_posts').select().eq('id_user', uid).eq('id_post', postId);
+      if (existingLike.isNotEmpty) return const Right(null);
+
       await client.from('liked_posts').insert({
         'id_user': uid,
         'id_post': postId,
@@ -264,6 +297,9 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
     required String commentId,
   }) async {
     try {
+      final existingLike = await client.from('liked_comments').select().eq('id_user', uid).eq('id_comment', commentId);
+      if (existingLike.isNotEmpty) return const Right(null);
+
       await client.from('liked_comments').insert({
         'id_user': uid,
         'id_comment': commentId,

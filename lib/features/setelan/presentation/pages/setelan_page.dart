@@ -53,8 +53,15 @@ class _SetelanPageState extends State<SetelanPage> {
               title: 'Edit profile',
               onTap: () => Navigator.of(context).push(
                 PageTransition(
-                  child: BlocProvider.value(
-                    value: setelanBloc,
+                  child: MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: setelanBloc,
+                      ),
+                      BlocProvider.value(
+                        value: authBloc,
+                      ),
+                    ],
                     child: EditProfilePage(user: widget.user),
                   ),
                   type: PageTransitionType.rightToLeft,

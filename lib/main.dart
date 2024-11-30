@@ -16,6 +16,7 @@ import 'features/komunitas/data/repositories/komunitas_repository_impl.dart';
 import 'features/komunitas/domain/usecases/komunitas_usecase.dart';
 import 'features/komunitas/presentation/blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import 'features/komunitas/presentation/blocs/komunitas_post/komunitas_post_bloc.dart';
+import 'features/komunitas/presentation/blocs/komunitas_search/komunitas_search_bloc.dart';
 import 'features/riwayat/data/repositories/riwayat_repository_impl.dart';
 import 'features/riwayat/domain/usecases/riwayat_usecase.dart';
 import 'features/riwayat/presentation/blocs/riwayat_history/riwayat_history_bloc.dart';
@@ -56,6 +57,9 @@ class Disoriza extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => KomunitasCommentBloc(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
+          ),
+          BlocProvider(
+            create: (context) => KomunitasSearchBloc(KomunitasUsecase(KomunitasRepositoryImpl(client: client))),
           ),
           BlocProvider(
             create: (context) => RiwayatHistoryBloc(RiwayatUsecase(RiwayatRepositoryImpl(client: client))),

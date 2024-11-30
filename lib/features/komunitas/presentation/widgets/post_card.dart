@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../../core/utils/format.dart';
 import '../../data/models/post_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
@@ -93,7 +93,7 @@ class _PostCardState extends State<PostCard> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      timeago.format(widget.postModel.date ?? DateTime.now()),
+                      formatTimeAgo(widget.postModel.date),
                       style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                     )
                   ],
