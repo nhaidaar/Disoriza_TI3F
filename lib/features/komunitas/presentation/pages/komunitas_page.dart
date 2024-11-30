@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../../core/common/colors.dart';
 import '../../../../../core/common/fontstyles.dart';
@@ -8,8 +9,10 @@ import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
+import '../blocs/komunitas_search/komunitas_search_bloc.dart';
 import 'komunitas_aktivitas.dart';
 import 'komunitas_diskusi.dart';
+import 'search_post_page.dart';
 
 class KomunitasPage extends StatelessWidget {
   final UserModel user;
@@ -27,6 +30,11 @@ class KomunitasPage extends StatelessWidget {
         BlocListener<KomunitasCommentBloc, KomunitasCommentState>(
           listener: (context, state) {
             if (state is KomunitasCommentError) showSnackbar(context, message: state.message, isError: true);
+          },
+        ),
+        BlocListener<KomunitasSearchBloc, KomunitasSearchState>(
+          listener: (context, state) {
+            if (state is KomunitasSearchError) showSnackbar(context, message: state.message, isError: true);
           },
         ),
       ],
@@ -54,9 +62,15 @@ class KomunitasPage extends StatelessWidget {
 
                     // Search Icon
                     IconButton(
-                      onPressed: () {
-                        // context.read<KomunitasCubit>().deleteAllPosts();
-                      },
+                      onPressed: () => Navigator.of(context).push(
+                        PageTransition(
+                          child: BlocProvider.value(
+                            value: context.read<KomunitasSearchBloc>(),
+                            child: SearchPostPage(user: user),
+                          ),
+                          type: PageTransitionType.rightToLeft,
+                        ),
+                      ),
                       icon: const Icon(IconsaxPlusLinear.search_normal_1),
                     ),
                   ],
