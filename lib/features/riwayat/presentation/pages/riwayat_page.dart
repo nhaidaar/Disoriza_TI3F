@@ -66,7 +66,7 @@ class _RiwayatPageState extends State<RiwayatPage> {
               prefixIconColor: neutral60,
               onChanged: (value) {
                 Timer(Durations.extralong1, () {
-                  setState(() => _searchQuery = _searchController.text);
+                  setState(() => _searchQuery = value);
                 });
               },
             ),

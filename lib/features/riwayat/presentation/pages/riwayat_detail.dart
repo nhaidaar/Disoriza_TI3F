@@ -11,6 +11,7 @@ import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/colors.dart';
 import '../../../../core/utils/camera.dart';
+import '../../../../core/utils/format.dart';
 import '../../../../core/utils/network_image.dart';
 import '../../../home/presentation/widgets/disoriza_logo.dart';
 import '../../data/models/riwayat_model.dart';
@@ -147,6 +148,36 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
           ),
 
           const SizedBox(height: 20),
+
+          Row(
+            children: [
+              // Tanggal
+              Expanded(
+                flex: 5,
+                child: RiwayatDetailCard(
+                  index: -1,
+                  controller: _scrollController,
+                  title: 'Dipindai pada',
+                  content: formatDate(widget.riwayat.date),
+                ),
+              ),
+
+              const SizedBox(width: 8),
+
+              // Akurasi
+              Expanded(
+                flex: 4,
+                child: RiwayatDetailCard(
+                  index: -1,
+                  controller: _scrollController,
+                  title: 'Akurasi',
+                  content: '${(widget.riwayat.accuracy ?? 0).toStringAsFixed(2)} %',
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
 
           // Definisi
           RiwayatDetailCard(

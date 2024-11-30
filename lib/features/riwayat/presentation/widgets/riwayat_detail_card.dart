@@ -24,6 +24,7 @@ class RiwayatDetailCard extends StatelessWidget {
       controller: controller,
       index: index,
       child: Container(
+        width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),

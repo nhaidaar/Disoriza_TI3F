@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
@@ -9,6 +8,7 @@ import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../../core/utils/format.dart';
 import '../../data/models/comment_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 
@@ -68,7 +68,7 @@ class _CommentCardState extends State<CommentCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    timeago.format(widget.commentModel.date ?? DateTime.now()),
+                    formatTimeAgo(widget.commentModel.date),
                     style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                   )
                 ],

@@ -3,11 +3,11 @@ import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../../core/utils/format.dart';
 import '../../data/models/riwayat_model.dart';
 import '../blocs/riwayat_history/riwayat_history_bloc.dart';
 import '../blocs/riwayat_scan/riwayat_scan_bloc.dart';
@@ -75,7 +75,7 @@ class RiwayatCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    timeago.format(riwayatModel.date ?? DateTime.now()),
+                    formatTimeAgo(riwayatModel.date),
                     style: mediumTS.copyWith(fontSize: 12, color: neutral70),
                   ),
                 ],

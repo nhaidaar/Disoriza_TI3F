@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
@@ -13,6 +12,7 @@ import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
+import '../../../../core/utils/format.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../data/models/comment_model.dart';
@@ -76,6 +76,13 @@ class _DetailPostPageState extends State<DetailPostPage> {
         ),
         BlocListener<KomunitasCommentBloc, KomunitasCommentState>(
           listener: (context, state) {
+            if (state is KomunitasCommentLoaded) {
+              setState(() {
+                (widget.postModel.comments ?? []).clear();
+                (widget.postModel.comments ?? []).addAll(state.commentModels.map((c) => c.idUser!.id!).toList());
+              });
+            }
+
             if (state is KomunitasCommentDeleted) {
               Navigator.of(context).pop(); // Pop the confirmation popup
               showSnackbar(context, message: 'Komentar berhasil dihapus!');
@@ -152,7 +159,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  timeago.format(widget.postModel.date ?? DateTime.now()),
+                                  formatTimeAgo(widget.postModel.date),
                                   style: mediumTS.copyWith(fontSize: 12, color: neutral60),
                                 )
                               ],
