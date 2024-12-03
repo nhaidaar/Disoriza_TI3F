@@ -171,7 +171,7 @@ class _RiwayatDetailState extends State<RiwayatDetail> {
                   index: -1,
                   controller: _scrollController,
                   title: 'Akurasi',
-                  content: '${(widget.riwayat.accuracy ?? 0).toStringAsFixed(2)} %',
+                  content: '${((widget.riwayat.accuracy ?? 0) * 100).toStringAsFixed(2)} %',
                 ),
               ),
             ],
