@@ -56,14 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
       listeners: [
         BlocListener<RiwayatHistoryBloc, RiwayatHistoryState>(
           listener: (context, state) {
-            if (state is RiwayatHistoryError) handleDiseaseError(context);
+            if (state is RiwayatHistoryError) showSnackbar(context, message: state.message, isError: true);
 
             if (state is RiwayatHistoryDeleted) handleRiwayatDeleted(context);
           },
         ),
         BlocListener<RiwayatScanBloc, RiwayatScanState>(
           listener: (context, state) {
-            if (state is RiwayatScanError) handleDiseaseError(context);
+            if (state is RiwayatScanError) handleDiseaseError(context, state);
 
             if (state is RiwayatScanLoading) showDiseaseLoading(context);
 
@@ -196,12 +196,13 @@ class _HomeScreenState extends State<HomeScreen> {
           );
   }
 
-  void handleDiseaseError(BuildContext context) {
+  void handleDiseaseError(BuildContext context, RiwayatScanError state) {
     // Pop loading popup
     Navigator.of(context).pop();
 
     showDiseaseError(
       context,
+      message: state.message,
       onScan: () {
         // Pop error popup
         Navigator.of(context).pop();

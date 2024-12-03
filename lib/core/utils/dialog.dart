@@ -33,6 +33,7 @@ void showDiseaseSehat(BuildContext context, {required VoidCallback? onScan}) asy
           text: 'Pindai Ulang',
           icon: IconsaxPlusLinear.scanner,
         ),
+        const SizedBox(height: 4),
         CustomButton(
           onTap: () => Navigator.of(context).pop(),
           text: 'Batal',
@@ -44,20 +45,25 @@ void showDiseaseSehat(BuildContext context, {required VoidCallback? onScan}) asy
   );
 }
 
-void showDiseaseError(BuildContext context, {required VoidCallback? onScan}) async {
+void showDiseaseError(
+  BuildContext context, {
+  required VoidCallback? onScan,
+  required String message,
+}) async {
   showDialog(
     context: context,
     builder: (context) => CustomPopup(
       icon: IconsaxPlusBold.close_circle,
       iconColor: dangerMain,
       title: 'Gagal memindai!',
-      subtitle: 'Maaf, pemindaian tidak berhasil.',
+      subtitle: message,
       actions: [
         CustomButton(
           onTap: onScan,
-          text: 'Pindai Ulang.',
+          text: 'Pindai Ulang',
           icon: IconsaxPlusLinear.scanner,
         ),
+        const SizedBox(height: 4),
         CustomButton(
           onTap: () => Navigator.of(context).pop(),
           text: 'Batal',
