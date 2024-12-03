@@ -108,7 +108,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       builder: (context, state) {
         return PopScope(
           canPop: areFieldsEmpty,
-          onPopInvoked: (didPop) async {
+          onPopInvokedWithResult: (didPop, result) async {
             if (didPop) return;
             final shouldPop = await _onPopInvoked();
             if (shouldPop && context.mounted) Navigator.of(context).pop();

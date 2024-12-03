@@ -21,7 +21,7 @@ class RiwayatScanBloc extends Bloc<RiwayatScanEvent, RiwayatScanState> {
           image: event.image,
         );
         response.fold(
-          (error) => emit(RiwayatScanError(message: error.toString())),
+          (error) => emit(RiwayatScanError(message: error.toString().split(': ').last)),
           (success) => emit(RiwayatScanSuccess(riwayatModel: success)),
         );
       } catch (_) {

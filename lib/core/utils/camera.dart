@@ -100,7 +100,7 @@ Future<XFile?> pickImage(BuildContext context) async {
   if (source == null) return null;
 
   final permissionGranted = await getPermission(source!);
-  if (permissionGranted) return await ImagePicker().pickImage(source: source!);
+  if (permissionGranted) return await ImagePicker().pickImage(source: source!, imageQuality: 70);
   return null;
 }
 
