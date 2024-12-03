@@ -20,7 +20,7 @@ class KomunitasCommentBloc extends Bloc<KomunitasCommentEvent, KomunitasCommentS
         );
 
         response.fold(
-          (error) => emit(KomunitasCommentError(message: error.toString())),
+          (error) => emit(KomunitasCommentError(message: error.toString().split(': ').last)),
           (success) => emit(KomunitasCommentLoaded(commentModels: success)),
         );
       } catch (_) {
@@ -31,7 +31,7 @@ class KomunitasCommentBloc extends Bloc<KomunitasCommentEvent, KomunitasCommentS
       try {
         final response = await _komunitasUsecase.createComment(comment: event.comment);
         response.fold(
-          (error) => emit(KomunitasCommentError(message: error.toString())),
+          (error) => emit(KomunitasCommentError(message: error.toString().split(': ').last)),
           (success) {},
         );
 
@@ -44,7 +44,7 @@ class KomunitasCommentBloc extends Bloc<KomunitasCommentEvent, KomunitasCommentS
       try {
         final response = await _komunitasUsecase.deleteComment(commentId: event.commentId);
         response.fold(
-          (error) => emit(KomunitasCommentError(message: error.toString())),
+          (error) => emit(KomunitasCommentError(message: error.toString().split(': ').last)),
           (success) => emit(KomunitasCommentDeleted()),
         );
         add(KomunitasFetchComments(postId: event.postId));
@@ -60,7 +60,7 @@ class KomunitasCommentBloc extends Bloc<KomunitasCommentEvent, KomunitasCommentS
         );
 
         response.fold(
-          (error) => emit(KomunitasCommentError(message: error.toString())),
+          (error) => emit(KomunitasCommentError(message: error.toString().split(': ').last)),
           (success) {},
         );
       } catch (_) {
@@ -75,7 +75,7 @@ class KomunitasCommentBloc extends Bloc<KomunitasCommentEvent, KomunitasCommentS
         );
 
         response.fold(
-          (error) => emit(KomunitasCommentError(message: error.toString())),
+          (error) => emit(KomunitasCommentError(message: error.toString().split(': ').last)),
           (success) {},
         );
       } catch (_) {

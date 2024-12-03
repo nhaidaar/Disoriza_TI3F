@@ -16,7 +16,7 @@ class KomunitasSearchBloc extends Bloc<KomunitasSearchEvent, KomunitasSearchStat
 
         final response = await _komunitasUsecase.searchPost(search: event.search);
         response.fold(
-          (error) => emit(KomunitasSearchError(message: error.toString())),
+          (error) => emit(KomunitasSearchError(message: error.toString().split(': ').last)),
           (success) => emit(KomunitasSearchLoaded(postModels: success)),
         );
       } catch (_) {

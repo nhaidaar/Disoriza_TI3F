@@ -19,7 +19,7 @@ class SetelanBloc extends Bloc<SetelanEvent, SetelanState> {
 
         final resetPassword = await _authUsecase.resetPassword(email: event.email);
         resetPassword.fold(
-          (error) => emit(SetelanError(message: error.toString())),
+          (error) => emit(SetelanError(message: error.toString().split(': ').last)),
           (success) => emit(SetelanPasswordChanged()),
         );
       } catch (_) {
@@ -32,7 +32,7 @@ class SetelanBloc extends Bloc<SetelanEvent, SetelanState> {
 
         final changeEmail = await _authUsecase.changeEmail(email: event.email);
         changeEmail.fold(
-          (error) => emit(SetelanError(message: error.toString())),
+          (error) => emit(SetelanError(message: error.toString().split(': ').last)),
           (success) => emit(SetelanEmailChanged()),
         );
       } catch (_) {
@@ -49,7 +49,7 @@ class SetelanBloc extends Bloc<SetelanEvent, SetelanState> {
           image: event.image,
         );
         result.fold(
-          (error) => emit(SetelanError(message: error.toString())),
+          (error) => emit(SetelanError(message: error.toString().split(': ').last)),
           (success) => emit(SetelanProfileChanged(userModel: success)),
         );
       } catch (_) {

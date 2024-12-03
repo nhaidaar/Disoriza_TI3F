@@ -21,7 +21,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           max: event.max,
         );
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString())),
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) => emit(KomunitasPostLoaded(postModels: success)),
         );
       } catch (_) {
@@ -37,7 +37,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           filter: event.filter,
         );
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString())),
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) => emit(KomunitasPostLoaded(postModels: success)),
         );
       } catch (_) {
@@ -55,7 +55,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           image: event.image,
         );
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString())),
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) {
             emit(KomunitasPostCreated());
             add(const KomunitasFetchPosts());
@@ -71,7 +71,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
 
         final response = await _komunitasUsecase.deletePost(postId: event.postId);
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString())),
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) {
             emit(KomunitasPostDeleted());
             add(const KomunitasFetchPosts());
@@ -89,7 +89,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         );
 
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString())),
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) {},
         );
       } catch (_) {
@@ -104,7 +104,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         );
 
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString())),
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) {},
         );
       } catch (_) {
