@@ -68,10 +68,7 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
                       return state.postModels.isNotEmpty
                           ? Column(
                               children: state.postModels.map((post) {
-                                return PostCard(
-                                  uid: widget.user.id.toString(),
-                                  postModel: post,
-                                );
+                                return PostCard(user: widget.user, post: post);
                               }).toList(), // Don't forget .toList()
                             )
                           : const DiskusiEmptyState();

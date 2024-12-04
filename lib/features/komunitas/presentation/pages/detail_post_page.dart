@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
-import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_dropdown.dart';
 import '../../../../core/common/custom_empty_state.dart';
@@ -12,7 +11,6 @@ import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/custom_textfield.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../../core/utils/format.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../data/models/comment_model.dart';
@@ -20,15 +18,16 @@ import '../../data/models/post_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../widgets/comment_card.dart';
+import '../widgets/components/user_details.dart';
 import '../widgets/post_card.dart';
 
 class DetailPostPage extends StatefulWidget {
-  final String uid;
-  final PostModel postModel;
+  final UserModel user;
+  final PostModel post;
   const DetailPostPage({
     super.key,
-    required this.uid,
-    required this.postModel,
+    required this.user,
+    required this.post,
   });
 
   @override
@@ -42,7 +41,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
 
   @override
   void initState() {
-    isLiked = (widget.postModel.likes ?? []).contains(widget.uid);
+    isLiked = (widget.post.likes ?? []).contains(widget.user.id);
     fetchComments(context);
     super.initState();
   }
@@ -55,7 +54,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
 
   void fetchComments(BuildContext context) {
     context.read<KomunitasCommentBloc>().add(KomunitasFetchComments(
-          postId: widget.postModel.id.toString(),
+          postId: widget.post.id.toString(),
         ));
   }
 
@@ -78,8 +77,8 @@ class _DetailPostPageState extends State<DetailPostPage> {
           listener: (context, state) {
             if (state is KomunitasCommentLoaded) {
               setState(() {
-                (widget.postModel.comments ?? []).clear();
-                (widget.postModel.comments ?? []).addAll(state.commentModels.map((c) => c.idUser!.id!).toList());
+                (widget.post.comments ?? []).clear();
+                (widget.post.comments ?? []).addAll(state.commentModels.map((c) => c.idUser!.id!).toList());
               });
             }
 
@@ -111,7 +110,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
           centerTitle: true,
 
           actions: [
-            widget.postModel.author!.id == widget.uid
+            widget.post.author?.id == widget.user.id
                 ? IconButton(
                     onPressed: () => handleDeletePost(context, postBloc),
                     icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
@@ -140,56 +139,36 @@ class _DetailPostPageState extends State<DetailPostPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            // Avatar
-                            CustomAvatar(link: widget.postModel.author!.profilePicture),
-
-                            const SizedBox(width: 12),
-
-                            // User details
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.postModel.author != null
-                                      ? widget.postModel.author!.name.toString()
-                                      : 'Disoriza User',
-                                  style: mediumTS.copyWith(color: neutral100),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  formatTimeAgo(widget.postModel.date),
-                                  style: mediumTS.copyWith(fontSize: 12, color: neutral60),
-                                )
-                              ],
-                            )
-                          ],
+                        UserDetails(
+                          name: widget.post.author != null ? widget.post.author!.name.toString() : 'Disoriza User',
+                          isAdmin: widget.post.author?.isAdmin ?? false,
+                          profilePicture: widget.post.author?.profilePicture,
+                          date: widget.post.date,
                         ),
 
                         const SizedBox(height: 12),
 
                         Text(
-                          widget.postModel.title.toString(),
+                          widget.post.title.toString(),
                           style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
                         ),
 
                         const SizedBox(height: 4),
 
                         Text(
-                          widget.postModel.content.toString(),
+                          widget.post.content.toString(),
                           style: mediumTS.copyWith(color: neutral90),
                         ),
 
                         const SizedBox(height: 4),
 
                         // Image (optional)
-                        if (widget.postModel.urlImage != null) ...[
+                        if (widget.post.urlImage != null) ...[
                           const SizedBox(height: 8),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(16),
                             child: CachedNetworkImage(
-                              imageUrl: widget.postModel.urlImage.toString(),
+                              imageUrl: widget.post.urlImage.toString(),
                             ),
                           ),
                         ],
@@ -209,7 +188,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              (widget.postModel.likes ?? []).length.toString(),
+                              (widget.post.likes ?? []).length.toString(),
                               style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                             ),
 
@@ -223,7 +202,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              (widget.postModel.comments ?? []).length.toString(),
+                              (widget.post.comments ?? []).length.toString(),
                               style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                             ),
                           ],
@@ -251,7 +230,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                                 if (isLatest != filter.value) {
                                   isLatest = !isLatest;
                                   context.read<KomunitasCommentBloc>().add(KomunitasFetchComments(
-                                        postId: widget.postModel.id.toString(),
+                                        postId: widget.post.id.toString(),
                                         latest: isLatest,
                                       ));
                                 }
@@ -272,8 +251,8 @@ class _DetailPostPageState extends State<DetailPostPage> {
                                   ? Column(
                                       children: state.commentModels.map((comment) {
                                         return CommentCard(
-                                          uid: widget.uid,
-                                          commentModel: comment,
+                                          user: widget.user,
+                                          comment: comment,
                                         );
                                       }).toList(),
                                     )
@@ -305,8 +284,8 @@ class _DetailPostPageState extends State<DetailPostPage> {
                       onPressed: () {
                         if (commentController.text.isNotEmpty) {
                           final comment = CommentModel(
-                            idPost: widget.postModel.id,
-                            idUser: UserModel(id: widget.uid),
+                            idPost: widget.post.id,
+                            idUser: UserModel(id: widget.user.id),
                             content: commentController.text,
                           );
 
@@ -341,7 +320,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
                 child: CustomButton(
                   backgroundColor: dangerMain,
                   pressedColor: dangerPressed,
-                  onTap: () => postBloc.add(KomunitasDeletePost(postId: widget.postModel.id.toString())),
+                  onTap: () => postBloc.add(KomunitasDeletePost(postId: widget.post.id.toString())),
                   text: 'Ya, hapus',
                 ),
               ),
@@ -364,17 +343,19 @@ class _DetailPostPageState extends State<DetailPostPage> {
   void handleLikePost(BuildContext context) {
     setState(() {
       isLiked = !isLiked;
-      isLiked ? (widget.postModel.likes ?? []).add(widget.uid) : (widget.postModel.likes ?? []).remove(widget.uid);
+      isLiked
+          ? (widget.post.likes ?? []).add(widget.user.id.toString())
+          : (widget.post.likes ?? []).remove(widget.user.id.toString());
     });
 
     isLiked
         ? context.read<KomunitasPostBloc>().add(KomunitasLikePost(
-              uid: widget.uid,
-              postId: widget.postModel.id.toString(),
+              uid: widget.user.id.toString(),
+              postId: widget.post.id.toString(),
             ))
         : context.read<KomunitasPostBloc>().add(KomunitasUnlikePost(
-              uid: widget.uid,
-              postId: widget.postModel.id.toString(),
+              uid: widget.user.id.toString(),
+              postId: widget.post.id.toString(),
             ));
   }
 }

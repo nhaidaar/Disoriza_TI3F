@@ -91,8 +91,8 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
                           ? Column(
                               children: state.postModels.map((post) {
                                 return PostCard(
-                                  uid: widget.user.id.toString(),
-                                  postModel: post,
+                                  user: widget.user,
+                                  post: post,
                                   isAktivitas: true,
                                 );
                               }).toList(),

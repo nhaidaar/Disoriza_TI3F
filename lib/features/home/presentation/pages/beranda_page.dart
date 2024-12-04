@@ -132,8 +132,8 @@ class _BerandaPageState extends State<BerandaPage> {
                                   carouselController: carouselController,
                                   items: state.postModels.map((post) {
                                     return PostCard(
-                                      uid: widget.user.id.toString(),
-                                      postModel: post,
+                                      user: widget.user,
+                                      post: post,
                                       isBerandaCard: true,
                                     );
                                   }).toList(),
@@ -215,6 +215,8 @@ class _BerandaPageState extends State<BerandaPage> {
                 ),
               ],
             ),
+
+            const SizedBox(height: 20),
           ],
         ),
       ),

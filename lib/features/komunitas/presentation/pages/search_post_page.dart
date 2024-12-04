@@ -82,7 +82,7 @@ class _SearchPostPageState extends State<SearchPostPage> {
                 : state is KomunitasSearchLoaded
                     ? state.postModels.isNotEmpty
                         ? state.postModels.map((post) {
-                            return PostCard(uid: widget.user.id.toString(), postModel: post);
+                            return PostCard(user: widget.user, post: post);
                           }).toList()
                         : [
                             const DiskusiEmptyState(),
