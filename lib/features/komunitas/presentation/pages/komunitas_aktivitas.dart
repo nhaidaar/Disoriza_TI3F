@@ -19,7 +19,6 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
   int _selectedIndex = 0;
 
   final aktivitasCategory = [
-    'Semua',
     'Postingan',
     'Disukai',
     'Komentar',

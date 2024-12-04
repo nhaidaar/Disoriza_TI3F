@@ -39,6 +39,7 @@ class _CustomDropdownState<K, V> extends State<CustomDropdown<K, V>> {
       ),
       elevation: 0,
       position: PopupMenuPosition.under,
+      color: backgroundComponent,
 
       // Handle selection change
       onSelected: (value) {
