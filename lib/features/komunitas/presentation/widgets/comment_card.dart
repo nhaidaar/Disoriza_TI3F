@@ -90,7 +90,7 @@ class _CommentCardState extends State<CommentCard> {
           const SizedBox(height: 8),
 
           // Delete Button
-          widget.comment.idUser?.id == widget.user.id
+          widget.comment.idUser?.id == widget.user.id || widget.user.isAdmin
               ? GestureDetector(
                   onTap: () => handleDeleteComment(context, commentBloc),
                   child: Text(

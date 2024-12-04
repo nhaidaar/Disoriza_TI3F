@@ -110,7 +110,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
           centerTitle: true,
 
           actions: [
-            widget.post.author?.id == widget.user.id
+            widget.post.author?.id == widget.user.id || widget.user.isAdmin
                 ? IconButton(
                     onPressed: () => handleDeletePost(context, postBloc),
                     icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),

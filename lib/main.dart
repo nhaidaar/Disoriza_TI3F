@@ -46,7 +46,6 @@ class Disoriza extends StatelessWidget {
       title: 'Disoriza',
       theme: ThemeData(
         scaffoldBackgroundColor: backgroundCanvas,
-        primarySwatch: Colors.lightGreen,
       ),
       home: MultiBlocProvider(
         providers: [
