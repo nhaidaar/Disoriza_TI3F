@@ -48,14 +48,14 @@ class _SearchPostPageState extends State<SearchPostPage> {
 
         title: Text(
           'Cari diskusi',
-          style: mediumTS.copyWith(color: neutral100),
+          style: mediumTS.copyWith(fontSize: 16, color: neutral100),
         ),
         centerTitle: true,
 
         bottom: PreferredSize(
           preferredSize: Size.zero,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
             child: CustomFormField(
               controller: _searchController,
               hint: 'Cari judul penyakit',

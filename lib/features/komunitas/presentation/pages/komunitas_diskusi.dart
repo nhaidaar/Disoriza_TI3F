@@ -21,66 +21,74 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
 
   @override
   void initState() {
-    context.read<KomunitasPostBloc>().add(const KomunitasFetchAllPosts());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      edgeOffset: 75,
-      onRefresh: () async => context.read<KomunitasPostBloc>().add(KomunitasFetchAllPosts(latest: isLatest)),
-      child: ListView(
-        children: [
-          // Create Post Widget
-          CreatePostButton(user: widget.user),
+    return BlocListener<KomunitasPostBloc, KomunitasPostState>(
+      listener: (context, state) {
+        if (state is KomunitasPostDeleted) fetchDiskusi(context);
+      },
+      child: RefreshIndicator(
+        edgeOffset: 75,
+        onRefresh: () async => fetchDiskusi(context),
+        child: ListView(
+          children: [
+            // Create Post Widget
+            CreatePostButton(user: widget.user),
 
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              children: [
-                // Filter post
-                Row(
-                  children: [
-                    CustomDropdown(
-                      items: const [
-                        MapEntry('Terpopuler', false),
-                        MapEntry('Terbaru', true),
-                      ],
-                      initialValue: const MapEntry('Terpopuler', false),
-                      onChanged: (filter) {
-                        if (isLatest != filter.value) {
-                          isLatest = !isLatest;
-                          context.read<KomunitasPostBloc>().add(KomunitasFetchAllPosts(latest: isLatest));
-                        }
-                      },
-                    ),
-                  ],
-                ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  // Filter post
+                  Row(
+                    children: [
+                      CustomDropdown(
+                        items: const [
+                          MapEntry('Terpopuler', false),
+                          MapEntry('Terbaru', true),
+                        ],
+                        initialValue: const MapEntry('Terpopuler', false),
+                        onChanged: (filter) {
+                          if (isLatest != filter.value) {
+                            isLatest = !isLatest;
+                            context.read<KomunitasPostBloc>().add(KomunitasFetchAllPosts(latest: isLatest));
+                          }
+                        },
+                      ),
+                    ],
+                  ),
 
-                const SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
-                BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
-                  builder: (context, state) {
-                    if (state is KomunitasPostLoading) {
-                      return const PostLoadingCard();
-                    } else if (state is KomunitasPostLoaded) {
-                      return state.postModels.isNotEmpty
-                          ? Column(
-                              children: state.postModels.map((post) {
-                                return PostCard(user: widget.user, post: post);
-                              }).toList(), // Don't forget .toList()
-                            )
-                          : const DiskusiEmptyState();
-                    }
-                    return const DiskusiEmptyState();
-                  },
-                ),
-              ],
-            ),
-          )
-        ],
+                  BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
+                    builder: (context, state) {
+                      if (state is KomunitasPostLoading) {
+                        return const PostLoadingCard();
+                      } else if (state is KomunitasPostLoaded) {
+                        return state.postModels.isNotEmpty
+                            ? Column(
+                                children: state.postModels.map((post) {
+                                  return PostCard(user: widget.user, post: post);
+                                }).toList(), // Don't forget .toList()
+                              )
+                            : const DiskusiEmptyState();
+                      }
+                      return const DiskusiEmptyState();
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  void fetchDiskusi(BuildContext context) {
+    context.read<KomunitasPostBloc>().add(KomunitasFetchAllPosts(latest: isLatest));
   }
 }

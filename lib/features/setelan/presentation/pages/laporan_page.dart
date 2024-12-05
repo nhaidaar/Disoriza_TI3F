@@ -19,12 +19,6 @@ class LaporanPage extends StatelessWidget {
     return BlocListener<KomunitasPostBloc, KomunitasPostState>(
       listener: (context, state) {
         if (state is KomunitasPostError) showSnackbar(context, message: state.message, isError: true);
-
-        if (state is KomunitasPostDeleted) {
-          Navigator.of(context).pop(); // Pop the confirmation popup
-          Navigator.of(context).pop(); // Pop the detail post page
-          showSnackbar(context, message: 'Postingan berhasil dihapus!');
-        }
       },
       child: DefaultTabController(
         length: 2,

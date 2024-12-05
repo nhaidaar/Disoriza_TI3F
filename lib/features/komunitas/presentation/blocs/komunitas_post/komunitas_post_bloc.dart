@@ -99,10 +99,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         final response = await _komunitasUsecase.deletePost(postId: event.postId);
         response.fold(
           (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
-          (success) {
-            emit(KomunitasPostDeleted());
-            add(const KomunitasFetchAllPosts());
-          },
+          (success) => emit(KomunitasPostDeleted()),
         );
       } catch (_) {
         rethrow;

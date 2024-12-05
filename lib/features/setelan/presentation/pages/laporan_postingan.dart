@@ -24,29 +24,34 @@ class _LaporanPostinganState extends State<LaporanPostingan> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async => fetchReportedPosts(context),
-      child: BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
-        builder: (context, state) {
-          return ListView(
-            padding: const EdgeInsets.all(8),
-            children: state is KomunitasPostLoading
-                ? [
-                    const PostLoadingCard(),
-                  ]
-                : state is KomunitasPostLoaded
-                    ? state.postModels.isNotEmpty
-                        ? state.postModels.map((post) {
-                            return ReportedPostCard(user: widget.user, post: post);
-                          }).toList()
-                        : [
-                            const DiskusiEmptyState(),
-                          ]
-                    : [
-                        const DiskusiEmptyState(),
-                      ],
-          );
-        },
+    return BlocListener<KomunitasPostBloc, KomunitasPostState>(
+      listener: (context, state) {
+        if (state is KomunitasPostDeleted) fetchReportedPosts(context);
+      },
+      child: RefreshIndicator(
+        onRefresh: () async => fetchReportedPosts(context),
+        child: BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
+          builder: (context, state) {
+            return ListView(
+              padding: const EdgeInsets.all(8),
+              children: state is KomunitasPostLoading
+                  ? [
+                      const PostLoadingCard(),
+                    ]
+                  : state is KomunitasPostLoaded
+                      ? state.postModels.isNotEmpty
+                          ? state.postModels.map((post) {
+                              return ReportedPostCard(user: widget.user, post: post);
+                            }).toList()
+                          : [
+                              const DiskusiEmptyState(),
+                            ]
+                      : [
+                          const DiskusiEmptyState(),
+                        ],
+            );
+          },
+        ),
       ),
     );
   }
