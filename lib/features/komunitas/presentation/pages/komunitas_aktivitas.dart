@@ -19,95 +19,104 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
   int _selectedIndex = 0;
 
   final aktivitasCategory = [
-    'Semua',
     'Postingan',
     'Disukai',
     'Komentar',
+    'Dilaporkan',
   ];
 
   @override
   void initState() {
-    context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
-          uid: widget.user.id.toString(),
-          filter: aktivitasCategory[_selectedIndex],
-        ));
     super.initState();
+    fetchAktivitas(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
+    return BlocListener<KomunitasPostBloc, KomunitasPostState>(
+      listener: (context, state) {
+        if (state is KomunitasPostDeleted) fetchAktivitas(context);
+      },
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
 
-        // Choose a category
-        SizedBox(
-          height: 45,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: aktivitasCategory.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 8 : 0,
-                  right: index == aktivitasCategory.length - 1 ? 4 : 0,
-                ),
-                child: AktivitasmuCategory(
-                  onTap: () => setState(() {
-                    if (_selectedIndex != index) {
-                      _selectedIndex = index;
-                      context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
-                            uid: widget.user.id.toString(),
-                            filter: aktivitasCategory[_selectedIndex],
-                          ));
-                    }
-                  }),
-                  title: aktivitasCategory[index],
-                  isSelected: _selectedIndex == index,
-                ),
-              );
-            },
-          ),
-        ),
-
-        const SizedBox(height: 8),
-
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async => context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
-                  uid: widget.user.id.toString(),
-                  filter: aktivitasCategory[_selectedIndex],
-                )),
-            displacement: 10,
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              children: [
-                BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
-                  key: ObjectKey(_selectedIndex),
-                  builder: (context, state) {
-                    if (state is KomunitasPostLoading) {
-                      return const PostLoadingCard();
-                    } else if (state is KomunitasPostLoaded) {
-                      return state.postModels.isNotEmpty
-                          ? Column(
-                              children: state.postModels.map((post) {
-                                return PostCard(
-                                  uid: widget.user.id.toString(),
-                                  postModel: post,
-                                  isAktivitas: true,
-                                );
-                              }).toList(),
-                            )
-                          : const AktivitasEmptyState();
-                    }
-                    return const AktivitasEmptyState();
-                  },
-                ),
-              ],
+          // Choose a category
+          SizedBox(
+            height: 45,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: aktivitasCategory.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: index == 0 ? 8 : 0,
+                    right: index == aktivitasCategory.length - 1 ? 4 : 0,
+                  ),
+                  child: AktivitasmuCategory(
+                    onTap: () => setState(() {
+                      if (_selectedIndex != index) {
+                        _selectedIndex = index;
+                        context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
+                              uid: widget.user.id.toString(),
+                              filter: aktivitasCategory[_selectedIndex],
+                            ));
+                      }
+                    }),
+                    title: aktivitasCategory[index],
+                    isSelected: _selectedIndex == index,
+                  ),
+                );
+              },
             ),
           ),
-        ),
-      ],
+
+          const SizedBox(height: 8),
+
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async => context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
+                    uid: widget.user.id.toString(),
+                    filter: aktivitasCategory[_selectedIndex],
+                  )),
+              displacement: 10,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                children: [
+                  BlocBuilder<KomunitasPostBloc, KomunitasPostState>(
+                    key: ObjectKey(_selectedIndex),
+                    builder: (context, state) {
+                      if (state is KomunitasPostLoading) {
+                        return const PostLoadingCard();
+                      } else if (state is KomunitasPostLoaded) {
+                        return state.postModels.isNotEmpty
+                            ? Column(
+                                children: state.postModels.map((post) {
+                                  return PostCard(
+                                    user: widget.user,
+                                    post: post,
+                                    isAktivitas: true,
+                                  );
+                                }).toList(),
+                              )
+                            : const AktivitasEmptyState();
+                      }
+                      return const AktivitasEmptyState();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  void fetchAktivitas(BuildContext context) {
+    context.read<KomunitasPostBloc>().add(KomunitasFetchAktivitas(
+          uid: widget.user.id.toString(),
+          filter: aktivitasCategory[_selectedIndex],
+        ));
   }
 }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/comment_model.dart';
+import '../../data/models/post_with_comment.dart';
 import '../../data/models/post_model.dart';
 
 abstract class KomunitasRepository {
@@ -10,6 +11,8 @@ abstract class KomunitasRepository {
     bool latest = false,
     int? max,
   });
+
+  Future<Either<Exception, List<PostModel>>> fetchReportedPosts();
 
   Future<Either<Exception, List<PostModel>>> fetchAktivitas({
     required String uid,
@@ -41,6 +44,8 @@ abstract class KomunitasRepository {
     required String postId,
     bool latest = false,
   });
+
+  Future<Either<Exception, List<PostWithCommentModel>>> fetchReportedComments();
 
   Future<Either<Exception, void>> createComment({required CommentModel comment});
 

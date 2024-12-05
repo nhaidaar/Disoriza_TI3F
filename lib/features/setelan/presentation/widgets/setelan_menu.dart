@@ -54,11 +54,7 @@ class SetelanMenu extends StatelessWidget {
                 style: mediumTS.copyWith(color: iconColor),
               ),
               const Spacer(),
-              if (enableArrowRight)
-                const Icon(
-                  IconsaxPlusLinear.arrow_right_3,
-                  color: neutral100,
-                ),
+              if (enableArrowRight) Icon(IconsaxPlusLinear.arrow_right_3, color: iconColor),
             ],
           ),
         ),

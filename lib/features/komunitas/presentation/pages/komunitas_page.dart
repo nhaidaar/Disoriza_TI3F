@@ -64,8 +64,18 @@ class KomunitasPage extends StatelessWidget {
                     IconButton(
                       onPressed: () => Navigator.of(context).push(
                         PageTransition(
-                          child: BlocProvider.value(
-                            value: context.read<KomunitasSearchBloc>(),
+                          child: MultiBlocProvider(
+                            providers: [
+                              BlocProvider.value(
+                                value: context.read<KomunitasSearchBloc>(),
+                              ),
+                              BlocProvider.value(
+                                value: context.read<KomunitasPostBloc>(),
+                              ),
+                              BlocProvider.value(
+                                value: context.read<KomunitasCommentBloc>(),
+                              ),
+                            ],
                             child: SearchPostPage(user: user),
                           ),
                           type: PageTransitionType.rightToLeft,

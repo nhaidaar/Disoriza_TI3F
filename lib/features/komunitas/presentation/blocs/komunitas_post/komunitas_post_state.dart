@@ -19,6 +19,14 @@ class KomunitasPostLoaded extends KomunitasPostState {
   List<Object> get props => [postModels];
 }
 
+class KomunitasPostWithCommentLoaded extends KomunitasPostState {
+  final List<PostWithCommentModel> commentWithPost;
+  const KomunitasPostWithCommentLoaded({required this.commentWithPost});
+
+  @override
+  List<Object> get props => [commentWithPost];
+}
+
 class KomunitasPostError extends KomunitasPostState {
   final String message;
   const KomunitasPostError({required this.message});

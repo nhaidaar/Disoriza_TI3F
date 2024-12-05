@@ -6,6 +6,7 @@ class CommentModel {
   final int? idPost;
   final String? content;
   final List<String>? likes;
+  final List<String>? reports;
   final DateTime? date;
 
   const CommentModel({
@@ -14,6 +15,7 @@ class CommentModel {
     this.idPost,
     this.content,
     this.likes,
+    this.reports,
     this.date,
   });
 
@@ -24,6 +26,9 @@ class CommentModel {
       idPost: map['id_post'],
       content: map['content'],
       likes: (map['liked_comments'] as List).map((like) {
+        return like['id_user'].toString();
+      }).toList(),
+      reports: (map['reported_comments'] as List).map((like) {
         return like['id_user'].toString();
       }).toList(),
       date: DateTime.parse(map['created_at']),
@@ -44,6 +49,7 @@ class CommentModel {
     int? idPost,
     String? content,
     List<String>? likes,
+    List<String>? reports,
     DateTime? date,
   }) {
     return CommentModel(
@@ -52,6 +58,7 @@ class CommentModel {
       idPost: idPost ?? this.idPost,
       content: content ?? this.content,
       likes: likes ?? this.likes,
+      reports: reports ?? this.reports,
       date: date ?? this.date,
     );
   }

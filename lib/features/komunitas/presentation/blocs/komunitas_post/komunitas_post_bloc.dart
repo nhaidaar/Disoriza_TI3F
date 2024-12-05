@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../data/models/post_model.dart';
+import '../../../data/models/post_with_comment.dart';
 import '../../../domain/usecases/komunitas_usecase.dart';
 
 part 'komunitas_post_event.dart';
@@ -12,7 +13,7 @@ part 'komunitas_post_state.dart';
 class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
   final KomunitasUsecase _komunitasUsecase;
   KomunitasPostBloc(this._komunitasUsecase) : super(KomunitasPostInitial()) {
-    on<KomunitasFetchPosts>((event, emit) async {
+    on<KomunitasFetchAllPosts>((event, emit) async {
       try {
         emit(KomunitasPostLoading());
 
@@ -23,6 +24,32 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         response.fold(
           (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) => emit(KomunitasPostLoaded(postModels: success)),
+        );
+      } catch (_) {
+        rethrow;
+      }
+    });
+    on<KomunitasFetchReportedPosts>((event, emit) async {
+      try {
+        emit(KomunitasPostLoading());
+
+        final response = await _komunitasUsecase.fetchReportedPosts();
+        response.fold(
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (success) => emit(KomunitasPostLoaded(postModels: success)),
+        );
+      } catch (_) {
+        rethrow;
+      }
+    });
+    on<KomunitasFetchReportedComments>((event, emit) async {
+      try {
+        emit(KomunitasPostLoading());
+
+        final response = await _komunitasUsecase.fetchReportedComments();
+        response.fold(
+          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (success) => emit(KomunitasPostWithCommentLoaded(commentWithPost: success)),
         );
       } catch (_) {
         rethrow;
@@ -58,7 +85,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
           (success) {
             emit(KomunitasPostCreated());
-            add(const KomunitasFetchPosts());
+            add(const KomunitasFetchAllPosts());
           },
         );
       } catch (_) {
@@ -72,10 +99,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         final response = await _komunitasUsecase.deletePost(postId: event.postId);
         response.fold(
           (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
-          (success) {
-            emit(KomunitasPostDeleted());
-            add(const KomunitasFetchPosts());
-          },
+          (success) => emit(KomunitasPostDeleted()),
         );
       } catch (_) {
         rethrow;

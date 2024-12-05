@@ -8,6 +8,7 @@ class PostModel {
   final UserModel? author;
   final List<String>? likes;
   final List<String>? comments;
+  final List<String>? reports;
   final DateTime? date;
 
   const PostModel({
@@ -18,6 +19,7 @@ class PostModel {
     this.author,
     this.likes,
     this.comments,
+    this.reports,
     this.date,
   });
 
@@ -32,6 +34,9 @@ class PostModel {
         return like['id_user'].toString();
       }).toList(),
       comments: (map['comments'] as List).map((comment) {
+        return comment['id_user'].toString();
+      }).toList(),
+      reports: (map['reported_posts'] as List).map((comment) {
         return comment['id_user'].toString();
       }).toList(),
       date: DateTime.parse(map['created_at']),
@@ -55,6 +60,7 @@ class PostModel {
     UserModel? author,
     List<String>? likes,
     List<String>? comments,
+    List<String>? reports,
     DateTime? date,
   }) {
     return PostModel(
@@ -65,6 +71,7 @@ class PostModel {
       author: author ?? this.author,
       likes: likes ?? this.likes,
       comments: comments ?? this.comments,
+      reports: reports ?? this.reports,
       date: date ?? this.date,
     );
   }

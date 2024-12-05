@@ -9,22 +9,23 @@ import '../../../../core/common/colors.dart';
 import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../../core/utils/format.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../../data/models/post_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../pages/detail_post_page.dart';
+import 'components/user_details.dart';
 
 class PostCard extends StatefulWidget {
-  final String uid;
-  final bool isBerandaCard;
+  final UserModel user;
+  final PostModel post;
   final bool isAktivitas;
-  final PostModel postModel;
+  final bool isBerandaCard;
 
   const PostCard({
     super.key,
-    required this.uid,
-    required this.postModel,
+    required this.user,
+    required this.post,
     this.isAktivitas = false,
     this.isBerandaCard = false,
   });
@@ -36,12 +37,14 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool isLiked = false;
   bool isCommented = false;
+  bool isReported = false;
   bool isLatest = false;
 
   @override
   void initState() {
-    isLiked = (widget.postModel.likes ?? []).contains(widget.uid);
-    isCommented = (widget.postModel.comments ?? []).contains(widget.uid);
+    isLiked = (widget.post.likes ?? []).contains(widget.user.id);
+    isCommented = (widget.post.comments ?? []).contains(widget.user.id);
+    isReported = (widget.post.reports ?? []).contains(widget.user.id);
     super.initState();
   }
 
@@ -59,7 +62,7 @@ class _PostCardState extends State<PostCard> {
                 value: context.read<KomunitasCommentBloc>(),
               ),
             ],
-            child: DetailPostPage(uid: widget.uid, postModel: widget.postModel),
+            child: DetailPostPage(user: widget.user, post: widget.post),
           ),
           type: PageTransitionType.rightToLeft,
         ),
@@ -76,35 +79,17 @@ class _PostCardState extends State<PostCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                // Avatar
-                CustomAvatar(link: widget.postModel.author!.profilePicture),
-
-                const SizedBox(width: 12),
-
-                // User details
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.postModel.author != null ? widget.postModel.author!.name.toString() : 'Disoriza User',
-                      style: mediumTS.copyWith(color: neutral100),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      formatTimeAgo(widget.postModel.date),
-                      style: mediumTS.copyWith(fontSize: 12, color: neutral60),
-                    )
-                  ],
-                )
-              ],
+            UserDetails(
+              profilePicture: widget.post.author?.profilePicture,
+              name: widget.post.author != null ? widget.post.author!.name.toString() : 'Disoriza User',
+              isAdmin: widget.post.author?.isAdmin ?? false,
+              date: widget.post.date,
             ),
 
             const SizedBox(height: 12),
 
             Text(
-              widget.postModel.title.toString(),
+              widget.post.title.toString(),
               style: semiboldTS.copyWith(fontSize: 16, color: neutral100),
               maxLines: widget.isBerandaCard ? 1 : 2,
               overflow: TextOverflow.ellipsis,
@@ -113,7 +98,7 @@ class _PostCardState extends State<PostCard> {
             const SizedBox(height: 4),
 
             Text(
-              widget.postModel.content.toString(),
+              widget.post.content.toString(),
               style: mediumTS.copyWith(color: neutral90),
               maxLines: widget.isBerandaCard ? 1 : 3,
               overflow: TextOverflow.ellipsis,
@@ -122,12 +107,12 @@ class _PostCardState extends State<PostCard> {
             const SizedBox(height: 4),
 
             // Image (optional)
-            if (!widget.isBerandaCard && widget.postModel.urlImage != null) ...[
+            if (!widget.isBerandaCard && widget.post.urlImage != null) ...[
               const SizedBox(height: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: CachedNetworkImage(
-                  imageUrl: widget.postModel.urlImage.toString(),
+                  imageUrl: widget.post.urlImage.toString(),
                 ),
               ),
             ],
@@ -147,7 +132,7 @@ class _PostCardState extends State<PostCard> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  (widget.postModel.likes ?? []).length.toString(),
+                  (widget.post.likes ?? []).length.toString(),
                   style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                 ),
 
@@ -161,14 +146,14 @@ class _PostCardState extends State<PostCard> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  (widget.postModel.comments ?? []).length.toString(),
+                  (widget.post.comments ?? []).length.toString(),
                   style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                 ),
 
                 if ((isLiked || isCommented) && widget.isAktivitas) ...[
                   const Spacer(),
                   CustomAvatar(
-                    link: widget.postModel.author!.profilePicture,
+                    link: widget.user.profilePicture,
                     radius: 10,
                   ),
                   const SizedBox(width: 4),
@@ -178,7 +163,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Kamu ${isCommented ? 'mengomentari' : 'menyukai'} postingan ini',
+                    'Kamu ${isReported ? 'melaporkan' : isCommented ? 'mengomentari' : 'menyukai'} postingan ini',
                     style: mediumTS.copyWith(fontSize: 12, color: neutral70),
                   ),
                 ]
@@ -193,17 +178,19 @@ class _PostCardState extends State<PostCard> {
   void handleLikePost(BuildContext context) {
     setState(() {
       isLiked = !isLiked;
-      isLiked ? (widget.postModel.likes ?? []).add(widget.uid) : (widget.postModel.likes ?? []).remove(widget.uid);
+      isLiked
+          ? (widget.post.likes ?? []).add(widget.user.id.toString())
+          : (widget.post.likes ?? []).remove(widget.user.id.toString());
     });
 
     isLiked
         ? context.read<KomunitasPostBloc>().add(KomunitasLikePost(
-              uid: widget.uid,
-              postId: widget.postModel.id.toString(),
+              uid: widget.user.id.toString(),
+              postId: widget.post.id.toString(),
             ))
         : context.read<KomunitasPostBloc>().add(KomunitasUnlikePost(
-              uid: widget.uid,
-              postId: widget.postModel.id.toString(),
+              uid: widget.user.id.toString(),
+              postId: widget.post.id.toString(),
             ));
   }
 }

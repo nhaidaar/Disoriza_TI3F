@@ -3,23 +3,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import '../../../../core/common/colors.dart';
-import '../../../../core/common/custom_avatar.dart';
 import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/effects.dart';
 import '../../../../core/common/fontstyles.dart';
-import '../../../../core/utils/format.dart';
+import '../../../auth/data/models/user_model.dart';
 import '../../data/models/comment_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
+import 'components/user_details.dart';
 
 class CommentCard extends StatefulWidget {
-  final String uid;
-  final CommentModel commentModel;
+  final UserModel user;
+  final CommentModel comment;
 
   const CommentCard({
     super.key,
-    required this.uid,
-    required this.commentModel,
+    required this.user,
+    required this.comment,
   });
 
   @override
@@ -31,7 +31,7 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   void initState() {
-    isLiked = (widget.commentModel.likes ?? []).contains(widget.uid);
+    isLiked = (widget.comment.likes ?? []).contains(widget.user.id);
     super.initState();
   }
 
@@ -51,30 +51,13 @@ class _CommentCardState extends State<CommentCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              // Avatar
-              CustomAvatar(link: widget.commentModel.idUser?.profilePicture),
-
-              const SizedBox(width: 12),
-
-              // User details
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.commentModel.idUser != null ? widget.commentModel.idUser!.name.toString() : 'Disoriza User',
-                    style: mediumTS.copyWith(color: neutral100),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    formatTimeAgo(widget.commentModel.date),
-                    style: mediumTS.copyWith(fontSize: 12, color: neutral60),
-                  )
-                ],
-              ),
-
-              const Spacer(),
+          UserDetails(
+            name: widget.comment.idUser != null ? widget.comment.idUser!.name.toString() : 'Disoriza User',
+            profilePicture: widget.comment.idUser?.profilePicture,
+            date: widget.comment.date,
+            isAdmin: widget.comment.idUser?.isAdmin ?? false,
+            widget: [
+              const SizedBox(width: 16),
 
               // Delete Button
               Column(
@@ -89,7 +72,7 @@ class _CommentCardState extends State<CommentCard> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    (widget.commentModel.likes ?? []).length.toString(),
+                    (widget.comment.likes ?? []).length.toString(),
                     style: mediumTS.copyWith(fontSize: 12, color: neutral80),
                   ),
                 ],
@@ -100,20 +83,34 @@ class _CommentCardState extends State<CommentCard> {
           const SizedBox(height: 8),
 
           Text(
-            widget.commentModel.content.toString(),
+            widget.comment.content.toString(),
             style: mediumTS.copyWith(color: neutral90),
           ),
 
           const SizedBox(height: 8),
 
           // Delete Button
-          widget.commentModel.idUser!.id.toString() == widget.uid
-              ? GestureDetector(
-                  onTap: () => handleDeleteComment(context, commentBloc),
-                  child: Text(
-                    'Hapus',
-                    style: mediumTS.copyWith(fontSize: 12, color: neutral60),
-                  ),
+          widget.comment.idUser?.id == widget.user.id || widget.user.isAdmin
+              ? Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => handleDeleteComment(context, commentBloc),
+                      child: Text(
+                        'Hapus',
+                        style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+                      ),
+                    ),
+                    if ((widget.comment.reports ?? []).isNotEmpty) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        child: CircleAvatar(radius: 2, backgroundColor: Color(0xFFD9D9D9)),
+                      ),
+                      Text(
+                        'Dilaporkan oleh ${widget.comment.reports?.length} orang',
+                        style: mediumTS.copyWith(fontSize: 12, color: neutral80),
+                      ),
+                    ]
+                  ],
                 )
               : GestureDetector(
                   onTap: () {},
@@ -144,8 +141,8 @@ class _CommentCardState extends State<CommentCard> {
                   pressedColor: dangerPressed,
                   onTap: () {
                     commentBloc.add(KomunitasDeleteComment(
-                      postId: widget.commentModel.idPost.toString(),
-                      commentId: widget.commentModel.id.toString(),
+                      postId: widget.comment.idPost.toString(),
+                      commentId: widget.comment.id.toString(),
                     ));
                   },
                   text: 'Ya, hapus',
@@ -171,18 +168,18 @@ class _CommentCardState extends State<CommentCard> {
     setState(() {
       isLiked = !isLiked;
       isLiked
-          ? (widget.commentModel.likes ?? []).add(widget.uid)
-          : (widget.commentModel.likes ?? []).remove(widget.uid);
+          ? (widget.comment.likes ?? []).add(widget.user.id.toString())
+          : (widget.comment.likes ?? []).remove(widget.user.id.toString());
     });
 
     isLiked
         ? context.read<KomunitasCommentBloc>().add(KomunitasLikeComment(
-              uid: widget.uid,
-              commentId: widget.commentModel.id.toString(),
+              uid: widget.user.id.toString(),
+              commentId: widget.comment.id.toString(),
             ))
         : context.read<KomunitasCommentBloc>().add(KomunitasUnlikeComment(
-              uid: widget.uid,
-              commentId: widget.commentModel.id.toString(),
+              uid: widget.user.id.toString(),
+              commentId: widget.comment.id.toString(),
             ));
   }
 }

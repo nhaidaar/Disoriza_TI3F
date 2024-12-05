@@ -39,7 +39,7 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Future<void> fetchData() async {
-    context.read<KomunitasPostBloc>().add(const KomunitasFetchPosts(max: 3));
+    context.read<KomunitasPostBloc>().add(const KomunitasFetchAllPosts(max: 3));
     context.read<RiwayatHistoryBloc>().add(RiwayatFetchRiwayats(uid: widget.user.id.toString(), max: 4));
   }
 
@@ -132,8 +132,8 @@ class _BerandaPageState extends State<BerandaPage> {
                                   carouselController: carouselController,
                                   items: state.postModels.map((post) {
                                     return PostCard(
-                                      uid: widget.user.id.toString(),
-                                      postModel: post,
+                                      user: widget.user,
+                                      post: post,
                                       isBerandaCard: true,
                                     );
                                   }).toList(),
@@ -215,6 +215,8 @@ class _BerandaPageState extends State<BerandaPage> {
                 ),
               ],
             ),
+
+            const SizedBox(height: 20),
           ],
         ),
       ),
