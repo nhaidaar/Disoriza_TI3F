@@ -28,7 +28,7 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
   Widget build(BuildContext context) {
     return BlocListener<KomunitasPostBloc, KomunitasPostState>(
       listener: (context, state) {
-        if (state is KomunitasPostDeleted) fetchDiskusi(context);
+        if (state is KomunitasPostDeleted || state is KomunitasPostCreated) fetchDiskusi(context);
       },
       child: RefreshIndicator(
         edgeOffset: 75,

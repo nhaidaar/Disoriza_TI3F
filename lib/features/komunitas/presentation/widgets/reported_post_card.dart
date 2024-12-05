@@ -10,6 +10,7 @@ import '../../../auth/data/models/user_model.dart';
 import '../../data/models/post_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
+import '../blocs/komunitas_report/komunitas_report_bloc.dart';
 import '../pages/detail_post_page.dart';
 import 'components/user_details.dart';
 
@@ -37,6 +38,7 @@ class _ReportedPostCardState extends State<ReportedPostCard> {
             providers: [
               BlocProvider.value(value: context.read<KomunitasPostBloc>()),
               BlocProvider.value(value: context.read<KomunitasCommentBloc>()),
+              BlocProvider.value(value: context.read<KomunitasReportBloc>()),
             ],
             child: DetailPostPage(user: widget.user, post: widget.post),
           ),

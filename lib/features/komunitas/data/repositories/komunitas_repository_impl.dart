@@ -258,6 +258,26 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }
 
   @override
+  Future<Either<Exception, void>> reportPost({
+    required String uid,
+    required String postId,
+  }) async {
+    try {
+      final existingReport = await client.from('reported_posts').select().eq('id_user', uid).eq('id_post', postId);
+      if (existingReport.isNotEmpty) return const Right(null);
+
+      await client.from('reported_posts').insert({
+        'id_user': uid,
+        'id_post': postId,
+      });
+
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
   Future<Either<Exception, void>> unlikePost({
     required String uid,
     required String postId,
@@ -377,6 +397,27 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }) async {
     try {
       await client.from('liked_comments').delete().eq('id_user', uid).eq('id_comment', commentId);
+
+      return const Right(null);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, void>> reportComment({
+    required String uid,
+    required String commentId,
+  }) async {
+    try {
+      final existingReport =
+          await client.from('reported_comments').select().eq('id_user', uid).eq('id_comment', commentId);
+      if (existingReport.isNotEmpty) return const Right(null);
+
+      await client.from('reported_comments').insert({
+        'id_user': uid,
+        'id_comment': commentId,
+      });
 
       return const Right(null);
     } on Exception catch (e) {

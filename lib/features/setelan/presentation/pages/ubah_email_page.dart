@@ -72,7 +72,7 @@ class _UbahEmailPageState extends State<UbahEmailPage> {
 
                     // Subtitle
                     Text(
-                      'Masukkan email anda untuk mendapatkan link konfirmasi ubah email.',
+                      'Masukkan email baru Anda untuk mendapatkan link konfirmasi ubah email.',
                       style: mediumTS.copyWith(color: neutral100.withOpacity(0.6)),
                       textAlign: TextAlign.center,
                     )

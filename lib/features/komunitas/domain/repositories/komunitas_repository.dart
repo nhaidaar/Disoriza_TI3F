@@ -40,6 +40,11 @@ abstract class KomunitasRepository {
     required String postId,
   });
 
+  Future<Either<Exception, void>> reportPost({
+    required String uid,
+    required String postId,
+  });
+
   Future<Either<Exception, List<CommentModel>>> fetchComments({
     required String postId,
     bool latest = false,
@@ -57,6 +62,11 @@ abstract class KomunitasRepository {
   });
 
   Future<Either<Exception, void>> unlikeComment({
+    required String uid,
+    required String commentId,
+  });
+
+  Future<Either<Exception, void>> reportComment({
     required String uid,
     required String commentId,
   });

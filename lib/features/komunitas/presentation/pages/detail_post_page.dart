@@ -17,6 +17,7 @@ import '../../data/models/comment_model.dart';
 import '../../data/models/post_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
+import '../blocs/komunitas_report/komunitas_report_bloc.dart';
 import '../widgets/comment_card.dart';
 import '../widgets/components/user_details.dart';
 import '../widgets/post_card.dart';
@@ -55,6 +56,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
   @override
   Widget build(BuildContext context) {
     final postBloc = context.read<KomunitasPostBloc>();
+    final reportBloc = context.read<KomunitasReportBloc>();
 
     return MultiBlocListener(
       listeners: [
@@ -68,6 +70,13 @@ class _DetailPostPageState extends State<DetailPostPage> {
             if (state is KomunitasCommentLoaded) refreshCommentsCount(state);
 
             if (state is KomunitasCommentDeleted) handleCommentDeleted(context);
+          },
+        ),
+        BlocListener<KomunitasReportBloc, KomunitasReportState>(
+          listener: (context, state) {
+            if (state is KomunitasReportPostReported) handlePostReported(context);
+
+            if (state is KomunitasReportCommentReported) handleCommentReported(context);
           },
         ),
       ],
@@ -97,7 +106,10 @@ class _DetailPostPageState extends State<DetailPostPage> {
                     onPressed: () => handleDeletePost(context, postBloc),
                     icon: const Icon(IconsaxPlusLinear.trash, color: dangerMain),
                   )
-                : Container(),
+                : IconButton(
+                    onPressed: () => handleReportPost(context, reportBloc),
+                    icon: const Icon(IconsaxPlusLinear.info_circle, color: neutral100),
+                  ),
           ],
         ),
         body: RefreshIndicator(
@@ -300,6 +312,16 @@ class _DetailPostPageState extends State<DetailPostPage> {
     showSnackbar(context, message: 'Komentar berhasil dihapus!');
   }
 
+  void handlePostReported(BuildContext context) {
+    Navigator.of(context).pop(); // Pop the confirmation popup
+    showSnackbar(context, message: 'Postingan berhasil dilaporkan!');
+  }
+
+  void handleCommentReported(BuildContext context) {
+    Navigator.of(context).pop(); // Pop the confirmation popup
+    showSnackbar(context, message: 'Komentar berhasil dilaporkan!');
+  }
+
   void fetchComments(BuildContext context) {
     context.read<KomunitasCommentBloc>().add(KomunitasFetchComments(
           postId: widget.post.id.toString(),
@@ -331,6 +353,43 @@ class _DetailPostPageState extends State<DetailPostPage> {
                   pressedColor: dangerPressed,
                   onTap: () => postBloc.add(KomunitasDeletePost(postId: widget.post.id.toString())),
                   text: 'Ya, hapus',
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: CustomButton(
+                  backgroundColor: neutral10,
+                  pressedColor: neutral50,
+                  onTap: () => Navigator.of(context).pop(),
+                  text: 'Batal',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> handleReportPost(BuildContext context, KomunitasReportBloc reportBloc) {
+    return showDialog(
+      context: context,
+      builder: (context) => CustomPopup(
+        icon: IconsaxPlusLinear.info_circle,
+        iconColor: dangerMain,
+        title: 'Ingin melaporkan diskusi ini?',
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  backgroundColor: dangerMain,
+                  pressedColor: dangerPressed,
+                  onTap: () => reportBloc.add(KomunitasReportPost(
+                    uid: widget.user.id.toString(),
+                    postId: widget.post.id.toString(),
+                  )),
+                  text: 'Ya, laporkan',
                 ),
               ),
               const SizedBox(width: 4),
