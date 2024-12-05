@@ -39,7 +39,7 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Future<void> fetchData() async {
-    context.read<KomunitasPostBloc>().add(const KomunitasFetchPosts(max: 3));
+    context.read<KomunitasPostBloc>().add(const KomunitasFetchAllPosts(max: 3));
     context.read<RiwayatHistoryBloc>().add(RiwayatFetchRiwayats(uid: widget.user.id.toString(), max: 4));
   }
 

@@ -7,10 +7,10 @@ abstract class KomunitasPostEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class KomunitasFetchPosts extends KomunitasPostEvent {
+class KomunitasFetchAllPosts extends KomunitasPostEvent {
   final bool latest;
   final int? max;
-  const KomunitasFetchPosts({
+  const KomunitasFetchAllPosts({
     this.latest = false,
     this.max,
   });
@@ -18,6 +18,10 @@ class KomunitasFetchPosts extends KomunitasPostEvent {
   @override
   List<Object?> get props => [latest, max];
 }
+
+class KomunitasFetchReportedPosts extends KomunitasPostEvent {}
+
+class KomunitasFetchReportedComments extends KomunitasPostEvent {}
 
 class KomunitasFetchAktivitas extends KomunitasPostEvent {
   final String uid;

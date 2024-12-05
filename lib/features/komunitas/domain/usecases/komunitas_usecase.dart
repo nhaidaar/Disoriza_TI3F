@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:fpdart/fpdart.dart';
 
 import '../../data/models/comment_model.dart';
+import '../../data/models/post_with_comment.dart';
 import '../../data/models/post_model.dart';
 import '../repositories/komunitas_repository.dart';
 
@@ -18,6 +19,10 @@ class KomunitasUsecase {
       latest: latest,
       max: max,
     );
+  }
+
+  Future<Either<Exception, List<PostModel>>> fetchReportedPosts() {
+    return _komunitasRepository.fetchReportedPosts();
   }
 
   Future<Either<Exception, List<PostModel>>> fetchAktivitas({
@@ -80,6 +85,10 @@ class KomunitasUsecase {
       postId: postId,
       latest: latest,
     );
+  }
+
+  Future<Either<Exception, List<PostWithCommentModel>>> fetchReportedComments() {
+    return _komunitasRepository.fetchReportedComments();
   }
 
   Future<Either<Exception, void>> createComment({required CommentModel comment}) {

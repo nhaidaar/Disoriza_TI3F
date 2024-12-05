@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../domain/repositories/komunitas_repository.dart';
 import '../models/comment_model.dart';
+import '../models/post_with_comment.dart';
 import '../models/post_model.dart';
 
 class KomunitasRepositoryImpl implements KomunitasRepository {
@@ -75,6 +76,28 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
   }
 
   @override
+  Future<Either<Exception, List<PostModel>>> fetchReportedPosts() async {
+    try {
+      final response = await client
+          .from('posts')
+          .select(postQuery)
+          .not('reported_posts', 'is', null)
+          .order('created_at', ascending: false);
+
+      // Convert responses to PostModel
+      List<PostModel> posts = List<PostModel>.from(
+        response.map((doc) => PostModel.fromMap(doc)),
+      );
+
+      posts.sort((a, b) => (b.reports ?? []).length.compareTo((a.reports ?? []).length));
+
+      return Right(posts);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
   Future<Either<Exception, List<PostModel>>> fetchAktivitas({
     required String uid,
     required String filter,
@@ -118,6 +141,22 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
               .from('posts')
               .select(postQuery)
               .inFilter('id', commentedPosts)
+              .order('created_at', ascending: false);
+          break;
+
+        // Select post that user reported
+        case 'Dilaporkan':
+          final reportedPosts = await client
+              .from('reported_posts')
+              .select('id_post')
+              .eq('id_user', uid)
+              .then((res) => List<String>.from(res.map((item) => item['id_post'].toString())));
+          if (reportedPosts.isEmpty) return const Right([]);
+
+          response = await client
+              .from('posts')
+              .select(postQuery)
+              .inFilter('id', reportedPosts)
               .order('created_at', ascending: false);
           break;
 
@@ -252,6 +291,38 @@ class KomunitasRepositoryImpl implements KomunitasRepository {
       if (!latest) comments.sort((a, b) => (b.likes ?? []).length.compareTo((a.likes ?? []).length));
 
       return Right(comments);
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, List<PostWithCommentModel>>> fetchReportedComments() async {
+    try {
+      final commentsResponse = await client
+          .from('comments')
+          .select(commentQuery)
+          .not('reported_comments', 'is', null)
+          .order('created_at', ascending: false);
+      List<CommentModel> comments = commentsResponse.map((commentData) {
+        return CommentModel.fromMap(commentData);
+      }).toList();
+
+      final postsResponse = await client
+          .from('posts')
+          .select(postQuery)
+          .inFilter('id', comments.map((comment) => comment.idPost).toList());
+      final postsMap = {for (var post in postsResponse) post['id']: PostModel.fromMap(post)}; // For iteration the posts
+
+      List<PostWithCommentModel> postWithComment = comments.map((comment) {
+        return PostWithCommentModel(commentModel: comment, postModel: postsMap[comment.idPost]!);
+      }).toList();
+
+      postWithComment.sort((a, b) {
+        return (b.commentModel.reports ?? []).length.compareTo((a.commentModel.reports ?? []).length);
+      });
+
+      return Right(postWithComment);
     } on Exception catch (e) {
       return Left(e);
     }

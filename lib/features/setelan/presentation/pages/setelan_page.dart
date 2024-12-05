@@ -9,9 +9,12 @@ import '../../../../core/common/custom_button.dart';
 import '../../../../core/common/custom_popup.dart';
 import '../../../../core/common/fontstyles.dart';
 import '../../../auth/presentation/blocs/auth_bloc.dart';
+import '../../../komunitas/presentation/blocs/komunitas_comment/komunitas_comment_bloc.dart';
+import '../../../komunitas/presentation/blocs/komunitas_post/komunitas_post_bloc.dart';
 import '../blocs/setelan_bloc.dart';
 import '../widgets/setelan_menu.dart';
 import 'edit_profile_page.dart';
+import 'laporan_page.dart';
 import 'ubah_email_page.dart';
 import 'ubah_password_page.dart';
 
@@ -28,6 +31,9 @@ class _SetelanPageState extends State<SetelanPage> {
   Widget build(BuildContext context) {
     final authBloc = context.read<AuthBloc>();
     final setelanBloc = context.read<SetelanBloc>();
+
+    final postBloc = context.read<KomunitasPostBloc>();
+    final commentBloc = context.read<KomunitasCommentBloc>();
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -48,6 +54,30 @@ class _SetelanPageState extends State<SetelanPage> {
         body: ListView(
           padding: const EdgeInsets.all(8),
           children: [
+            if (widget.user.isAdmin) ...[
+              // Laporan
+              SetelanMenu(
+                icon: IconsaxPlusLinear.info_circle,
+                title: 'Laporan',
+                iconColor: successMain,
+                onTap: () => Navigator.of(context).push(
+                  PageTransition(
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: postBloc),
+                        BlocProvider.value(value: commentBloc),
+                      ],
+                      child: LaporanPage(user: widget.user),
+                    ),
+                    type: PageTransitionType.rightToLeft,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+            ],
+
+            // Edit Profile
             SetelanMenu(
               icon: IconsaxPlusLinear.profile,
               title: 'Edit profile',
@@ -68,6 +98,8 @@ class _SetelanPageState extends State<SetelanPage> {
                 ),
               ),
             ),
+
+            // Ubah email
             SetelanMenu(
               icon: IconsaxPlusLinear.sms,
               title: 'Ubah email',
@@ -81,6 +113,8 @@ class _SetelanPageState extends State<SetelanPage> {
                 ),
               ),
             ),
+
+            // Ubah password
             SetelanMenu(
               icon: IconsaxPlusLinear.key,
               title: 'Ubah password',
@@ -94,6 +128,8 @@ class _SetelanPageState extends State<SetelanPage> {
                 ),
               ),
             ),
+
+            // Logout
             SetelanMenu(
               icon: IconsaxPlusLinear.logout,
               iconColor: dangerMain,

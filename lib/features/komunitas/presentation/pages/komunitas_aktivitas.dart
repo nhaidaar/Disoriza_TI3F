@@ -22,6 +22,7 @@ class _KomunitasAktivitasState extends State<KomunitasAktivitas> {
     'Postingan',
     'Disukai',
     'Komentar',
+    'Dilaporkan',
   ];
 
   @override

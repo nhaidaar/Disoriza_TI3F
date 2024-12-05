@@ -52,12 +52,6 @@ class _DetailPostPageState extends State<DetailPostPage> {
     super.dispose();
   }
 
-  void fetchComments(BuildContext context) {
-    context.read<KomunitasCommentBloc>().add(KomunitasFetchComments(
-          postId: widget.post.id.toString(),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     final postBloc = context.read<KomunitasPostBloc>();
@@ -66,26 +60,14 @@ class _DetailPostPageState extends State<DetailPostPage> {
       listeners: [
         BlocListener<KomunitasPostBloc, KomunitasPostState>(
           listener: (context, state) {
-            if (state is KomunitasPostDeleted) {
-              Navigator.of(context).pop(); // Pop the confirmation popup
-              Navigator.of(context).pop(); // Pop the detail post page
-              showSnackbar(context, message: 'Postingan berhasil dihapus!');
-            }
+            if (state is KomunitasPostDeleted) handlePostDeleted(context);
           },
         ),
         BlocListener<KomunitasCommentBloc, KomunitasCommentState>(
           listener: (context, state) {
-            if (state is KomunitasCommentLoaded) {
-              setState(() {
-                (widget.post.comments ?? []).clear();
-                (widget.post.comments ?? []).addAll(state.commentModels.map((c) => c.idUser!.id!).toList());
-              });
-            }
+            if (state is KomunitasCommentLoaded) refreshCommentsCount(state);
 
-            if (state is KomunitasCommentDeleted) {
-              Navigator.of(context).pop(); // Pop the confirmation popup
-              showSnackbar(context, message: 'Komentar berhasil dihapus!');
-            }
+            if (state is KomunitasCommentDeleted) handleCommentDeleted(context);
           },
         ),
       ],
@@ -119,9 +101,7 @@ class _DetailPostPageState extends State<DetailPostPage> {
           ],
         ),
         body: RefreshIndicator(
-          onRefresh: () async {
-            fetchComments(context);
-          },
+          onRefresh: () async => fetchComments(context),
           child: Column(
             children: [
               Expanded(
@@ -144,6 +124,10 @@ class _DetailPostPageState extends State<DetailPostPage> {
                           isAdmin: widget.post.author?.isAdmin ?? false,
                           profilePicture: widget.post.author?.profilePicture,
                           date: widget.post.date,
+
+                          // Reports
+                          canViewReport: widget.user.isAdmin && (widget.post.reports ?? []).isNotEmpty,
+                          reports: widget.post.reports?.length,
                         ),
 
                         const SizedBox(height: 12),
@@ -303,6 +287,31 @@ class _DetailPostPageState extends State<DetailPostPage> {
         ),
       ),
     );
+  }
+
+  void handlePostDeleted(BuildContext context) {
+    Navigator.of(context).pop(); // Pop the confirmation popup
+    Navigator.of(context).pop(); // Pop the detail post page
+    showSnackbar(context, message: 'Postingan berhasil dihapus!');
+  }
+
+  void handleCommentDeleted(BuildContext context) {
+    Navigator.of(context).pop(); // Pop the confirmation popup
+    showSnackbar(context, message: 'Komentar berhasil dihapus!');
+  }
+
+  void fetchComments(BuildContext context) {
+    context.read<KomunitasCommentBloc>().add(KomunitasFetchComments(
+          postId: widget.post.id.toString(),
+          latest: isLatest,
+        ));
+  }
+
+  void refreshCommentsCount(KomunitasCommentLoaded state) {
+    setState(() {
+      (widget.post.comments ?? []).clear();
+      (widget.post.comments ?? []).addAll(state.commentModels.map((c) => c.idUser!.id!).toList());
+    });
   }
 
   Future<void> handleDeletePost(BuildContext context, KomunitasPostBloc postBloc) {

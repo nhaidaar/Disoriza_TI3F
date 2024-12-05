@@ -37,12 +37,14 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool isLiked = false;
   bool isCommented = false;
+  bool isReported = false;
   bool isLatest = false;
 
   @override
   void initState() {
     isLiked = (widget.post.likes ?? []).contains(widget.user.id);
     isCommented = (widget.post.comments ?? []).contains(widget.user.id);
+    isReported = (widget.post.reports ?? []).contains(widget.user.id);
     super.initState();
   }
 
@@ -161,7 +163,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Kamu ${isCommented ? 'mengomentari' : 'menyukai'} postingan ini',
+                    'Kamu ${isReported ? 'melaporkan' : isCommented ? 'mengomentari' : 'menyukai'} postingan ini',
                     style: mediumTS.copyWith(fontSize: 12, color: neutral70),
                   ),
                 ]

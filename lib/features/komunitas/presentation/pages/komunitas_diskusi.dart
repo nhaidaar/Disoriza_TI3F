@@ -21,7 +21,7 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
 
   @override
   void initState() {
-    context.read<KomunitasPostBloc>().add(const KomunitasFetchPosts());
+    context.read<KomunitasPostBloc>().add(const KomunitasFetchAllPosts());
     super.initState();
   }
 
@@ -29,7 +29,7 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       edgeOffset: 75,
-      onRefresh: () async => context.read<KomunitasPostBloc>().add(KomunitasFetchPosts(latest: isLatest)),
+      onRefresh: () async => context.read<KomunitasPostBloc>().add(KomunitasFetchAllPosts(latest: isLatest)),
       child: ListView(
         children: [
           // Create Post Widget
@@ -51,7 +51,7 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
                       onChanged: (filter) {
                         if (isLatest != filter.value) {
                           isLatest = !isLatest;
-                          context.read<KomunitasPostBloc>().add(KomunitasFetchPosts(latest: isLatest));
+                          context.read<KomunitasPostBloc>().add(KomunitasFetchAllPosts(latest: isLatest));
                         }
                       },
                     ),

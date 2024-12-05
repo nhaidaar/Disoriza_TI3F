@@ -7,6 +7,8 @@ import '../../../../core/common/fontstyles.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../../komunitas/presentation/blocs/komunitas_post/komunitas_post_bloc.dart';
+import 'laporan_komentar.dart';
+import 'laporan_postingan.dart';
 
 class LaporanPage extends StatelessWidget {
   final UserModel user;
@@ -78,8 +80,8 @@ class LaporanPage extends StatelessWidget {
           body: TabBarView(
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              Container(),
-              Container(),
+              LaporanPostingan(user: user),
+              LaporanKomentar(user: user),
             ],
           ),
         ),

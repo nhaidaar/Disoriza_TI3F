@@ -91,12 +91,26 @@ class _CommentCardState extends State<CommentCard> {
 
           // Delete Button
           widget.comment.idUser?.id == widget.user.id || widget.user.isAdmin
-              ? GestureDetector(
-                  onTap: () => handleDeleteComment(context, commentBloc),
-                  child: Text(
-                    'Hapus',
-                    style: mediumTS.copyWith(fontSize: 12, color: neutral60),
-                  ),
+              ? Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => handleDeleteComment(context, commentBloc),
+                      child: Text(
+                        'Hapus',
+                        style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+                      ),
+                    ),
+                    if ((widget.comment.reports ?? []).isNotEmpty) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        child: CircleAvatar(radius: 2, backgroundColor: Color(0xFFD9D9D9)),
+                      ),
+                      Text(
+                        'Dilaporkan oleh ${widget.comment.reports?.length} orang',
+                        style: mediumTS.copyWith(fontSize: 12, color: neutral80),
+                      ),
+                    ]
+                  ],
                 )
               : GestureDetector(
                   onTap: () {},

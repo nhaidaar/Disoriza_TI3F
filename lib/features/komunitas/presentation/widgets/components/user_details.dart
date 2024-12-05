@@ -11,6 +11,8 @@ class UserDetails extends StatelessWidget {
   final String? profilePicture;
   final bool isAdmin;
   final DateTime? date;
+  final bool canViewReport;
+  final int? reports;
   final List<Widget>? widget;
   const UserDetails({
     super.key,
@@ -19,6 +21,8 @@ class UserDetails extends StatelessWidget {
     required this.isAdmin,
     this.date,
     this.widget,
+    this.canViewReport = false,
+    this.reports,
   });
 
   @override
@@ -46,9 +50,23 @@ class UserDetails extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                formatTimeAgo(date),
-                style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+              Row(
+                children: [
+                  Text(
+                    formatTimeAgo(date),
+                    style: mediumTS.copyWith(fontSize: 12, color: neutral60),
+                  ),
+                  if (canViewReport) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: CircleAvatar(radius: 2, backgroundColor: Color(0xFFD9D9D9)),
+                    ),
+                    Text(
+                      'Dilaporkan oleh $reports orang',
+                      style: mediumTS.copyWith(fontSize: 12, color: neutral80),
+                    )
+                  ]
+                ],
               )
             ],
           ),
