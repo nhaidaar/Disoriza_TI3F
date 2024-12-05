@@ -65,7 +65,7 @@ class _UbahPasswordPageState extends State<UbahPasswordPage> {
 
                     // Subtitle
                     Text(
-                      'Masukkan email anda untuk mendapatkan link reset password.',
+                      'Masukkan email Anda untuk mendapatkan link reset password.',
                       style: mediumTS.copyWith(color: neutral100.withOpacity(0.6)),
                       textAlign: TextAlign.center,
                     )

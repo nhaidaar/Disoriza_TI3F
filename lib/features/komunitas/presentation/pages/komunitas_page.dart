@@ -9,6 +9,7 @@ import '../../../../core/utils/snackbar.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
+import '../blocs/komunitas_report/komunitas_report_bloc.dart';
 import '../blocs/komunitas_search/komunitas_search_bloc.dart';
 import 'komunitas_aktivitas.dart';
 import 'komunitas_diskusi.dart';
@@ -66,15 +67,10 @@ class KomunitasPage extends StatelessWidget {
                         PageTransition(
                           child: MultiBlocProvider(
                             providers: [
-                              BlocProvider.value(
-                                value: context.read<KomunitasSearchBloc>(),
-                              ),
-                              BlocProvider.value(
-                                value: context.read<KomunitasPostBloc>(),
-                              ),
-                              BlocProvider.value(
-                                value: context.read<KomunitasCommentBloc>(),
-                              ),
+                              BlocProvider.value(value: context.read<KomunitasSearchBloc>()),
+                              BlocProvider.value(value: context.read<KomunitasPostBloc>()),
+                              BlocProvider.value(value: context.read<KomunitasCommentBloc>()),
+                              BlocProvider.value(value: context.read<KomunitasReportBloc>()),
                             ],
                             child: SearchPostPage(user: user),
                           ),

@@ -10,6 +10,7 @@ import '../../../../core/common/fontstyles.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../data/models/comment_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
+import '../blocs/komunitas_report/komunitas_report_bloc.dart';
 import 'components/user_details.dart';
 
 class CommentCard extends StatefulWidget {
@@ -38,6 +39,7 @@ class _CommentCardState extends State<CommentCard> {
   @override
   Widget build(BuildContext context) {
     final commentBloc = context.read<KomunitasCommentBloc>();
+    final reportBloc = context.read<KomunitasReportBloc>();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -113,7 +115,7 @@ class _CommentCardState extends State<CommentCard> {
                   ],
                 )
               : GestureDetector(
-                  onTap: () {},
+                  onTap: () => handleReportComment(context, reportBloc),
                   child: Text(
                     'Laporkan',
                     style: mediumTS.copyWith(fontSize: 12, color: neutral60),
@@ -139,13 +141,48 @@ class _CommentCardState extends State<CommentCard> {
                 child: CustomButton(
                   backgroundColor: dangerMain,
                   pressedColor: dangerPressed,
-                  onTap: () {
-                    commentBloc.add(KomunitasDeleteComment(
-                      postId: widget.comment.idPost.toString(),
-                      commentId: widget.comment.id.toString(),
-                    ));
-                  },
+                  onTap: () => commentBloc.add(KomunitasDeleteComment(
+                    postId: widget.comment.idPost.toString(),
+                    commentId: widget.comment.id.toString(),
+                  )),
                   text: 'Ya, hapus',
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: CustomButton(
+                  backgroundColor: neutral10,
+                  pressedColor: neutral50,
+                  onTap: () => Navigator.of(context).pop(),
+                  text: 'Batal',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> handleReportComment(BuildContext context, KomunitasReportBloc reportBloc) {
+    return showDialog(
+      context: context,
+      builder: (context) => CustomPopup(
+        icon: IconsaxPlusLinear.info_circle,
+        iconColor: dangerMain,
+        title: 'Ingin melaporkan komentar ini?',
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  backgroundColor: dangerMain,
+                  pressedColor: dangerPressed,
+                  onTap: () => reportBloc.add(KomunitasReportComment(
+                    uid: widget.user.id.toString(),
+                    commentId: widget.comment.id.toString(),
+                  )),
+                  text: 'Ya, laporkan',
                 ),
               ),
               const SizedBox(width: 4),

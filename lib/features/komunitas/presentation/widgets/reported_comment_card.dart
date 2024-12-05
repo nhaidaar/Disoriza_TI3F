@@ -14,6 +14,7 @@ import '../../data/models/comment_model.dart';
 import '../../data/models/post_model.dart';
 import '../blocs/komunitas_comment/komunitas_comment_bloc.dart';
 import '../blocs/komunitas_post/komunitas_post_bloc.dart';
+import '../blocs/komunitas_report/komunitas_report_bloc.dart';
 import '../pages/detail_post_page.dart';
 import 'components/user_details.dart';
 
@@ -38,6 +39,7 @@ class _ReportedCommentCardState extends State<ReportedCommentCard> {
   Widget build(BuildContext context) {
     final commentBloc = context.read<KomunitasCommentBloc>();
     final postBloc = context.read<KomunitasPostBloc>();
+    final reportBloc = context.read<KomunitasReportBloc>();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -79,6 +81,7 @@ class _ReportedCommentCardState extends State<ReportedCommentCard> {
                     providers: [
                       BlocProvider.value(value: commentBloc),
                       BlocProvider.value(value: postBloc),
+                      BlocProvider.value(value: reportBloc),
                     ],
                     child: DetailPostPage(user: widget.user, post: widget.post),
                   ),

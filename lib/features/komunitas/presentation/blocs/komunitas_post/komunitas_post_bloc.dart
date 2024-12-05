@@ -83,10 +83,7 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         );
         response.fold(
           (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
-          (success) {
-            emit(KomunitasPostCreated());
-            add(const KomunitasFetchAllPosts());
-          },
+          (success) => emit(KomunitasPostCreated()),
         );
       } catch (_) {
         rethrow;

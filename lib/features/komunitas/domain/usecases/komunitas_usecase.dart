@@ -77,6 +77,16 @@ class KomunitasUsecase {
     );
   }
 
+  Future<Either<Exception, void>> reportPost({
+    required String uid,
+    required String postId,
+  }) {
+    return _komunitasRepository.reportPost(
+      uid: uid,
+      postId: postId,
+    );
+  }
+
   Future<Either<Exception, List<CommentModel>>> fetchComments({
     required String postId,
     bool latest = false,
@@ -114,6 +124,16 @@ class KomunitasUsecase {
     required String commentId,
   }) {
     return _komunitasRepository.unlikeComment(
+      uid: uid,
+      commentId: commentId,
+    );
+  }
+
+  Future<Either<Exception, void>> reportComment({
+    required String uid,
+    required String commentId,
+  }) {
+    return _komunitasRepository.reportComment(
       uid: uid,
       commentId: commentId,
     );
