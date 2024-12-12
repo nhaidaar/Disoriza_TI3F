@@ -31,7 +31,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password: event.password,
         );
         account.fold(
-          (error) => emit(AuthError(message: error.toString().split(': ').last)),
+          (error) => emit(AuthError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(Authenticated(user: success, isFirstTime: true)),
         );
       } catch (_) {
@@ -47,7 +49,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password: event.password,
         );
         session.fold(
-          (error) => emit(AuthError(message: error.toString().split(': ').last)),
+          (error) => emit(AuthError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(Authenticated(user: success)),
         );
       } catch (_) {
@@ -58,7 +62,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final logout = await _authUsecase.logout();
         logout.fold(
-          (error) => emit(AuthError(message: error.toString().split(': ').last)),
+          (error) => emit(AuthError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(Unauthenticated()),
         );
       } catch (_) {
@@ -71,7 +77,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         final resetPassword = await _authUsecase.resetPassword(email: event.email);
         resetPassword.fold(
-          (error) => emit(AuthError(message: error.toString().split(': ').last)),
+          (error) => emit(AuthError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(AuthPasswordReseted()),
         );
       } catch (_) {

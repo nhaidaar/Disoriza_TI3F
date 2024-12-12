@@ -22,7 +22,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           max: event.max,
         );
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasPostLoaded(postModels: success)),
         );
       } catch (_) {
@@ -35,7 +37,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
 
         final response = await _komunitasUsecase.fetchReportedPosts();
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasPostLoaded(postModels: success)),
         );
       } catch (_) {
@@ -48,7 +52,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
 
         final response = await _komunitasUsecase.fetchReportedComments();
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasPostWithCommentLoaded(commentWithPost: success)),
         );
       } catch (_) {
@@ -64,7 +70,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           filter: event.filter,
         );
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasPostLoaded(postModels: success)),
         );
       } catch (_) {
@@ -82,7 +90,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
           image: event.image,
         );
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasPostCreated()),
         );
       } catch (_) {
@@ -95,7 +105,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
 
         final response = await _komunitasUsecase.deletePost(postId: event.postId);
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasPostDeleted()),
         );
       } catch (_) {
@@ -110,7 +122,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         );
 
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) {},
         );
       } catch (_) {
@@ -125,7 +139,9 @@ class KomunitasPostBloc extends Bloc<KomunitasPostEvent, KomunitasPostState> {
         );
 
         response.fold(
-          (error) => emit(KomunitasPostError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasPostError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) {},
         );
       } catch (_) {

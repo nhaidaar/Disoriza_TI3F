@@ -17,7 +17,9 @@ class KomunitasReportBloc extends Bloc<KomunitasReportEvent, KomunitasReportStat
         );
 
         response.fold(
-          (error) => emit(KomunitasReportError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasReportError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasReportPostReported()),
         );
       } catch (_) {
@@ -32,7 +34,9 @@ class KomunitasReportBloc extends Bloc<KomunitasReportEvent, KomunitasReportStat
         );
 
         response.fold(
-          (error) => emit(KomunitasReportError(message: error.toString().split(': ').last)),
+          (error) => emit(KomunitasReportError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(KomunitasReportCommentReported()),
         );
       } catch (_) {
