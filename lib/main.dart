@@ -31,7 +31,6 @@ Future<void> main() async {
   final supabase = await supa.Supabase.initialize(
     url: dotenv.get('SUPABASE_URL'),
     anonKey: dotenv.get('SUPABASE_ANON_KEY'),
-    debug: true,
   );
 
   runApp(Disoriza(client: supabase.client));
