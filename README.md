@@ -1,6 +1,7 @@
 # Disoriza
 
-This repository is belongs to Kelompok 3 PBL TI-3F
+This repository is belongs to Kelompok 3 PBL TI-3F <br>
+Available on <a href="https://play.google.com/store/apps/details?id=com.disoriza.app">Google Play</a>
 
 ## Contributors
 
