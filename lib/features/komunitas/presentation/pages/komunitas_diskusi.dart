@@ -22,6 +22,7 @@ class _KomunitasDiskusiState extends State<KomunitasDiskusi> {
   @override
   void initState() {
     super.initState();
+    fetchDiskusi(context);
   }
 
   @override

@@ -77,7 +77,8 @@ class RiwayatRepositoryImpl implements RiwayatRepository {
       if (response.statusCode == 201) return const Right(null);
 
       // If any disease detected
-      final path = '/$uid/${image.path.split('/').last}'; // Set for file path (name)
+      final time = DateTime.now().millisecondsSinceEpoch;
+      final path = '/$uid/${time}_${image.path.split('/').last}'; // Set for file path (name)
       await client.storage.from('user_histories').uploadBinary(path, imageBytes); // Upload image to supabase
       final url = client.storage.from('user_histories').getPublicUrl(path);
       final disease = await client

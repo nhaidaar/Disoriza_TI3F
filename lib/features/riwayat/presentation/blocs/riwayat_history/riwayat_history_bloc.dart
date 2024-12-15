@@ -20,7 +20,9 @@ class RiwayatHistoryBloc extends Bloc<RiwayatHistoryEvent, RiwayatHistoryState> 
           max: event.max,
         );
         response.fold(
-          (error) => emit(RiwayatHistoryError(message: error.toString().split(': ').last)),
+          (error) => emit(RiwayatHistoryError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(RiwayatHistoryLoaded(riwayatModel: success)),
         );
       } catch (_) {
@@ -33,7 +35,9 @@ class RiwayatHistoryBloc extends Bloc<RiwayatHistoryEvent, RiwayatHistoryState> 
 
         final response = await _riwayatUsecase.deleteRiwayat(riwayatId: event.riwayatId);
         response.fold(
-          (error) => emit(RiwayatHistoryError(message: error.toString().split(': ').last)),
+          (error) => emit(RiwayatHistoryError(
+            message: error.toString().replaceFirst(RegExp(r'^[A-Za-z]+Exception: '), '').trim(),
+          )),
           (success) => emit(RiwayatHistoryDeleted()),
         );
       } catch (_) {
